@@ -122,7 +122,7 @@ function Frame({
         "h-screen overflow-x-auto overflow-y-hidden cyber-scrollbar",
       )}
     >
-      <div className="flex h-screen min-w-[1280px] items-stretch">
+      <div className="flex h-screen min-w-7xl items-stretch">
         {sidebar}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           {header}
@@ -157,12 +157,19 @@ function Sidebar({
         )}
       >
         <div className="flex flex-col gap-2 p-8">
-          <div className={cn("font-display text-2xl font-bold uppercase tracking-[-0.8px]", dark ? "text-[#9cff93]" : "text-[#006e17]")}>
+          <div
+            className={cn(
+              "font-display text-2xl font-bold uppercase tracking-[-0.8px]",
+              dark ? "text-[#9cff93]" : "text-[#006e17]",
+            )}
+          >
             NEURAL_LINK
           </div>
           <div
             className={cn(
-              subtitleFont === "pixel" ? "font-pixel text-[10px] leading-[15px]" : "font-sans text-[12px] leading-4",
+              subtitleFont === "pixel"
+                ? "font-pixel text-[10px] leading-[15px]"
+                : "font-sans text-[12px] leading-4",
               subtitleClassName ?? (dark ? "text-[#6b7280]" : "text-[#6c7988]"),
             )}
           >
@@ -174,12 +181,14 @@ function Sidebar({
             const current = item.key === active;
             const href = navHref(theme, item.key);
             const baseClassName = cn(
-            "flex items-center gap-4 px-4 py-4 uppercase transition-colors",
-            navSize === "md" ? "font-display text-base tracking-[-0.8px]" : "font-display text-[14px] tracking-[-0.8px]",
-            current &&
-              (dark
-                ? "border-l-4 border-[#9cff93] bg-[#262626] pl-3 text-[#9cff93]"
-                : "border-l-4 border-[#006e17] bg-[#cfd7de] pl-3 text-[#006e17]"),
+              "flex items-center gap-4 px-4 py-4 uppercase transition-colors",
+              navSize === "md"
+                ? "font-display text-base tracking-[-0.8px]"
+                : "font-display text-[14px] tracking-[-0.8px]",
+              current &&
+                (dark
+                  ? "border-l-4 border-[#9cff93] bg-[#262626] pl-3 text-[#9cff93]"
+                  : "border-l-4 border-[#006e17] bg-[#cfd7de] pl-3 text-[#006e17]"),
               !current && (dark ? "text-[#6b7280]" : "text-[#52606f]"),
             );
             const content = (
@@ -197,13 +206,17 @@ function Sidebar({
               );
             }
 
-          return (
-            <Link className={cn(baseClassName, interactiveMotionClass)} href={href} key={item.key}>
-              {content}
-            </Link>
-          );
-        })}
-      </nav>
+            return (
+              <Link
+                className={cn(baseClassName, interactiveMotionClass)}
+                href={href}
+                key={item.key}
+              >
+                {content}
+              </Link>
+            );
+          })}
+        </nav>
         {footer ? <div className="mt-auto">{footer}</div> : null}
       </aside>
     </>
@@ -240,7 +253,14 @@ function SidebarFooterUser({
           : "text-[#64748b]";
 
   return (
-    <div className={cn(dark ? "border-t-4 border-[#262626] bg-[#0e0e0e]" : "border-t-4 border-[#b5c0ca] bg-[#e7edf1]", "p-6")}>
+    <div
+      className={cn(
+        dark
+          ? "border-t-4 border-[#262626] bg-[#0e0e0e]"
+          : "border-t-4 border-[#b5c0ca] bg-[#e7edf1]",
+        "p-6",
+      )}
+    >
       <div
         className={cn(
           dark ? "bg-[#262626]" : "bg-[#cfd7de]",
@@ -256,8 +276,22 @@ function SidebarFooterUser({
           width={40}
         />
         <div className="min-w-0">
-          <div className={cn("font-pixel text-[10px] uppercase leading-4", dark ? "text-white" : "text-[#0f172a]")}>{title}</div>
-          <div className={cn("font-display text-[10px] uppercase leading-[15px]", subtitleColor)}>{subtitle}</div>
+          <div
+            className={cn(
+              "font-pixel text-[10px] uppercase leading-4",
+              dark ? "text-white" : "text-[#0f172a]",
+            )}
+          >
+            {title}
+          </div>
+          <div
+            className={cn(
+              "font-display text-[10px] uppercase leading-[15px]",
+              subtitleColor,
+            )}
+          >
+            {subtitle}
+          </div>
         </div>
       </div>
     </div>
@@ -284,7 +318,7 @@ function HeaderBar({
         {children}
       </div>
       <div className="ml-6 shrink-0">
-        <ThemeToggle theme={theme} />
+        <ThemeToggle  />
       </div>
     </header>
   );
@@ -301,11 +335,21 @@ function HeaderTitle({
 }) {
   return (
     <div className="flex items-center gap-4">
-      <div className={cn("font-display text-xl font-bold tracking-[2px]", theme === "dark" ? "text-[#9cff93]" : "text-[#006e17]")}>
+      <div
+        className={cn(
+          "font-display text-xl font-bold tracking-[2px]",
+          theme === "dark" ? "text-[#9cff93]" : "text-[#006e17]",
+        )}
+      >
         {title}
       </div>
       {trail ? (
-        <div className={cn("font-display text-sm uppercase", theme === "dark" ? "text-[#adaaaa]" : "text-[#475569]")}>
+        <div
+          className={cn(
+            "font-display text-sm uppercase",
+            theme === "dark" ? "text-[#adaaaa]" : "text-[#475569]",
+          )}
+        >
           {trail}
         </div>
       ) : null}
@@ -324,8 +368,24 @@ function MetricBadge({
 }) {
   return (
     <div className="flex items-center gap-2">
-      {icon ? <span className={cn("size-4", theme === "dark" ? "text-[#9cff93]" : "text-[#16a34a]")}>{icon}</span> : null}
-      <span className={cn("font-display text-sm font-bold", theme === "dark" ? "text-white" : "text-[#0f172a]")}>{children}</span>
+      {icon ? (
+        <span
+          className={cn(
+            "size-4",
+            theme === "dark" ? "text-[#9cff93]" : "text-[#16a34a]",
+          )}
+        >
+          {icon}
+        </span>
+      ) : null}
+      <span
+        className={cn(
+          "font-display text-sm font-bold",
+          theme === "dark" ? "text-white" : "text-[#0f172a]",
+        )}
+      >
+        {children}
+      </span>
     </div>
   );
 }
@@ -365,7 +425,14 @@ function ProgressSegments({
   return (
     <div className="flex w-full gap-1">
       {Array.from({ length: total }).map((_, index) => (
-        <div className={cn("flex-1", height, index < value ? activeColor : inactiveColor)} key={`${activeTone}-${index}`} />
+        <div
+          className={cn(
+            "flex-1",
+            height,
+            index < value ? activeColor : inactiveColor,
+          )}
+          key={`${activeTone}-${index}`}
+        />
       ))}
     </div>
   );
@@ -383,13 +450,28 @@ function SectionTitle({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className={cn("h-6 w-2", theme === "dark" ? "bg-[#9cff93]" : "bg-[#16a34a]")} />
-        <h2 className={cn("font-display text-xl font-bold tracking-[-1px]", theme === "dark" ? "text-white" : "text-[#0f172a]")}>
+        <div
+          className={cn(
+            "h-6 w-2",
+            theme === "dark" ? "bg-[#9cff93]" : "bg-[#16a34a]",
+          )}
+        />
+        <h2
+          className={cn(
+            "font-display text-xl font-bold tracking-[-1px]",
+            theme === "dark" ? "text-white" : "text-[#0f172a]",
+          )}
+        >
           {title}
         </h2>
       </div>
       {linkLabel ? (
-        <div className={cn("font-sans text-[10px] font-semibold uppercase", theme === "dark" ? "text-[#69daff]" : "text-[#0891b2]")}>
+        <div
+          className={cn(
+            "font-sans text-[10px] font-semibold uppercase",
+            theme === "dark" ? "text-[#69daff]" : "text-[#0891b2]",
+          )}
+        >
           {linkLabel}
         </div>
       ) : null}
@@ -438,19 +520,55 @@ function LessonCard({
 
   return (
     <article className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#d9e0e6]", "p-5")}>
-      <div className={cn(dark ? "bg-[#131313]" : "bg-[#cfd7de]", "relative mb-4 aspect-video overflow-hidden")}>
-        <SafeImage alt={title} className="h-full w-full object-cover opacity-80" height={128} src={imageSrc} width={177} />
+      <div
+        className={cn(
+          dark ? "bg-[#131313]" : "bg-[#cfd7de]",
+          "relative mb-4 aspect-video overflow-hidden",
+        )}
+      >
+        <SafeImage
+          alt={title}
+          className="h-full w-full object-cover opacity-80"
+          height={128}
+          src={imageSrc}
+          width={177}
+        />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={cn("size-7", dark ? "text-[#9cff93]" : "text-[#16a34a]")}>
+          <span
+            className={cn("size-7", dark ? "text-[#9cff93]" : "text-[#16a34a]")}
+          >
             <TerminalIcon />
           </span>
         </div>
       </div>
-      <div className={cn("mb-1 font-sans text-[9px] font-semibold uppercase", tagClass)}>{tag}</div>
-      <div className={cn("mb-3 font-display text-sm font-bold uppercase", dark ? "text-white" : "text-[#0f172a]")}>{title}</div>
+      <div
+        className={cn(
+          "mb-1 font-sans text-[9px] font-semibold uppercase",
+          tagClass,
+        )}
+      >
+        {tag}
+      </div>
+      <div
+        className={cn(
+          "mb-3 font-display text-sm font-bold uppercase",
+          dark ? "text-white" : "text-[#0f172a]",
+        )}
+      >
+        {title}
+      </div>
       <div className="flex items-center justify-between">
-        <div className={cn("font-sans text-[10px] italic", dark ? "text-[#adaaaa]" : "text-[#475569]")}>{duration}</div>
-        <div className={cn("font-sans text-[10px] font-semibold", xpClass)}>{xp}</div>
+        <div
+          className={cn(
+            "font-sans text-[10px] italic",
+            dark ? "text-[#adaaaa]" : "text-[#475569]",
+          )}
+        >
+          {duration}
+        </div>
+        <div className={cn("font-sans text-[10px] font-semibold", xpClass)}>
+          {xp}
+        </div>
       </div>
     </article>
   );
@@ -483,18 +601,42 @@ function AssistantRail({
         ? "text-[#d575ff]"
         : "text-[#9800d0]";
   return (
-    <FloatingRailShell theme={theme}>
-      <div className={cn(dark ? "border-b-4 border-[#262626]" : "border-b-4 border-[#b5c0ca]", "p-6")}>
+    <FloatingRailShell>
+      <div
+        className={cn(
+          dark ? "border-b-4 border-[#262626]" : "border-b-4 border-[#b5c0ca]",
+          "p-6",
+        )}
+      >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className={cn(dark ? "bg-[#262626]" : "bg-[#cfd7de]", "flex size-12 items-center justify-center")}>
+            <div
+              className={cn(
+                dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                "flex size-12 items-center justify-center",
+              )}
+            >
               <span className={accentColor}>
                 <BotIcon />
               </span>
             </div>
             <div>
-              <div className={cn("font-display text-sm font-bold uppercase", accentColor)}>{title}</div>
-              <div className={cn("font-sans text-[10px]", dark ? "text-[#9cff93]" : "text-[#16a34a]")}>{subtitle}</div>
+              <div
+                className={cn(
+                  "font-display text-sm font-bold uppercase",
+                  accentColor,
+                )}
+              >
+                {title}
+              </div>
+              <div
+                className={cn(
+                  "font-sans text-[10px]",
+                  dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                )}
+              >
+                {subtitle}
+              </div>
             </div>
           </div>
           <button
@@ -511,28 +653,57 @@ function AssistantRail({
         {topCard ? <div className="mt-6">{topCard}</div> : null}
       </div>
       <div className="flex flex-1 flex-col gap-6 p-6">{middleCards}</div>
-      {footer ? <div className={cn(dark ? "border-t-4 border-[#262626] bg-[#0e0e0e]" : "border-t-4 border-[#b5c0ca] bg-[#e7edf1]", "p-6")}>{footer}</div> : null}
+      {footer ? (
+        <div
+          className={cn(
+            dark
+              ? "border-t-4 border-[#262626] bg-[#0e0e0e]"
+              : "border-t-4 border-[#b5c0ca] bg-[#e7edf1]",
+            "p-6",
+          )}
+        >
+          {footer}
+        </div>
+      ) : null}
     </FloatingRailShell>
   );
 }
 
-function ProfileLogRail({
-  theme,
-}: {
-  theme: CyberTheme;
-}) {
+function ProfileLogRail({ theme }: { theme: CyberTheme }) {
   const dark = theme === "dark";
 
   return (
-    <FloatingRailShell theme={theme}>
-      <div className={cn(dark ? "border-b-2 border-[#262626]" : "border-b-2 border-[#b5c0ca]", "p-8")}>
+    <FloatingRailShell>
+      <div
+        className={cn(
+          dark ? "border-b-2 border-[#262626]" : "border-b-2 border-[#b5c0ca]",
+          "p-8",
+        )}
+      >
         <div className="flex items-center gap-4">
-          <div className={cn(dark ? "bg-[#d575ff]" : "bg-[#9800d0]", "flex size-12 items-center justify-center")}>
+          <div
+            className={cn(
+              dark ? "bg-[#d575ff]" : "bg-[#9800d0]",
+              "flex size-12 items-center justify-center",
+            )}
+          >
             <BotIcon className={dark ? "text-black" : "text-white"} />
           </div>
           <div>
-            <div className={cn("font-display text-sm font-bold uppercase", dark ? "text-[#d575ff]" : "text-[#9800d0]")}>AI_ASSISTANT</div>
-            <div className={cn("font-pixel text-[10px] leading-5", dark ? "text-[#9cff93]" : "text-[#006e17]")}>
+            <div
+              className={cn(
+                "font-display text-sm font-bold uppercase",
+                dark ? "text-[#d575ff]" : "text-[#9800d0]",
+              )}
+            >
+              AI_ASSISTANT
+            </div>
+            <div
+              className={cn(
+                "font-pixel text-[10px] leading-5",
+                dark ? "text-[#9cff93]" : "text-[#006e17]",
+              )}
+            >
               ONLINE /
               <br />
               PROCESSING
@@ -589,7 +760,12 @@ function ProfileLogRail({
           theme={theme}
         />
       </div>
-      <div className={cn(dark ? "bg-black" : "border-t-2 border-[#b5c0ca] bg-[#cfd7de]", "p-6")}>
+      <div
+        className={cn(
+          dark ? "bg-black" : "border-t-2 border-[#b5c0ca] bg-[#cfd7de]",
+          "p-6",
+        )}
+      >
         <div className="flex justify-between">
           <div className="font-pixel text-[10px] leading-5 text-[#767575]">
             UPTIME:
@@ -647,10 +823,30 @@ function MetricTile({
           : "text-[#006e17]";
 
   return (
-    <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]", "border-l-4 p-4", borderColor)}>
-      <div className={cn("mb-1 font-pixel text-[10px] uppercase leading-[15px]", labelColor)}>{label}</div>
+    <div
+      className={cn(
+        dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]",
+        "border-l-4 p-4",
+        borderColor,
+      )}
+    >
+      <div
+        className={cn(
+          "mb-1 font-pixel text-[10px] uppercase leading-[15px]",
+          labelColor,
+        )}
+      >
+        {label}
+      </div>
       <div className="flex items-center gap-2">
-        <div className={cn("font-display text-4xl font-bold tracking-[2.4px]", dark ? "text-white" : "text-[#0f172a]")}>{value}</div>
+        <div
+          className={cn(
+            "font-display text-4xl font-bold tracking-[2.4px]",
+            dark ? "text-white" : "text-[#0f172a]",
+          )}
+        >
+          {value}
+        </div>
         {icon ? <span className={labelColor}>{icon}</span> : null}
       </div>
     </div>
@@ -688,14 +884,57 @@ function AchievementCard({
 
   return (
     <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]", "relative p-5")}>
-      <div className={cn("mb-6 flex size-16 items-center justify-center", dark ? "bg-[#262626]" : "bg-[#cfd7de]", locked ? "opacity-35" : "")}>
-        <span className={locked ? (dark ? "text-[#6b7280]" : "text-[#6c7988]") : tone === "purple" ? (dark ? "text-[#d575ff]" : "text-[#9800d0]") : tone === "cyan" ? (dark ? "text-[#69daff]" : "text-[#00677d]") : (dark ? "text-[#9cff93]" : "text-[#006e17]")}>
+      <div
+        className={cn(
+          "mb-6 flex size-16 items-center justify-center",
+          dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+          locked ? "opacity-35" : "",
+        )}
+      >
+        <span
+          className={
+            locked
+              ? dark
+                ? "text-[#6b7280]"
+                : "text-[#6c7988]"
+              : tone === "purple"
+                ? dark
+                  ? "text-[#d575ff]"
+                  : "text-[#9800d0]"
+                : tone === "cyan"
+                  ? dark
+                    ? "text-[#69daff]"
+                    : "text-[#00677d]"
+                  : dark
+                    ? "text-[#9cff93]"
+                    : "text-[#006e17]"
+          }
+        >
           {icon}
         </span>
       </div>
-      <div className={cn("font-pixel text-[10px] uppercase leading-[15px]", dark ? "text-white" : "text-[#0f172a]")}>{title}</div>
-      <div className={cn("mt-1 font-sans text-[10px] uppercase", dark ? "text-[#adaaaa]" : "text-[#6c7988]")}>{subtitle}</div>
-      <div className={cn("absolute inset-x-0 bottom-0 h-1", locked ? (dark ? "bg-[#262626]" : "bg-[#cbd5e1]") : accent)} />
+      <div
+        className={cn(
+          "font-pixel text-[10px] uppercase leading-[15px]",
+          dark ? "text-white" : "text-[#0f172a]",
+        )}
+      >
+        {title}
+      </div>
+      <div
+        className={cn(
+          "mt-1 font-sans text-[10px] uppercase",
+          dark ? "text-[#adaaaa]" : "text-[#6c7988]",
+        )}
+      >
+        {subtitle}
+      </div>
+      <div
+        className={cn(
+          "absolute inset-x-0 bottom-0 h-1",
+          locked ? (dark ? "bg-[#262626]" : "bg-[#cbd5e1]") : accent,
+        )}
+      />
     </div>
   );
 }
@@ -743,14 +982,29 @@ function SubjectCard({
       <div className="absolute right-0 top-0 bg-black/10 px-2 py-2 font-display text-[10px] uppercase text-current opacity-50">
         {code}
       </div>
-      <div className={cn(dark ? "bg-[#262626]" : "bg-[#cfd7de]", "mb-6 flex size-16 items-center justify-center")}>
+      <div
+        className={cn(
+          dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+          "mb-6 flex size-16 items-center justify-center",
+        )}
+      >
         <span className={tagColor}>{icon}</span>
       </div>
       <div>
-        <h3 className={cn("mb-3 font-display text-[24px] font-bold uppercase leading-8 tracking-[-0.6px]", dark ? "text-white" : "text-[#0f172a]")}>
+        <h3
+          className={cn(
+            "mb-3 font-display text-[24px] font-bold uppercase leading-8 tracking-[-0.6px]",
+            dark ? "text-white" : "text-[#0f172a]",
+          )}
+        >
           {title}
         </h3>
-        <div className={cn("space-y-0.5 font-sans text-sm leading-5", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
+        <div
+          className={cn(
+            "space-y-0.5 font-sans text-sm leading-5",
+            dark ? "text-[#adaaaa]" : "text-[#475569]",
+          )}
+        >
           {description.map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -758,8 +1012,21 @@ function SubjectCard({
       </div>
       <div className="flex items-end justify-between">
         <div className="w-20">
-          <div className={cn("mb-2 font-display text-[10px] uppercase", dark ? "text-[#adaaaa]" : "text-[#64748b]")}>PROGRESS</div>
-          <ProgressSegments activeTone={tone} size="sm" theme={theme} total={4} value={progress} />
+          <div
+            className={cn(
+              "mb-2 font-display text-[10px] uppercase",
+              dark ? "text-[#adaaaa]" : "text-[#64748b]",
+            )}
+          >
+            PROGRESS
+          </div>
+          <ProgressSegments
+            activeTone={tone}
+            size="sm"
+            theme={theme}
+            total={4}
+            value={progress}
+          />
         </div>
         <span className={tagColor}>
           <ArrowRightIcon />
@@ -801,12 +1068,35 @@ function PromoCard({
         "flex items-center gap-6 p-8",
       )}
     >
-      <div className={cn(dark ? "bg-black" : "bg-[#cfd7de]", "shrink-0 overflow-hidden shadow-[0px_0px_0px_4px_#b5c0ca]")}>
-        <SafeImage alt={title} className="h-20 w-20 object-cover" height={80} src={imageSrc} width={80} />
+      <div
+        className={cn(
+          dark ? "bg-black" : "bg-[#cfd7de]",
+          "shrink-0 overflow-hidden shadow-[0px_0px_0px_4px_#b5c0ca]",
+        )}
+      >
+        <SafeImage
+          alt={title}
+          className="h-20 w-20 object-cover"
+          height={80}
+          src={imageSrc}
+          width={80}
+        />
       </div>
       <div>
-        <div className={cn("font-display text-base font-bold uppercase", titleColor)}>{title}</div>
-        <div className={cn("mt-1 space-y-0.5 font-sans text-sm leading-5", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
+        <div
+          className={cn(
+            "font-display text-base font-bold uppercase",
+            titleColor,
+          )}
+        >
+          {title}
+        </div>
+        <div
+          className={cn(
+            "mt-1 space-y-0.5 font-sans text-sm leading-5",
+            dark ? "text-[#adaaaa]" : "text-[#475569]",
+          )}
+        >
           {description.map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -822,12 +1112,28 @@ function EditorTabs({ theme }: { theme: CyberTheme }) {
   return (
     <div
       className={cn(
-        dark ? "border-b-4 border-[#131313] bg-[#0e0e0e]" : "border-b-4 border-[#b5c0ca] bg-[#e7edf1]",
+        dark
+          ? "border-b-4 border-[#131313] bg-[#0e0e0e]"
+          : "border-b-4 border-[#b5c0ca] bg-[#e7edf1]",
         "flex items-center gap-6 px-4 py-3",
       )}
     >
-      <div className={cn("font-display text-sm font-bold tracking-[1.4px]", dark ? "text-white" : "text-[#0f172a]")}>Binary_Search_Logic.md</div>
-      <div className={cn("font-display text-xs font-bold uppercase", dark ? "text-[#69daff]" : "text-[#0891b2]")}>SAVED</div>
+      <div
+        className={cn(
+          "font-display text-sm font-bold tracking-[1.4px]",
+          dark ? "text-white" : "text-[#0f172a]",
+        )}
+      >
+        Binary_Search_Logic.md
+      </div>
+      <div
+        className={cn(
+          "font-display text-xs font-bold uppercase",
+          dark ? "text-[#69daff]" : "text-[#0891b2]",
+        )}
+      >
+        SAVED
+      </div>
       <div className="ml-auto flex items-center gap-6">
         {["GRAPH", "PREVIEW", "AI_AS..."].map((tab, index) => (
           <div
@@ -872,42 +1178,95 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
         </HeaderBar>
       }
       main={
-        <main className={cn(dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]", "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain")}>
+        <main
+          className={cn(
+            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
+          )}
+        >
           <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-12 p-8">
             <div className="grid gap-8 xl:grid-cols-[minmax(0,2fr)_320px]">
-              <section className={cn(dark ? "bg-[#131313] border-l-4 border-[#9cff93]" : "bg-[#d9e0e6] border-l-4 border-[#16a34a]", "overflow-hidden p-8")}>
+              <section
+                className={cn(
+                  dark
+                    ? "bg-[#131313] border-l-4 border-[#9cff93]"
+                    : "bg-[#d9e0e6] border-l-4 border-[#16a34a]",
+                  "overflow-hidden p-8",
+                )}
+              >
                 <div className="flex justify-between gap-6">
                   <div className="max-w-[560px]">
                     <div
                       className={cn(
-                        dark ? "bg-[#00fc40] text-[#005a10]" : "bg-[#dcfce7] text-[#166534]",
+                        dark
+                          ? "bg-[#00fc40] text-[#005a10]"
+                          : "bg-[#dcfce7] text-[#166534]",
                         "mb-4 inline-flex px-3 py-1 font-sans text-[10px] font-semibold uppercase tracking-[1px]",
                       )}
                     >
                       ONGOING MODULE
                     </div>
-                    <h1 className={cn("font-display text-5xl font-bold uppercase leading-[1] tracking-[-1.8px]", dark ? "text-white" : "text-[#0f172a]")}>
+                    <h1
+                      className={cn(
+                        "font-display text-5xl font-bold uppercase leading-[1] tracking-[-1.8px]",
+                        dark ? "text-white" : "text-[#0f172a]",
+                      )}
+                    >
                       INTRODUCTION TO ALGORITHMS
                     </h1>
-                    <p className={cn("mt-5 max-w-[28rem] font-sans text-sm leading-[22px]", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
-                      Master the foundational logic of computational complexity and data structures in a high-fidelity
-                      terminal environment.
+                    <p
+                      className={cn(
+                        "mt-5 max-w-[28rem] font-sans text-sm leading-[22px]",
+                        dark ? "text-[#adaaaa]" : "text-[#475569]",
+                      )}
+                    >
+                      Master the foundational logic of computational complexity
+                      and data structures in a high-fidelity terminal
+                      environment.
                     </p>
                   </div>
-                  <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#cfd7de]", "hidden h-28 w-32 items-center justify-center xl:flex")}>
-                    <span className={cn("size-12", dark ? "text-[#6b7280]" : "text-[#9aa8b6]")}>
+                  <div
+                    className={cn(
+                      dark ? "bg-[#1a1a1a]" : "bg-[#cfd7de]",
+                      "hidden h-28 w-32 items-center justify-center xl:flex",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "size-12",
+                        dark ? "text-[#6b7280]" : "text-[#9aa8b6]",
+                      )}
+                    >
                       <TerminalFrameIcon />
                     </span>
                   </div>
                 </div>
                 <div className="mt-10">
                   <div className="mb-3 flex items-end justify-between">
-                    <div className={cn("font-display text-xs font-bold uppercase", dark ? "text-[#9cff93]" : "text-[#16a34a]")}>
+                    <div
+                      className={cn(
+                        "font-display text-xs font-bold uppercase",
+                        dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                      )}
+                    >
                       PROGRESS_LOAD: 64%
                     </div>
-                    <div className={cn("font-display text-xs uppercase", dark ? "text-[#6b7280]" : "text-[#6c7988]")}>SEGMENT_04/07</div>
+                    <div
+                      className={cn(
+                        "font-display text-xs uppercase",
+                        dark ? "text-[#6b7280]" : "text-[#6c7988]",
+                      )}
+                    >
+                      SEGMENT_04/07
+                    </div>
                   </div>
-                  <ProgressSegments activeTone="cyan" size="lg" theme={theme} total={7} value={4} />
+                  <ProgressSegments
+                    activeTone="cyan"
+                    size="lg"
+                    theme={theme}
+                    total={7}
+                    value={4}
+                  />
                 </div>
                 <div className="mt-8">
                   <PixelButton className="min-w-[280px]" theme={theme}>
@@ -916,26 +1275,62 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                 </div>
               </section>
               <div className="flex flex-col gap-8">
-                <div className={cn(dark ? "bg-[#262626] border-b-4 border-[#ff7351]" : "bg-[#d9e0e6] border-b-4 border-[#dc2626]", "p-6")}>
+                <div
+                  className={cn(
+                    dark
+                      ? "bg-[#262626] border-b-4 border-[#ff7351]"
+                      : "bg-[#d9e0e6] border-b-4 border-[#dc2626]",
+                    "p-6",
+                  )}
+                >
                   <div className="mb-4 flex items-center gap-4">
-                    <div className={cn(dark ? "bg-[#b92902]" : "bg-[#fee2e2]", "flex size-12 items-center justify-center")}>
-                      <span className={dark ? "text-[#ff7351]" : "text-[#dc2626]"}>
+                    <div
+                      className={cn(
+                        dark ? "bg-[#b92902]" : "bg-[#fee2e2]",
+                        "flex size-12 items-center justify-center",
+                      )}
+                    >
+                      <span
+                        className={dark ? "text-[#ff7351]" : "text-[#dc2626]"}
+                      >
                         <FireIcon />
                       </span>
                     </div>
                     <div>
-                      <div className={cn("font-display text-[10px] font-bold uppercase", dark ? "text-[#ff7351]" : "text-[#dc2626]")}>ACTIVE STREAK</div>
-                      <div className={cn("font-display text-4xl font-bold", dark ? "text-white" : "text-[#0f172a]")}>07 DAYS</div>
+                      <div
+                        className={cn(
+                          "font-display text-[10px] font-bold uppercase",
+                          dark ? "text-[#ff7351]" : "text-[#dc2626]",
+                        )}
+                      >
+                        ACTIVE STREAK
+                      </div>
+                      <div
+                        className={cn(
+                          "font-display text-4xl font-bold",
+                          dark ? "text-white" : "text-[#0f172a]",
+                        )}
+                      >
+                        07 DAYS
+                      </div>
                     </div>
                   </div>
-                  <ProgressSegments activeTone={dark ? "orange" : "red"} size="sm" theme={theme} total={7} value={7} />
+                  <ProgressSegments
+                    activeTone={dark ? "orange" : "red"}
+                    size="sm"
+                    theme={theme}
+                    total={7}
+                    value={7}
+                  />
                 </div>
                 <MessageCard
                   body={
                     <>
-                      &quot;Operator, your performance in &apos;O-Notation&apos; is optimal.
+                      &quot;Operator, your performance in &apos;O-Notation&apos;
+                      is optimal.
                       <br />
-                      Suggesting &apos;Advanced Sorting&apos; for next cycle.&quot;
+                      Suggesting &apos;Advanced Sorting&apos; for next
+                      cycle.&quot;
                     </>
                   }
                   label="AI_ADVISORY"
@@ -945,7 +1340,11 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
               </div>
             </div>
             <section className="space-y-8">
-              <SectionTitle linkLabel="VIEW_ALL_NODES" theme={theme} title="RECOMMENDED PATHWAYS" />
+              <SectionTitle
+                linkLabel="VIEW_ALL_NODES"
+                theme={theme}
+                title="RECOMMENDED PATHWAYS"
+              />
               <div className="grid gap-6 xl:grid-cols-4">
                 <LessonCard
                   duration="24m duration"
@@ -994,7 +1393,12 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
             accent="green"
             footer={
               <div className="space-y-4">
-                <PixelButton className="w-full" hollow theme={theme} tone="purple">
+                <PixelButton
+                  className="w-full"
+                  hollow
+                  theme={theme}
+                  tone="purple"
+                >
                   CHAT
                 </PixelButton>
                 <PixelButton className="w-full" theme={theme} tone="purple">
@@ -1094,15 +1498,35 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
         </HeaderBar>
       }
       main={
-        <main className={cn(dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]", "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain")}>
+        <main
+          className={cn(
+            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
+          )}
+        >
           <div className="mx-auto flex w-full max-w-[1152px] flex-col gap-12 p-12">
             <div className="max-w-[720px]">
-              <h1 className={cn("font-display text-[60px] font-bold uppercase leading-[1] tracking-[-3px]", dark ? "text-white" : "text-[#0f172a]")}>
-                SELECT <span className={dark ? "text-[#9cff93]" : "text-[#16a34a]"}>SUBJECT</span>_
+              <h1
+                className={cn(
+                  "font-display text-[60px] font-bold uppercase leading-[1] tracking-[-3px]",
+                  dark ? "text-white" : "text-[#0f172a]",
+                )}
+              >
+                SELECT{" "}
+                <span className={dark ? "text-[#9cff93]" : "text-[#16a34a]"}>
+                  SUBJECT
+                </span>
+                _
               </h1>
-              <p className={cn("mt-4 text-base leading-[26px]", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
-                Initialize your cognitive uplink. Choose a primary knowledge domain to begin processing new data packets.
-                All progression is permanent within the neural ledger.
+              <p
+                className={cn(
+                  "mt-4 text-base leading-[26px]",
+                  dark ? "text-[#adaaaa]" : "text-[#475569]",
+                )}
+              >
+                Initialize your cognitive uplink. Choose a primary knowledge
+                domain to begin processing new data packets. All progression is
+                permanent within the neural ledger.
               </p>
             </div>
             <div className="grid gap-10 xl:grid-cols-2">
@@ -1186,7 +1610,10 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
                 theme={theme}
                 tone="purple"
               />
-              <MessageCard body="Show me my latest score in History." theme={theme} />
+              <MessageCard
+                body="Show me my latest score in History."
+                theme={theme}
+              />
               <MessageCard
                 body={
                   <>
@@ -1220,8 +1647,12 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
                     <BotIcon />
                   </div>
                   <div>
-                    <div className="font-display text-xs font-bold uppercase text-[#d575ff]">AI_ASSISTANT</div>
-                    <div className="font-sans text-[10px] text-[#adaaaa]">Online / Processing</div>
+                    <div className="font-display text-xs font-bold uppercase text-[#d575ff]">
+                      AI_ASSISTANT
+                    </div>
+                    <div className="font-sans text-[10px] text-[#adaaaa]">
+                      Online / Processing
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1232,8 +1663,12 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
                     <BotIcon />
                   </div>
                   <div>
-                    <div className="font-display text-xs font-bold uppercase text-[#9800d0]">AI_ASSISTANT</div>
-                    <div className="font-sans text-[10px] text-[#52606f]">Online / Processing</div>
+                    <div className="font-display text-xs font-bold uppercase text-[#9800d0]">
+                      AI_ASSISTANT
+                    </div>
+                    <div className="font-sans text-[10px] text-[#52606f]">
+                      Online / Processing
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1241,7 +1676,11 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
           }
           navSize="md"
           subtitle="Rank: Novice"
-          subtitleClassName={dark ? "font-sans text-xs leading-4 text-[#adaaaa] tracking-[1.2px]" : "font-sans text-xs leading-4 text-[#6c7988]"}
+          subtitleClassName={
+            dark
+              ? "font-sans text-xs leading-4 text-[#adaaaa] tracking-[1.2px]"
+              : "font-sans text-xs leading-4 text-[#6c7988]"
+          }
           theme={theme}
         />
       }
@@ -1257,13 +1696,19 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
     <Frame
       header={
         <HeaderBar theme={theme}>
-          <HeaderTitle theme={theme} title="LEARNING_TERMINAL" trail="COMPUTER SCIENCE / MODULE 01" />
+          <HeaderTitle
+            theme={theme}
+            title="LEARNING_TERMINAL"
+            trail="COMPUTER SCIENCE / MODULE 01"
+          />
           {dark ? (
             <div className="flex items-center gap-4">
               <div className="text-[#9cff93]">
                 <BotStatusIcon />
               </div>
-              <div className="font-display text-sm font-bold text-[#9cff93]">ONLINE</div>
+              <div className="font-display text-sm font-bold text-[#9cff93]">
+                ONLINE
+              </div>
             </div>
           ) : (
             <MetricBadge icon={<SparkIcon />} theme={theme}>
@@ -1273,22 +1718,44 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
         </HeaderBar>
       }
       main={
-        <main className={cn(dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]", "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain")}>
+        <main
+          className={cn(
+            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
+          )}
+        >
           <div className="mx-auto flex w-full max-w-[1152px] flex-col gap-10 p-12">
             <div>
-              <h1 className={cn("font-display text-5xl font-bold uppercase", dark ? "text-white" : "text-[#0f172a]")}>
+              <h1
+                className={cn(
+                  "font-display text-5xl font-bold uppercase",
+                  dark ? "text-white" : "text-[#0f172a]",
+                )}
+              >
                 COMPUTER SCIENCE PATH
               </h1>
               <div className="mt-4 max-w-[560px]">
-                <ProgressSegments activeTone="cyan" size="md" theme={theme} total={8} value={3} />
+                <ProgressSegments
+                  activeTone="cyan"
+                  size="md"
+                  theme={theme}
+                  total={8}
+                  value={3}
+                />
               </div>
             </div>
             <div className="relative grid gap-10">
-              <div className={cn("absolute bottom-0 left-8 top-0 w-px", dark ? "bg-[#262626]" : "bg-[#cbd5e1]")} />
+              <div
+                className={cn(
+                  "absolute bottom-0 left-8 top-0 w-px",
+                  dark ? "bg-[#262626]" : "bg-[#cbd5e1]",
+                )}
+              />
               {[
                 {
                   title: "BINARY & LOGIC GATES",
-                  description: "Master the foundational units of digital computation and boolean algebra.",
+                  description:
+                    "Master the foundational units of digital computation and boolean algebra.",
                   time: "45 MIN",
                   xp: "150 XP",
                   active: false,
@@ -1297,7 +1764,8 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                 },
                 {
                   title: "MEMORY MANAGEMENT",
-                  description: "Understanding pointers, stack vs heap, and manual allocation logic.",
+                  description:
+                    "Understanding pointers, stack vs heap, and manual allocation logic.",
                   time: "60 MIN",
                   xp: "250 XP",
                   active: true,
@@ -1306,7 +1774,8 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                 },
                 {
                   title: "DATA STRUCTURES I",
-                  description: "Implementation of Linked Lists, Queues, and Stacks from scratch.",
+                  description:
+                    "Implementation of Linked Lists, Queues, and Stacks from scratch.",
                   time: "90 MIN",
                   xp: "400 XP",
                   active: false,
@@ -1315,7 +1784,8 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                 },
                 {
                   title: "ALGORITHMIC COMPLEXITY",
-                  description: "Big O Notation, space-time trade-offs, and optimization strategies.",
+                  description:
+                    "Big O Notation, space-time trade-offs, and optimization strategies.",
                   time: "120 MIN",
                   xp: "500 XP",
                   active: false,
@@ -1323,7 +1793,10 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                   done: false,
                 },
               ].map((item, index) => (
-                <div className="grid grid-cols-[64px_minmax(0,1fr)] gap-10" key={item.title}>
+                <div
+                  className="grid grid-cols-[64px_minmax(0,1fr)] gap-10"
+                  key={item.title}
+                >
                   <div className="relative flex justify-center">
                     <div
                       className={cn(
@@ -1341,7 +1814,13 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                               : "border-[#b5c0ca] bg-[#e7edf1] text-[#6c7988]",
                       )}
                     >
-                      {item.locked ? <LockIcon /> : item.done ? <CheckIcon /> : <CodeIcon />}
+                      {item.locked ? (
+                        <LockIcon />
+                      ) : item.done ? (
+                        <CheckIcon />
+                      ) : (
+                        <CodeIcon />
+                      )}
                     </div>
                   </div>
                   <article
@@ -1357,27 +1836,82 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                         (dark
                           ? "border border-[#36553a] shadow-[inset_0_0_0_1px_rgba(156,255,147,0.18)]"
                           : "border-2 border-[#00b61f]"),
-                      !item.active && !item.locked && !item.done && (dark ? "bg-[#131313]" : "bg-[#d9e0e6]"),
+                      !item.active &&
+                        !item.locked &&
+                        !item.done &&
+                        (dark ? "bg-[#131313]" : "bg-[#d9e0e6]"),
                       !dark && "shadow-[0px_0px_0px_2px_#b5c0ca]",
                       "p-6",
                     )}
                   >
-                    <div className={cn("mb-2 font-display text-sm font-bold uppercase", item.active ? (dark ? "text-[#9cff93]" : "text-[#16a34a]") : dark ? "text-[#6b7280]" : "text-[#6c7988]")}>
+                    <div
+                      className={cn(
+                        "mb-2 font-display text-sm font-bold uppercase",
+                        item.active
+                          ? dark
+                            ? "text-[#9cff93]"
+                            : "text-[#16a34a]"
+                          : dark
+                            ? "text-[#6b7280]"
+                            : "text-[#6c7988]",
+                      )}
+                    >
                       UNIT 0{index + 1}
                       {item.active ? "  READY TO PROCESS" : ""}
                     </div>
-                    <h2 className={cn("font-display text-4xl font-bold uppercase", item.locked ? (dark ? "text-[#575757]" : "text-[#6c7988]") : dark ? "text-white" : "text-[#0f172a]")}>
+                    <h2
+                      className={cn(
+                        "font-display text-4xl font-bold uppercase",
+                        item.locked
+                          ? dark
+                            ? "text-[#575757]"
+                            : "text-[#6c7988]"
+                          : dark
+                            ? "text-white"
+                            : "text-[#0f172a]",
+                      )}
+                    >
                       {item.title}
                     </h2>
-                    <p className={cn("mt-3 text-base", item.locked ? (dark ? "text-[#575757]" : "text-[#6c7988]") : dark ? "text-[#adaaaa]" : "text-[#475569]")}>
+                    <p
+                      className={cn(
+                        "mt-3 text-base",
+                        item.locked
+                          ? dark
+                            ? "text-[#575757]"
+                            : "text-[#6c7988]"
+                          : dark
+                            ? "text-[#adaaaa]"
+                            : "text-[#475569]",
+                      )}
+                    >
                       {item.description}
                     </p>
-                    <div className={cn("mt-4 flex gap-6 font-display text-sm", item.locked ? (dark ? "text-[#575757]" : "text-[#6c7988]") : dark ? "text-[#69daff]" : "text-[#0891b2]")}>
+                    <div
+                      className={cn(
+                        "mt-4 flex gap-6 font-display text-sm",
+                        item.locked
+                          ? dark
+                            ? "text-[#575757]"
+                            : "text-[#6c7988]"
+                          : dark
+                            ? "text-[#69daff]"
+                            : "text-[#0891b2]",
+                      )}
+                    >
                       <span className="flex items-center gap-2">
                         <ClockIcon />
                         {item.time}
                       </span>
-                      <span className={item.locked ? "" : dark ? "text-[#9cff93]" : "text-[#16a34a]"}>
+                      <span
+                        className={
+                          item.locked
+                            ? ""
+                            : dark
+                              ? "text-[#9cff93]"
+                              : "text-[#16a34a]"
+                        }
+                      >
                         <span className="inline-flex items-center gap-2">
                           <BoltIcon />
                           {item.xp}
@@ -1394,8 +1928,20 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
       rightRail={
         <AssistantRail
           footer={
-            <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#d9e0e6] border border-[#b5c0ca]", "p-4")}>
-              <div className={cn("font-sans text-xs", dark ? "text-[#6b7280]" : "text-[#6c7988]")}>TYPE_MESSAGE...</div>
+            <div
+              className={cn(
+                dark ? "bg-[#1a1a1a]" : "bg-[#d9e0e6] border border-[#b5c0ca]",
+                "p-4",
+              )}
+            >
+              <div
+                className={cn(
+                  "font-sans text-xs",
+                  dark ? "text-[#6b7280]" : "text-[#6c7988]",
+                )}
+              >
+                TYPE_MESSAGE...
+              </div>
             </div>
           }
           middleCards={
@@ -1403,7 +1949,8 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
               <MessageCard
                 body={
                   <>
-                    Memory management is critical for low-level system performance.
+                    Memory management is critical for low-level system
+                    performance.
                     <br />
                     Would you like a breakdown of Stack vs Heap?
                   </>
@@ -1412,7 +1959,11 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                 theme={theme}
                 tone="purple"
               />
-              <MessageCard body='"Yes, explain the Stack first."' label="USER:" theme={theme} />
+              <MessageCard
+                body='"Yes, explain the Stack first."'
+                label="USER:"
+                theme={theme}
+              />
               <MessageCard
                 body={
                   <>
@@ -1438,7 +1989,11 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
           footer={
             <SidebarFooterUser
               compact
-              src={dark ? figmaAssets.darkHome.userAvatar : figmaAssets.lightHome.userAvatar}
+              src={
+                dark
+                  ? figmaAssets.darkHome.userAvatar
+                  : figmaAssets.lightHome.userAvatar
+              }
               subtitle="STREAK: 12 DAYS"
               subtitleTone="cyan"
               theme={theme}
@@ -1446,7 +2001,11 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
             />
           }
           subtitle="RANK: NOVICE"
-          subtitleClassName={dark ? "font-pixel text-[10px] leading-[15px] text-[#9cff93]" : "font-pixel text-[10px] leading-[15px] text-[#9800d0]"}
+          subtitleClassName={
+            dark
+              ? "font-pixel text-[10px] leading-[15px] text-[#9cff93]"
+              : "font-pixel text-[10px] leading-[15px] text-[#9800d0]"
+          }
           subtitleFont="pixel"
           theme={theme}
         />
@@ -1469,7 +2028,9 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
               <span className="text-[#9cff93]">
                 <SparkIcon />
               </span>
-              <div className="font-display text-sm font-bold text-[#9cff93]">XP: 2450</div>
+              <div className="font-display text-sm font-bold text-[#9cff93]">
+                XP: 2450
+              </div>
             </div>
           ) : (
             <div className="flex items-center gap-5 text-[#6c7988]">
@@ -1481,15 +2042,39 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
         </HeaderBar>
       }
       main={
-        <main className={cn(dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]", "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain")}>
+        <main
+          className={cn(
+            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
+          )}
+        >
           <EditorTabs theme={theme} />
           <div className="grid h-[calc(100vh-64px-52px)] grid-cols-[220px_minmax(0,1fr)_280px]">
-            <aside className={cn(dark ? "border-r border-[#262626] bg-[#131313]" : "border-r border-[#b5c0ca] bg-[#d9e0e6]", "p-4")}>
-              <div className={cn(dark ? "bg-[#262626] text-[#6b7280]" : "bg-[#e7edf1] text-[#6c7988]", "mb-4 flex items-center justify-between px-4 py-3 text-xs")}>
+            <aside
+              className={cn(
+                dark
+                  ? "border-r border-[#262626] bg-[#131313]"
+                  : "border-r border-[#b5c0ca] bg-[#d9e0e6]",
+                "p-4",
+              )}
+            >
+              <div
+                className={cn(
+                  dark
+                    ? "bg-[#262626] text-[#6b7280]"
+                    : "bg-[#e7edf1] text-[#6c7988]",
+                  "mb-4 flex items-center justify-between px-4 py-3 text-xs",
+                )}
+              >
                 <span>SEARCH_FILES...</span>
                 <SearchIcon />
               </div>
-              <div className={cn("space-y-3 font-display text-sm", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
+              <div
+                className={cn(
+                  "space-y-3 font-display text-sm",
+                  dark ? "text-[#adaaaa]" : "text-[#475569]",
+                )}
+              >
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <FolderIcon />
@@ -1500,7 +2085,14 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                       <FolderIcon />
                       <span>RECURSION_NOTES</span>
                     </div>
-                    <div className={cn(dark ? "bg-[#262626] text-[#9cff93]" : "bg-[#e7edf1] text-[#16a34a]", "flex items-center gap-2 px-3 py-2")}>
+                    <div
+                      className={cn(
+                        dark
+                          ? "bg-[#262626] text-[#9cff93]"
+                          : "bg-[#e7edf1] text-[#16a34a]",
+                        "flex items-center gap-2 px-3 py-2",
+                      )}
+                    >
                       <FileIcon />
                       <span>Binary_Search_Logic.md</span>
                     </div>
@@ -1520,30 +2112,104 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 </div>
               </div>
             </aside>
-            <section className={cn(dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]", "overflow-auto p-4 cyber-scrollbar")}>
-              <div className={cn(dark ? "border border-[#262626] bg-[#131313]" : "border border-[#b5c0ca] bg-[#d9e0e6]", "mx-auto max-w-[520px] p-6")}>
-                <div className={cn("mb-4 font-display text-sm uppercase", dark ? "text-[#9cff93]" : "text-[#16a34a]")}># Binary Search Algorithm</div>
-                <h1 className={cn("mb-6 font-display text-5xl font-bold leading-tight", dark ? "text-white" : "text-[#0f172a]")}>
+            <section
+              className={cn(
+                dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+                "overflow-auto p-4 cyber-scrollbar",
+              )}
+            >
+              <div
+                className={cn(
+                  dark
+                    ? "border border-[#262626] bg-[#131313]"
+                    : "border border-[#b5c0ca] bg-[#d9e0e6]",
+                  "mx-auto max-w-[520px] p-6",
+                )}
+              >
+                <div
+                  className={cn(
+                    "mb-4 font-display text-sm uppercase",
+                    dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                  )}
+                >
+                  # Binary Search Algorithm
+                </div>
+                <h1
+                  className={cn(
+                    "mb-6 font-display text-5xl font-bold leading-tight",
+                    dark ? "text-white" : "text-[#0f172a]",
+                  )}
+                >
                   Binary Search
                   <br />
                   Implementation
                 </h1>
-                <div className={cn("space-y-3 text-base leading-9", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
-                  <p>Binary search is a fast search algorithm with run-time complexity of O(log n).</p>
-                  <p>This search algorithm works on the principle of divide and conquer.</p>
-                  <p>For this algorithm to work properly, the data collection should be in the sorted form.</p>
+                <div
+                  className={cn(
+                    "space-y-3 text-base leading-9",
+                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                  )}
+                >
+                  <p>
+                    Binary search is a fast search algorithm with run-time
+                    complexity of O(log n).
+                  </p>
+                  <p>
+                    This search algorithm works on the principle of divide and
+                    conquer.
+                  </p>
+                  <p>
+                    For this algorithm to work properly, the data collection
+                    should be in the sorted form.
+                  </p>
                 </div>
-                <h2 className={cn("mt-8 font-display text-xl font-bold", dark ? "text-[#9cff93]" : "text-[#16a34a]")}>## Logic Principles</h2>
-                <ul className={cn("mt-4 space-y-3 text-lg leading-9", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
-                  <li>Compare target value with the middle element of the array.</li>
+                <h2
+                  className={cn(
+                    "mt-8 font-display text-xl font-bold",
+                    dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                  )}
+                >
+                  ## Logic Principles
+                </h2>
+                <ul
+                  className={cn(
+                    "mt-4 space-y-3 text-lg leading-9",
+                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                  )}
+                >
+                  <li>
+                    Compare target value with the middle element of the array.
+                  </li>
                   <li>If target equals middle, search is successful.</li>
-                  <li>If target is smaller, continue search in the lower half.</li>
-                  <li>Leverage recursion carefully to keep implementations cleaner.</li>
+                  <li>
+                    If target is smaller, continue search in the lower half.
+                  </li>
+                  <li>
+                    Leverage recursion carefully to keep implementations
+                    cleaner.
+                  </li>
                 </ul>
-                <div className={cn(dark ? "bg-[#262626]" : "bg-[#cfd7de]", "mt-8 p-6")}>
-                  <div className={cn("mb-3 font-display text-base", dark ? "text-[#d575ff]" : "text-[#9800d0]")}>{"// Code snippet logic"}</div>
-                  <pre className={cn("overflow-auto font-mono text-sm leading-7", dark ? "text-white" : "text-[#0f172a]")}>
-{`function binarySearch(arr, target) {
+                <div
+                  className={cn(
+                    dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                    "mt-8 p-6",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "mb-3 font-display text-base",
+                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                    )}
+                  >
+                    {"// Code snippet logic"}
+                  </div>
+                  <pre
+                    className={cn(
+                      "overflow-auto font-mono text-sm leading-7",
+                      dark ? "text-white" : "text-[#0f172a]",
+                    )}
+                  >
+                    {`function binarySearch(arr, target) {
   let left = 0;
   let right = arr.length - 1;
   ...
@@ -1552,22 +2218,109 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 </div>
               </div>
             </section>
-            <aside className={cn(dark ? "border-l border-[#262626] bg-[#0e0e0e]" : "border-l border-[#b5c0ca] bg-[#d9e0e6]", "flex flex-col")}>
-              <div className={cn("flex-1 p-4", dark ? "bg-black" : "bg-[#e7edf1]")}>
+            <aside
+              className={cn(
+                dark
+                  ? "border-l border-[#262626] bg-[#0e0e0e]"
+                  : "border-l border-[#b5c0ca] bg-[#d9e0e6]",
+                "flex flex-col",
+              )}
+            >
+              <div
+                className={cn("flex-1 p-4", dark ? "bg-black" : "bg-[#e7edf1]")}
+              >
                 <div className="relative h-full border">
-                  <div className={cn("absolute left-1/2 top-24 h-8 w-16 -translate-x-1/2 border text-center text-[8px]", dark ? "border-[#9cff93] text-[#9cff93]" : "border-[#0f172a] text-[#0f172a]")}>SORTED</div>
-                  <div className={cn("absolute right-6 top-24 h-8 w-16 border text-center text-[8px]", dark ? "border-[#9cff93] text-[#9cff93]" : "border-[#0f172a] text-[#0f172a]")}>ARRAY</div>
-                  <div className={cn("absolute left-10 top-24 h-8 w-16 border text-center text-[8px]", dark ? "border-[#9cff93] text-[#9cff93]" : "border-[#0f172a] text-[#0f172a]")}>SEARCH</div>
-                  <div className={cn("absolute left-1/2 top-44 h-8 w-24 -translate-x-1/2 border text-center text-[8px]", dark ? "border-[#9cff93] text-[#9cff93]" : "border-[#0f172a] text-[#0f172a]")}>BINARY SEARCH</div>
-                  <div className={cn("absolute left-1/2 top-64 h-8 w-20 -translate-x-1/2 border text-center text-[8px]", dark ? "border-[#d575ff] text-[#d575ff]" : "border-[#9800d0] text-[#9800d0]")}>RECURSION</div>
-                  <div className={cn("absolute left-1/2 top-32 h-16 w-px -translate-x-1/2", dark ? "bg-[#9cff93]" : "bg-[#0f172a]")} />
-                  <div className={cn("absolute left-24 top-32 h-20 w-px rotate-45 origin-top", dark ? "bg-[#9cff93]" : "bg-[#0f172a]")} />
-                  <div className={cn("absolute right-24 top-32 h-20 w-px -rotate-45 origin-top", dark ? "bg-[#9cff93]" : "bg-[#0f172a]")} />
+                  <div
+                    className={cn(
+                      "absolute left-1/2 top-24 h-8 w-16 -translate-x-1/2 border text-center text-[8px]",
+                      dark
+                        ? "border-[#9cff93] text-[#9cff93]"
+                        : "border-[#0f172a] text-[#0f172a]",
+                    )}
+                  >
+                    SORTED
+                  </div>
+                  <div
+                    className={cn(
+                      "absolute right-6 top-24 h-8 w-16 border text-center text-[8px]",
+                      dark
+                        ? "border-[#9cff93] text-[#9cff93]"
+                        : "border-[#0f172a] text-[#0f172a]",
+                    )}
+                  >
+                    ARRAY
+                  </div>
+                  <div
+                    className={cn(
+                      "absolute left-10 top-24 h-8 w-16 border text-center text-[8px]",
+                      dark
+                        ? "border-[#9cff93] text-[#9cff93]"
+                        : "border-[#0f172a] text-[#0f172a]",
+                    )}
+                  >
+                    SEARCH
+                  </div>
+                  <div
+                    className={cn(
+                      "absolute left-1/2 top-44 h-8 w-24 -translate-x-1/2 border text-center text-[8px]",
+                      dark
+                        ? "border-[#9cff93] text-[#9cff93]"
+                        : "border-[#0f172a] text-[#0f172a]",
+                    )}
+                  >
+                    BINARY SEARCH
+                  </div>
+                  <div
+                    className={cn(
+                      "absolute left-1/2 top-64 h-8 w-20 -translate-x-1/2 border text-center text-[8px]",
+                      dark
+                        ? "border-[#d575ff] text-[#d575ff]"
+                        : "border-[#9800d0] text-[#9800d0]",
+                    )}
+                  >
+                    RECURSION
+                  </div>
+                  <div
+                    className={cn(
+                      "absolute left-1/2 top-32 h-16 w-px -translate-x-1/2",
+                      dark ? "bg-[#9cff93]" : "bg-[#0f172a]",
+                    )}
+                  />
+                  <div
+                    className={cn(
+                      "absolute left-24 top-32 h-20 w-px rotate-45 origin-top",
+                      dark ? "bg-[#9cff93]" : "bg-[#0f172a]",
+                    )}
+                  />
+                  <div
+                    className={cn(
+                      "absolute right-24 top-32 h-20 w-px -rotate-45 origin-top",
+                      dark ? "bg-[#9cff93]" : "bg-[#0f172a]",
+                    )}
+                  />
                 </div>
               </div>
-              <div className={cn(dark ? "border-t border-[#262626] bg-[#131313]" : "border-t-2 border-[#b5c0ca] bg-[#d9e0e6]", "space-y-4 p-4")}>
-                <div className={cn("font-display text-sm font-bold uppercase", dark ? "text-[#d575ff]" : "text-[#9800d0]")}>SUGGESTED_ACTIONS</div>
-                {["GENERATE_FLASHCARDS", "SUMMARIZE_LOGIC", "LINK_TO_RECURSION"].map((action, index) => (
+              <div
+                className={cn(
+                  dark
+                    ? "border-t border-[#262626] bg-[#131313]"
+                    : "border-t-2 border-[#b5c0ca] bg-[#d9e0e6]",
+                  "space-y-4 p-4",
+                )}
+              >
+                <div
+                  className={cn(
+                    "font-display text-sm font-bold uppercase",
+                    dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                  )}
+                >
+                  SUGGESTED_ACTIONS
+                </div>
+                {[
+                  "GENERATE_FLASHCARDS",
+                  "SUMMARIZE_LOGIC",
+                  "LINK_TO_RECURSION",
+                ].map((action, index) => (
                   <div
                     className={cn(
                       dark ? "bg-[#1a1a1a]" : "bg-[#e7edf1]",
@@ -1600,7 +2353,11 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
           footer={
             <SidebarFooterUser
               compact
-              src={dark ? figmaAssets.darkHome.userAvatar : figmaAssets.lightHome.userAvatar}
+              src={
+                dark
+                  ? figmaAssets.darkHome.userAvatar
+                  : figmaAssets.lightHome.userAvatar
+              }
               subtitle="STREAK: 12 DAYS"
               subtitleTone="cyan"
               theme={theme}
@@ -1608,7 +2365,11 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
             />
           }
           subtitle="RANK: NOVICE"
-          subtitleClassName={dark ? "font-sans text-xs leading-4 text-[#adaaaa] tracking-[1.2px]" : "font-pixel text-[10px] leading-[15px] text-[#16a34a]"}
+          subtitleClassName={
+            dark
+              ? "font-sans text-xs leading-4 text-[#adaaaa] tracking-[1.2px]"
+              : "font-pixel text-[10px] leading-[15px] text-[#16a34a]"
+          }
           subtitleFont={dark ? "body" : "pixel"}
           theme={theme}
         />
@@ -1625,13 +2386,23 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
     <Frame
       header={
         <HeaderBar theme={theme}>
-          <HeaderTitle theme={theme} title="LEARNING_TERMINAL" trail="PYTHON_MODULE_04: RECURSION" />
+          <HeaderTitle
+            theme={theme}
+            title="LEARNING_TERMINAL"
+            trail="PYTHON_MODULE_04: RECURSION"
+          />
           <div className="flex items-center gap-8">
             {["LEARN", "PRACTICE", "CHALLENGE"].map((item, index) => (
               <div
                 className={cn(
                   "font-display text-sm font-bold uppercase",
-                  index === 1 ? (dark ? "text-[#69daff]" : "text-[#0f172a]") : dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                  index === 1
+                    ? dark
+                      ? "text-[#69daff]"
+                      : "text-[#0f172a]"
+                    : dark
+                      ? "text-[#9cff93]"
+                      : "text-[#16a34a]",
                 )}
                 key={item}
               >
@@ -1642,7 +2413,12 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
         </HeaderBar>
       }
       main={
-        <main className={cn(dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]", "flex-1 overflow-hidden")}>
+        <main
+          className={cn(
+            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            "flex-1 overflow-hidden",
+          )}
+        >
           <div className="grid h-[calc(100vh-64px)] grid-cols-[420px_minmax(0,1fr)] overflow-hidden">
             <section
               className={cn(
@@ -1651,41 +2427,120 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                 "cyber-scrollbar overflow-y-auto border-r p-8",
               )}
             >
-              <div className={cn(dark ? "bg-[#262626]" : "bg-[#cfd7de]", "mb-6 flex items-start justify-between p-4")}>
+              <div
+                className={cn(
+                  dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                  "mb-6 flex items-start justify-between p-4",
+                )}
+              >
                 <div>
-                  <div className={cn("font-display text-xl font-bold uppercase", dark ? "text-[#9cff93]" : "text-[#16a34a]")}>
+                  <div
+                    className={cn(
+                      "font-display text-xl font-bold uppercase",
+                      dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                    )}
+                  >
                     PROBLEM_042:
                     <br />
                     BINARY_SEARCH
                   </div>
                 </div>
-                <div className={cn(dark ? "bg-[#9cff93] text-[#0e0e0e]" : "bg-[#16a34a] text-white", "px-4 py-1 font-display text-sm font-bold uppercase")}>HARD</div>
+                <div
+                  className={cn(
+                    dark
+                      ? "bg-[#9cff93] text-[#0e0e0e]"
+                      : "bg-[#16a34a] text-white",
+                    "px-4 py-1 font-display text-sm font-bold uppercase",
+                  )}
+                >
+                  HARD
+                </div>
               </div>
-              <div className={cn("space-y-6 text-2xl leading-[1.45]", dark ? "text-white" : "text-[#0f172a]")}>
+              <div
+                className={cn(
+                  "space-y-6 text-2xl leading-[1.45]",
+                  dark ? "text-white" : "text-[#0f172a]",
+                )}
+              >
                 <p>
                   Implement a function
-                  <span className={cn("mx-2 px-2 py-1 text-xl", dark ? "bg-[#262626] text-[#d575ff]" : "bg-[#cfd7de] text-[#9800d0]")}>
+                  <span
+                    className={cn(
+                      "mx-2 px-2 py-1 text-xl",
+                      dark
+                        ? "bg-[#262626] text-[#d575ff]"
+                        : "bg-[#cfd7de] text-[#9800d0]",
+                    )}
+                  >
                     binary_search(arr, target)
                   </span>
-                  that returns the index of the target in a sorted list using the
-                  <span className={cn("ml-2", dark ? "text-[#69daff]" : "text-[#0891b2]")}>Divide and Conquer</span>
+                  that returns the index of the target in a sorted list using
+                  the
+                  <span
+                    className={cn(
+                      "ml-2",
+                      dark ? "text-[#69daff]" : "text-[#0891b2]",
+                    )}
+                  >
+                    Divide and Conquer
+                  </span>
                   strategy.
                 </p>
               </div>
               <div className="mt-8">
-                <div className={cn("mb-4 font-display text-3xl font-bold uppercase", dark ? "text-white" : "text-[#0f172a]")}>LOGIC_REQUIREMENTS:</div>
+                <div
+                  className={cn(
+                    "mb-4 font-display text-3xl font-bold uppercase",
+                    dark ? "text-white" : "text-[#0f172a]",
+                  )}
+                >
+                  LOGIC_REQUIREMENTS:
+                </div>
                 <div className="space-y-4">
-                  {["Time Complexity: O(log n)", "Space Complexity: O(1)", "Handle empty arrays and missing targets."].map((item) => (
+                  {[
+                    "Time Complexity: O(log n)",
+                    "Space Complexity: O(1)",
+                    "Handle empty arrays and missing targets.",
+                  ].map((item) => (
                     <div className="flex items-start gap-3" key={item}>
-                      <span className={cn("mt-1 size-3 border", dark ? "border-[#9cff93]" : "border-[#16a34a]")} />
-                      <span className={cn("text-xl", dark ? "text-white" : "text-[#0f172a]")}>{item}</span>
+                      <span
+                        className={cn(
+                          "mt-1 size-3 border",
+                          dark ? "border-[#9cff93]" : "border-[#16a34a]",
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          "text-xl",
+                          dark ? "text-white" : "text-[#0f172a]",
+                        )}
+                      >
+                        {item}
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className={cn(dark ? "bg-[#262626]" : "bg-[#cfd7de]", "mt-8 p-6")}>
-                <div className={cn("mb-3 font-display text-2xl font-bold uppercase", dark ? "text-[#69daff]" : "text-[#0891b2]")}>EXAMPLE_INPUT:</div>
-                <div className={cn("font-mono text-sm leading-7", dark ? "text-white" : "text-[#0f172a]")}>
+              <div
+                className={cn(
+                  dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                  "mt-8 p-6",
+                )}
+              >
+                <div
+                  className={cn(
+                    "mb-3 font-display text-2xl font-bold uppercase",
+                    dark ? "text-[#69daff]" : "text-[#0891b2]",
+                  )}
+                >
+                  EXAMPLE_INPUT:
+                </div>
+                <div
+                  className={cn(
+                    "font-mono text-sm leading-7",
+                    dark ? "text-white" : "text-[#0f172a]",
+                  )}
+                >
                   arr = [1, 3, 5, 7, 9, 11]
                   <br />
                   target = 7
@@ -1693,11 +2548,29 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   OUTPUT: 3
                 </div>
               </div>
-              <div className={cn(dark ? "bg-[#262626]" : "bg-[#cfd7de]", "mt-4 p-6")}>
-                <div className={cn("mb-3 font-display text-2xl font-bold uppercase", dark ? "text-[#767575]" : "text-[#64748b]")}>SYSTEM_HINT:</div>
-                <p className={cn("text-lg italic leading-8", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
-                  Remember to update the &apos;low&apos; and &apos;high&apos; pointers correctly to avoid infinite loops in the terminal memory
-                  space.
+              <div
+                className={cn(
+                  dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                  "mt-4 p-6",
+                )}
+              >
+                <div
+                  className={cn(
+                    "mb-3 font-display text-2xl font-bold uppercase",
+                    dark ? "text-[#767575]" : "text-[#64748b]",
+                  )}
+                >
+                  SYSTEM_HINT:
+                </div>
+                <p
+                  className={cn(
+                    "text-lg italic leading-8",
+                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                  )}
+                >
+                  Remember to update the &apos;low&apos; and &apos;high&apos;
+                  pointers correctly to avoid infinite loops in the terminal
+                  memory space.
                 </p>
               </div>
             </section>
@@ -1706,7 +2579,9 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                 <div className="min-h-0 p-6">
                   <div
                     className={cn(
-                      dark ? "border border-[#262626] bg-[#0e0e0e]" : "border border-[#b5c0ca] bg-[#e7edf1]",
+                      dark
+                        ? "border border-[#262626] bg-[#0e0e0e]"
+                        : "border border-[#b5c0ca] bg-[#e7edf1]",
                       "flex h-full min-h-0 flex-col p-6",
                     )}
                   >
@@ -1714,7 +2589,14 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                       <span className="size-3 rounded-full bg-[#ef4444]" />
                       <span className="size-3 rounded-full bg-[#f59e0b]" />
                       <span className="size-3 rounded-full bg-[#d575ff]" />
-                      <div className={cn("ml-4 font-display text-base font-bold", dark ? "text-[#adaaaa]" : "text-[#475569]")}>solution.py</div>
+                      <div
+                        className={cn(
+                          "ml-4 font-display text-base font-bold",
+                          dark ? "text-[#adaaaa]" : "text-[#475569]",
+                        )}
+                      >
+                        solution.py
+                      </div>
                     </div>
                     <pre
                       className={cn(
@@ -1722,7 +2604,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                         dark ? "text-[#d575ff]" : "text-[#9800d0]",
                       )}
                     >
-{`def binary_search(arr, target):
+                      {`def binary_search(arr, target):
     # Initialize pointers
     low = 0
     high = len(arr) - 1
@@ -1753,11 +2635,27 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   )}
                 >
                   <div className="mb-8 flex items-center gap-4">
-                    <div className={cn(dark ? "border-4 border-[#d575ff]" : "border-4 border-[#9800d0]", "flex size-12 items-center justify-center")}>
-                      <BotIcon className={dark ? "text-white" : "text-[#0f172a]"} />
+                    <div
+                      className={cn(
+                        dark
+                          ? "border-4 border-[#d575ff]"
+                          : "border-4 border-[#9800d0]",
+                        "flex size-12 items-center justify-center",
+                      )}
+                    >
+                      <BotIcon
+                        className={dark ? "text-white" : "text-[#0f172a]"}
+                      />
                     </div>
                     <div>
-                      <div className={cn("font-display text-sm font-bold uppercase", dark ? "text-white" : "text-[#0f172a]")}>ONLINE / PROCESSING</div>
+                      <div
+                        className={cn(
+                          "font-display text-sm font-bold uppercase",
+                          dark ? "text-white" : "text-[#0f172a]",
+                        )}
+                      >
+                        ONLINE / PROCESSING
+                      </div>
                     </div>
                   </div>
                   <MessageCard
@@ -1775,27 +2673,68 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                     theme={theme}
                     tone="purple"
                   />
-                  <div className={cn("mt-5 font-display text-lg font-bold uppercase", dark ? "text-[#d575ff]" : "text-[#9800d0]")}>
+                  <div
+                    className={cn(
+                      "mt-5 font-display text-lg font-bold uppercase",
+                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                    )}
+                  >
                     SUGGESTED_QUERY:
                   </div>
-                  <div className={cn("mt-2 text-base italic leading-7", dark ? "text-[#adaaaa]" : "text-[#475569]")}>
-                    &quot;Explain space complexity in recursive implementations?&quot;
+                  <div
+                    className={cn(
+                      "mt-2 text-base italic leading-7",
+                      dark ? "text-[#adaaaa]" : "text-[#475569]",
+                    )}
+                  >
+                    &quot;Explain space complexity in recursive
+                    implementations?&quot;
                   </div>
-                  <div className={cn("mt-10 flex items-center justify-between font-display text-xl font-bold uppercase", dark ? "text-white" : "text-[#475569]")}>
+                  <div
+                    className={cn(
+                      "mt-10 flex items-center justify-between font-display text-xl font-bold uppercase",
+                      dark ? "text-white" : "text-[#475569]",
+                    )}
+                  >
                     <span>SYSTEM_LOAD</span>
                     <span>42%</span>
                   </div>
                   <div className="mt-3">
-                    <ProgressSegments activeTone="purple" size="sm" theme={theme} total={4} value={2} />
+                    <ProgressSegments
+                      activeTone="purple"
+                      size="sm"
+                      theme={theme}
+                      total={4}
+                      value={2}
+                    />
                   </div>
                 </aside>
               </div>
-              <div className={cn(dark ? "border-t border-[#262626]" : "border-t-2 border-[#b5c0ca]", "grid grid-cols-[minmax(0,1fr)_320px]")}>
+              <div
+                className={cn(
+                  dark
+                    ? "border-t border-[#262626]"
+                    : "border-t-2 border-[#b5c0ca]",
+                  "grid grid-cols-[minmax(0,1fr)_320px]",
+                )}
+              >
                 <div className="min-h-0 p-6">
-                  <div className={cn(dark ? "bg-[#131313]" : "bg-[#111827]", "flex h-full min-h-0 flex-col p-4")}>
-                    <div className={cn("mb-3 font-display text-xl font-bold uppercase", dark ? "text-[#9cff93]" : "text-[#9cff93]")}>CONSOLE_OUTPUT</div>
+                  <div
+                    className={cn(
+                      dark ? "bg-[#131313]" : "bg-[#111827]",
+                      "flex h-full min-h-0 flex-col p-4",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "mb-3 font-display text-xl font-bold uppercase",
+                        dark ? "text-[#9cff93]" : "text-[#9cff93]",
+                      )}
+                    >
+                      CONSOLE_OUTPUT
+                    </div>
                     <pre className="cyber-scrollbar min-h-0 flex-1 overflow-auto font-mono text-sm leading-7 text-[#00fc40]">
-{`> Executing test cases...
+                      {`> Executing test cases...
 > Test 1: [1, 2, 3], target 2 ... PASSED
 > Test 2: [10, 20, 30, 40], target 40 ... PASSED
 > Test 3: [], target 5 ... PASSED
@@ -1804,8 +2743,22 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#cfd7de] border border-[#b5c0ca]", "p-4")}>
-                    <div className={cn("font-sans text-sm", dark ? "text-[#575757]" : "text-[#6c7988]")}>TYPE_QUERY_HERE...</div>
+                  <div
+                    className={cn(
+                      dark
+                        ? "bg-[#1a1a1a]"
+                        : "bg-[#cfd7de] border border-[#b5c0ca]",
+                      "p-4",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "font-sans text-sm",
+                        dark ? "text-[#575757]" : "text-[#6c7988]",
+                      )}
+                    >
+                      TYPE_QUERY_HERE...
+                    </div>
                   </div>
                   <div className="mt-4">
                     <PixelButton className="w-full" theme={theme} tone="purple">
@@ -1824,14 +2777,22 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
           footer={
             <SidebarFooterUser
               compact
-              src={dark ? figmaAssets.darkHome.userAvatar : figmaAssets.lightHome.userAvatar}
+              src={
+                dark
+                  ? figmaAssets.darkHome.userAvatar
+                  : figmaAssets.lightHome.userAvatar
+              }
               subtitle="ONLINE"
               theme={theme}
               title="SYS_USR_882"
             />
           }
           subtitle="RANK: NOVICE"
-          subtitleClassName={dark ? "font-display text-[12px] tracking-[1.2px] text-[#6b7280]" : "font-display text-[12px] tracking-[1.2px] text-[#6c7988]"}
+          subtitleClassName={
+            dark
+              ? "font-display text-[12px] tracking-[1.2px] text-[#6b7280]"
+              : "font-display text-[12px] tracking-[1.2px] text-[#6c7988]"
+          }
           theme={theme}
         />
       }
@@ -1855,8 +2816,12 @@ export function FlashcardScreen() {
         <main className="cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#0e0e0e]">
           <div className="mx-auto flex w-full max-w-[1152px] flex-col gap-12 p-12">
             <div className="ml-28 max-w-[520px]">
-              <div className="font-display text-5xl font-bold uppercase text-[#9cff93]">CURRENT SESSION</div>
-              <div className="mt-1 font-display text-lg uppercase text-[#767575]">MODULE_04: RECURSIVE_LOGIC</div>
+              <div className="font-display text-5xl font-bold uppercase text-[#9cff93]">
+                CURRENT SESSION
+              </div>
+              <div className="mt-1 font-display text-lg uppercase text-[#767575]">
+                MODULE_04: RECURSIVE_LOGIC
+              </div>
             </div>
             <div className="mx-auto w-full max-w-[820px]">
               <div className="bg-[#262626] p-12 shadow-[12px_8px_0px_0px_black]">
@@ -1881,7 +2846,13 @@ export function FlashcardScreen() {
                 <span className="font-display text-xl uppercase">PREV</span>
               </div>
               <div className="w-24">
-                <ProgressSegments activeTone="brand" size="sm" theme={theme} total={5} value={3} />
+                <ProgressSegments
+                  activeTone="brand"
+                  size="sm"
+                  theme={theme}
+                  total={5}
+                  value={3}
+                />
               </div>
               <div className="flex items-center gap-6 text-white">
                 <span className="font-display text-xl uppercase">NEXT</span>
@@ -1892,16 +2863,42 @@ export function FlashcardScreen() {
             </div>
             <div className="grid gap-6 xl:grid-cols-3">
               {[
-                { label: "FOCUS_TIME", value: "24:12", tone: "purple" as const, icon: <ClockIcon /> },
-                { label: "ACCURACY", value: "92.4%", tone: "brand" as const, icon: <BoltIcon /> },
-                { label: "SESSION", value: "03/07", tone: "cyan" as const, icon: <LayersIcon /> },
+                {
+                  label: "FOCUS_TIME",
+                  value: "24:12",
+                  tone: "purple" as const,
+                  icon: <ClockIcon />,
+                },
+                {
+                  label: "ACCURACY",
+                  value: "92.4%",
+                  tone: "brand" as const,
+                  icon: <BoltIcon />,
+                },
+                {
+                  label: "SESSION",
+                  value: "03/07",
+                  tone: "cyan" as const,
+                  icon: <LayersIcon />,
+                },
               ].map((card) => (
                 <div className="bg-[#262626] p-6" key={card.label}>
-                  <div className={cn("mb-3 flex items-center gap-3 font-display text-xs uppercase", card.tone === "purple" ? "text-[#d575ff]" : card.tone === "cyan" ? "text-[#69daff]" : "text-[#9cff93]")}>
+                  <div
+                    className={cn(
+                      "mb-3 flex items-center gap-3 font-display text-xs uppercase",
+                      card.tone === "purple"
+                        ? "text-[#d575ff]"
+                        : card.tone === "cyan"
+                          ? "text-[#69daff]"
+                          : "text-[#9cff93]",
+                    )}
+                  >
                     {card.icon}
                     {card.label}
                   </div>
-                  <div className="font-display text-4xl font-bold text-white">{card.value}</div>
+                  <div className="font-display text-4xl font-bold text-white">
+                    {card.value}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1910,7 +2907,11 @@ export function FlashcardScreen() {
       }
       rightRail={
         <AssistantRail
-          footer={<PixelButton className="w-full" theme={theme} tone="purple">NEW_QUERY</PixelButton>}
+          footer={
+            <PixelButton className="w-full" theme={theme} tone="purple">
+              NEW_QUERY
+            </PixelButton>
+          }
           middleCards={
             <>
               <MessageCard
@@ -1926,7 +2927,11 @@ export function FlashcardScreen() {
                 tone="purple"
               />
               <div className="space-y-5 text-[#adaaaa]">
-                {["Show code snippet", "Explain like I'm five", "Why is this important?"].map((item) => (
+                {[
+                  "Show code snippet",
+                  "Explain like I'm five",
+                  "Why is this important?",
+                ].map((item) => (
                   <div className="font-sans text-sm" key={item}>
                     -- {item}
                   </div>
@@ -1945,9 +2950,19 @@ export function FlashcardScreen() {
           footer={
             <div className="border-t-4 border-[#262626] bg-[#0e0e0e] p-6">
               <div className="bg-[#262626] p-4">
-                <div className="mb-2 font-display text-xs uppercase text-[#69daff]">NEURAL SYNC STATUS</div>
-                <ProgressSegments activeTone="brand" size="sm" theme="dark" total={1} value={1} />
-                <div className="mt-2 text-right font-display text-[10px] uppercase text-[#6b7280]">75% SYNCHED</div>
+                <div className="mb-2 font-display text-xs uppercase text-[#69daff]">
+                  NEURAL SYNC STATUS
+                </div>
+                <ProgressSegments
+                  activeTone="brand"
+                  size="sm"
+                  theme="dark"
+                  total={1}
+                  value={1}
+                />
+                <div className="mt-2 text-right font-display text-[10px] uppercase text-[#6b7280]">
+                  75% SYNCHED
+                </div>
               </div>
             </div>
           }
@@ -1978,22 +2993,41 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
             <span className={dark ? "text-[#69daff]" : "text-[#0891b2]"}>
               <TrophyIcon />
             </span>
-            <div className={cn(dark ? "bg-[#00fc40] text-[#005a10]" : "bg-[#006e17] text-white", "px-3 py-1 font-pixel text-[10px]")}>
+            <div
+              className={cn(
+                dark
+                  ? "bg-[#00fc40] text-[#005a10]"
+                  : "bg-[#006e17] text-white",
+                "px-3 py-1 font-pixel text-[10px]",
+              )}
+            >
               XP: 2450
             </div>
           </div>
         </HeaderBar>
       }
       main={
-        <main className={cn(dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]", "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain")}>
+        <main
+          className={cn(
+            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
+          )}
+        >
           <div className="mx-auto flex w-full max-w-[1152px] flex-col gap-12 p-12">
             <section className="flex items-end gap-8">
               <div className="relative">
-                <div className={cn(dark ? "bg-[#9cff93]/20" : "bg-[#006e17]/10", "absolute inset-0 blur-xl")} />
+                <div
+                  className={cn(
+                    dark ? "bg-[#9cff93]/20" : "bg-[#006e17]/10",
+                    "absolute inset-0 blur-xl",
+                  )}
+                />
                 <SafeImage
                   alt="Operator Neo"
                   className={cn(
-                    dark ? "border-4 border-[#262626] saturate-0" : "border-4 border-[#b5c0ca] saturate-0",
+                    dark
+                      ? "border-4 border-[#262626] saturate-0"
+                      : "border-4 border-[#b5c0ca] saturate-0",
                     "relative h-48 w-48 object-cover",
                   )}
                   height={192}
@@ -2001,105 +3035,323 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                   src={assets.heroAvatar}
                   width={192}
                 />
-                <div className={cn(dark ? "bg-[#9cff93] text-[#006413]" : "bg-[#006e17] text-white", "absolute bottom-0 right-0 px-2 py-1 font-pixel text-[10px]")}>
+                <div
+                  className={cn(
+                    dark
+                      ? "bg-[#9cff93] text-[#006413]"
+                      : "bg-[#006e17] text-white",
+                    "absolute bottom-0 right-0 px-2 py-1 font-pixel text-[10px]",
+                  )}
+                >
                   LVL 15
                 </div>
               </div>
               <div className="flex-1">
-                <h1 className={cn("font-display text-[48px] font-bold uppercase tracking-[-2.4px]", dark ? "text-white" : "text-[#0f172a]")}>
+                <h1
+                  className={cn(
+                    "font-display text-[48px] font-bold uppercase tracking-[-2.4px]",
+                    dark ? "text-white" : "text-[#0f172a]",
+                  )}
+                >
                   OPERATOR_NEO
                 </h1>
-                <div className={cn("mt-4 max-w-[32rem] space-y-0.5 text-base leading-6", dark ? "text-[#adaaaa]" : "text-[#484847]")}>
-                  <p>Neural link established. Currently processing advanced algorithmic patterns.</p>
-                  <p>Specializing in logic structures and recursive deep-learning modules.</p>
+                <div
+                  className={cn(
+                    "mt-4 max-w-[32rem] space-y-0.5 text-base leading-6",
+                    dark ? "text-[#adaaaa]" : "text-[#484847]",
+                  )}
+                >
+                  <p>
+                    Neural link established. Currently processing advanced
+                    algorithmic patterns.
+                  </p>
+                  <p>
+                    Specializing in logic structures and recursive deep-learning
+                    modules.
+                  </p>
                 </div>
                 <div className="mt-4 grid max-w-[520px] gap-4 md:grid-cols-2">
                   <MetricTile label="TOTAL XP" theme={theme} value="2,450.00" />
-                  <MetricTile icon={<FireIcon />} label="CURRENT STREAK" theme={theme} tone="purple" value="12 DAYS" />
-                  <MetricTile label="GLOBAL RANK" theme={theme} tone="cyan" value="#1,024" />
+                  <MetricTile
+                    icon={<FireIcon />}
+                    label="CURRENT STREAK"
+                    theme={theme}
+                    tone="purple"
+                    value="12 DAYS"
+                  />
+                  <MetricTile
+                    label="GLOBAL RANK"
+                    theme={theme}
+                    tone="cyan"
+                    value="#1,024"
+                  />
                 </div>
               </div>
             </section>
             <section className="space-y-6">
-              <div className={cn(dark ? "border-b-2 border-[#262626]" : "border-b-2 border-[#b5c0ca]", "flex items-end justify-between pb-5")}>
-                <h2 className={cn("font-display text-[24px] font-bold uppercase", dark ? "text-white" : "text-[#0f172a]")}>
+              <div
+                className={cn(
+                  dark
+                    ? "border-b-2 border-[#262626]"
+                    : "border-b-2 border-[#b5c0ca]",
+                  "flex items-end justify-between pb-5",
+                )}
+              >
+                <h2
+                  className={cn(
+                    "font-display text-[24px] font-bold uppercase",
+                    dark ? "text-white" : "text-[#0f172a]",
+                  )}
+                >
                   EARNED_ACHIEVEMENTS
                 </h2>
-                <div className={cn("font-display text-sm uppercase", dark ? "text-[#767575]" : "text-[#64748b]")}>14 / 48 UNLOCKED</div>
+                <div
+                  className={cn(
+                    "font-display text-sm uppercase",
+                    dark ? "text-[#767575]" : "text-[#64748b]",
+                  )}
+                >
+                  14 / 48 UNLOCKED
+                </div>
               </div>
               <div className="grid gap-4 xl:grid-cols-6">
-                <AchievementCard icon={<TerminalIcon />} subtitle="FIRST BOOTUP" theme={theme} title="HELLO_WORLD" tone="brand" />
-                <AchievementCard icon={<BoltIcon />} subtitle="3HR SESSION" theme={theme} title="OVERCLOCK" tone="purple" />
-                <AchievementCard icon={<DatabaseIcon />} subtitle="COLLECTED 100 FILES" theme={theme} title="ARCHIVIST" tone="cyan" />
-                <AchievementCard icon={<ShieldIcon />} subtitle="SECURE AUTH" theme={theme} title="ENCRYPTED" tone="brand" />
-                <AchievementCard icon={<LockIcon />} locked subtitle="???" theme={theme} title="LOCKED_ID" tone="brand" />
-                <AchievementCard icon={<LockIcon />} locked subtitle="???" theme={theme} title="LOCKED_ID" tone="brand" />
+                <AchievementCard
+                  icon={<TerminalIcon />}
+                  subtitle="FIRST BOOTUP"
+                  theme={theme}
+                  title="HELLO_WORLD"
+                  tone="brand"
+                />
+                <AchievementCard
+                  icon={<BoltIcon />}
+                  subtitle="3HR SESSION"
+                  theme={theme}
+                  title="OVERCLOCK"
+                  tone="purple"
+                />
+                <AchievementCard
+                  icon={<DatabaseIcon />}
+                  subtitle="COLLECTED 100 FILES"
+                  theme={theme}
+                  title="ARCHIVIST"
+                  tone="cyan"
+                />
+                <AchievementCard
+                  icon={<ShieldIcon />}
+                  subtitle="SECURE AUTH"
+                  theme={theme}
+                  title="ENCRYPTED"
+                  tone="brand"
+                />
+                <AchievementCard
+                  icon={<LockIcon />}
+                  locked
+                  subtitle="???"
+                  theme={theme}
+                  title="LOCKED_ID"
+                  tone="brand"
+                />
+                <AchievementCard
+                  icon={<LockIcon />}
+                  locked
+                  subtitle="???"
+                  theme={theme}
+                  title="LOCKED_ID"
+                  tone="brand"
+                />
               </div>
             </section>
             <section className="grid gap-6 xl:grid-cols-[1.4fr_1fr_1fr]">
-              <div className={cn(dark ? "bg-[#1a1a1a] border-l-4 border-[#9cff93]" : "bg-[#e2e8f0] border-l-4 border-[#006e17]", "min-w-0 p-6")}>
+              <div
+                className={cn(
+                  dark
+                    ? "bg-[#1a1a1a] border-l-4 border-[#9cff93]"
+                    : "bg-[#e2e8f0] border-l-4 border-[#006e17]",
+                  "min-w-0 p-6",
+                )}
+              >
                 <div className="flex justify-between">
                   <div>
-                    <div className={cn("font-display text-4xl font-bold uppercase", dark ? "text-white" : "text-[#0f172a]")}>LEVEL_15</div>
-                    <div className={cn("font-display text-4xl font-bold uppercase", dark ? "text-white" : "text-[#0f172a]")}>EVOLUTION</div>
+                    <div
+                      className={cn(
+                        "font-display text-4xl font-bold uppercase",
+                        dark ? "text-white" : "text-[#0f172a]",
+                      )}
+                    >
+                      LEVEL_15
+                    </div>
+                    <div
+                      className={cn(
+                        "font-display text-4xl font-bold uppercase",
+                        dark ? "text-white" : "text-[#0f172a]",
+                      )}
+                    >
+                      EVOLUTION
+                    </div>
                   </div>
-                  <div className={cn("min-w-0 break-words text-right font-display text-[18px] font-bold uppercase", dark ? "text-[#9cff93]" : "text-[#16a34a]")}>
+                  <div
+                    className={cn(
+                      "min-w-0 break-words text-right font-display text-[18px] font-bold uppercase",
+                      dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                    )}
+                  >
                     NEXT_UP:
                     <br />
                     DATA_MINING_II
                   </div>
                 </div>
-                <div className={cn("mt-4 text-sm", dark ? "text-[#adaaaa]" : "text-[#475569]")}>74% Progress to Level 16</div>
+                <div
+                  className={cn(
+                    "mt-4 text-sm",
+                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                  )}
+                >
+                  74% Progress to Level 16
+                </div>
                 <div className="mt-5">
-                  <ProgressSegments size="lg" theme={theme} total={10} value={7} />
+                  <ProgressSegments
+                    size="lg"
+                    theme={theme}
+                    total={10}
+                    value={7}
+                  />
                 </div>
               </div>
               <div className="grid min-w-0 gap-6">
-                <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]", "min-w-0 p-6")}>
-                  <div className={cn("mb-4 flex items-center gap-2 font-pixel text-[10px] uppercase", dark ? "text-[#d575ff]" : "text-[#9800d0]")}>
+                <div
+                  className={cn(
+                    dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]",
+                    "min-w-0 p-6",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "mb-4 flex items-center gap-2 font-pixel text-[10px] uppercase",
+                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                    )}
+                  >
                     RECENT_LEARNING <EyeIcon />
                   </div>
                   <div className="space-y-2">
                     {[
-                      ["SYNTAX_ERRORS", "98%", dark ? "text-[#9cff93]" : "text-[#006e17]"],
-                      ["ASYNC_WAIT", "82%", dark ? "text-[#9cff93]" : "text-[#006e17]"],
-                      ["DATA_MAPPING", "45%", dark ? "text-[#d575ff]" : "text-[#9800d0]"],
+                      [
+                        "SYNTAX_ERRORS",
+                        "98%",
+                        dark ? "text-[#9cff93]" : "text-[#006e17]",
+                      ],
+                      [
+                        "ASYNC_WAIT",
+                        "82%",
+                        dark ? "text-[#9cff93]" : "text-[#006e17]",
+                      ],
+                      [
+                        "DATA_MAPPING",
+                        "45%",
+                        dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                      ],
                     ].map(([label, value, color]) => (
                       <div className="flex justify-between text-sm" key={label}>
-                        <span className={dark ? "text-white" : "text-[#0f172a]"}>{label}</span>
+                        <span
+                          className={dark ? "text-white" : "text-[#0f172a]"}
+                        >
+                          {label}
+                        </span>
                         <span className={color}>{value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]", "min-w-0 p-6")}>
-                  <div className={cn("mb-4 flex items-center gap-2 font-pixel text-[10px] uppercase", dark ? "text-[#69daff]" : "text-[#00677d]")}>
+                <div
+                  className={cn(
+                    dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]",
+                    "min-w-0 p-6",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "mb-4 flex items-center gap-2 font-pixel text-[10px] uppercase",
+                      dark ? "text-[#69daff]" : "text-[#00677d]",
+                    )}
+                  >
                     SOCIAL_MATRIX <ShareIcon />
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
-                      <SafeImage alt="SYS_ADMIN" className="h-8 w-8 rounded-full object-cover saturate-0" height={32} src={assets.friendAdmin} width={32} />
-                      <span className={cn("font-pixel text-[10px]", dark ? "text-white" : "text-[#0f172a]")}>SYS_ADMIN</span>
+                      <SafeImage
+                        alt="SYS_ADMIN"
+                        className="h-8 w-8 rounded-full object-cover saturate-0"
+                        height={32}
+                        src={assets.friendAdmin}
+                        width={32}
+                      />
+                      <span
+                        className={cn(
+                          "font-pixel text-[10px]",
+                          dark ? "text-white" : "text-[#0f172a]",
+                        )}
+                      >
+                        SYS_ADMIN
+                      </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <SafeImage alt="NULL_POINTER" className="h-8 w-[14px] rounded-full object-cover saturate-0" height={32} src={assets.friendPointer} width={14} />
-                      <span className={cn("font-pixel text-[10px]", dark ? "text-white" : "text-[#0f172a]")}>NULL_POINTER</span>
+                      <SafeImage
+                        alt="NULL_POINTER"
+                        className="h-8 w-[14px] rounded-full object-cover saturate-0"
+                        height={32}
+                        src={assets.friendPointer}
+                        width={14}
+                      />
+                      <span
+                        className={cn(
+                          "font-pixel text-[10px]",
+                          dark ? "text-white" : "text-[#0f172a]",
+                        )}
+                      >
+                        NULL_POINTER
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className={cn(dark ? "bg-[#1a1a1a] border-b-8 border-[#d575ff]" : "bg-[#e2e8f0] border-b-8 border-[#9800d0]", "min-w-0 p-6")}>
+              <div
+                className={cn(
+                  dark
+                    ? "bg-[#1a1a1a] border-b-8 border-[#d575ff]"
+                    : "bg-[#e2e8f0] border-b-8 border-[#9800d0]",
+                  "min-w-0 p-6",
+                )}
+              >
                 <div className="mb-6 flex items-center gap-3">
-                  <div className={cn(dark ? "bg-[#d575ff]" : "bg-[#9800d0]", "flex h-4 w-[10px] items-center justify-center")}>
-                    <span className={cn("size-2", dark ? "bg-black" : "bg-[#e7edf1]")} />
+                  <div
+                    className={cn(
+                      dark ? "bg-[#d575ff]" : "bg-[#9800d0]",
+                      "flex h-4 w-[10px] items-center justify-center",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "size-2",
+                        dark ? "bg-black" : "bg-[#e7edf1]",
+                      )}
+                    />
                   </div>
-                  <div className={cn("font-pixel text-xs uppercase leading-4", dark ? "text-[#d575ff]" : "text-[#9800d0]")}>
+                  <div
+                    className={cn(
+                      "font-pixel text-xs uppercase leading-4",
+                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                    )}
+                  >
                     AI_PULSE:
                     <br />
                     ACTIVE
                   </div>
                 </div>
-                <div className={cn("min-w-0 break-all font-pixel text-[10px] uppercase leading-5", dark ? "text-[#767575]" : "text-[#484847]")}>
+                <div
+                  className={cn(
+                    "min-w-0 break-all font-pixel text-[10px] uppercase leading-5",
+                    dark ? "text-[#767575]" : "text-[#484847]",
+                  )}
+                >
                   CURRENT_STATUS:
                   <br />
                   ANALYZING_USER_TRAJECTORY...
@@ -2112,7 +3364,14 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                   <br />
                   REVISIT_RECURSION_MODULES.
                 </div>
-                <div className={cn(dark ? "border-2 border-[#262626]" : "border-2 border-[#f1f5f9]", "mt-6")}>
+                <div
+                  className={cn(
+                    dark
+                      ? "border-2 border-[#262626]"
+                      : "border-2 border-[#f1f5f9]",
+                    "mt-6",
+                  )}
+                >
                   <SafeImage
                     alt="Processing Visualization"
                     className="h-32 w-full object-cover saturate-0"
@@ -2146,7 +3405,11 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
             />
           }
           subtitle="RANK: NOVICE"
-          subtitleClassName={dark ? "font-pixel text-[10px] leading-[15px] text-[#d575ff]" : "font-pixel text-[10px] leading-[15px] text-[#9800d0]"}
+          subtitleClassName={
+            dark
+              ? "font-pixel text-[10px] leading-[15px] text-[#d575ff]"
+              : "font-pixel text-[10px] leading-[15px] text-[#9800d0]"
+          }
           subtitleFont="pixel"
           theme={theme}
         />
@@ -2175,15 +3438,23 @@ export function QuizScreen() {
                 SESSION_PROGRESS: UNIT_04 // QUANTUM_MECHANICS
               </div>
               <div className="mt-3 max-w-[640px]">
-                <ProgressSegments activeTone="cyan" size="md" theme={theme} total={9} value={7} />
+                <ProgressSegments
+                  activeTone="cyan"
+                  size="md"
+                  theme={theme}
+                  total={9}
+                  value={7}
+                />
               </div>
             </div>
             <div className="space-y-6">
               <div className="border border-[#262626] bg-[#131313] p-8">
-                <div className="mb-4 font-display text-base font-bold uppercase text-[#9cff93]">QUESTION_MODULE_04_A</div>
+                <div className="mb-4 font-display text-base font-bold uppercase text-[#9cff93]">
+                  QUESTION_MODULE_04_A
+                </div>
                 <h1 className="max-w-[820px] font-display text-5xl font-bold leading-tight text-white">
-                  Which principle states that it is impossible to know both the position and momentum of a particle with
-                  absolute precision?
+                  Which principle states that it is impossible to know both the
+                  position and momentum of a particle with absolute precision?
                 </h1>
               </div>
               <div className="grid gap-5 xl:grid-cols-2">
@@ -2193,24 +3464,34 @@ export function QuizScreen() {
                   "Schrodinger Wave Equation",
                   "Quantum Entanglement",
                 ].map((choice, index) => (
-                  <div className="bg-[#262626] px-5 py-6 text-2xl text-white" key={choice}>
+                  <div
+                    className="bg-[#262626] px-5 py-6 text-2xl text-white"
+                    key={choice}
+                  >
                     <div className="flex items-start justify-between gap-6">
                       <span>{choice}</span>
-                      <span className="font-display text-[10px] uppercase text-[#575757]">OPTION_0{index + 1}</span>
+                      <span className="font-display text-[10px] uppercase text-[#575757]">
+                        OPTION_0{index + 1}
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="border border-[#262626] bg-[#131313] p-8">
-                <div className="mb-4 font-display text-base font-bold uppercase text-[#d575ff]">FILL_BLANK_MODULE_04_B</div>
+                <div className="mb-4 font-display text-base font-bold uppercase text-[#d575ff]">
+                  FILL_BLANK_MODULE_04_B
+                </div>
                 <h2 className="max-w-[820px] font-display text-5xl font-bold leading-tight text-white">
-                  The wave-particle duality suggests that light can exhibit properties of both waves and _____.
+                  The wave-particle duality suggests that light can exhibit
+                  properties of both waves and _____.
                 </h2>
                 <div className="mt-8 h-1 w-40 bg-[#d575ff]" />
               </div>
               <div className="space-y-5">
                 <div className="bg-[#262626] p-5">
-                  <div className="font-display text-xs uppercase text-[#575757]">INPUT_TERMINAL</div>
+                  <div className="font-display text-xs uppercase text-[#575757]">
+                    INPUT_TERMINAL
+                  </div>
                   <textarea
                     className="mt-4 min-h-[72px] w-full resize-none bg-transparent font-display text-[28px] leading-tight text-white placeholder:text-[#575757] focus:outline-none"
                     placeholder="TYPE YOUR ANSWER HERE..."
@@ -2222,7 +3503,9 @@ export function QuizScreen() {
                   <PixelButton className="w-full" theme={theme}>
                     SUBMIT_RESPONSE
                   </PixelButton>
-                  <div className="bg-[#262626] px-8 py-4 font-display text-sm font-bold uppercase text-white">SKIP</div>
+                  <div className="bg-[#262626] px-8 py-4 font-display text-sm font-bold uppercase text-white">
+                    SKIP
+                  </div>
                 </div>
               </div>
             </div>
@@ -2233,7 +3516,9 @@ export function QuizScreen() {
         <AssistantRail
           footer={
             <div className="space-y-4">
-              <div className="bg-[#262626] px-5 py-4 font-display text-sm uppercase text-[#9cff93]">CHAT</div>
+              <div className="bg-[#262626] px-5 py-4 font-display text-sm uppercase text-[#9cff93]">
+                CHAT
+              </div>
               <PixelButton className="w-full" theme={theme} tone="purple">
                 NEW_QUERY
               </PixelButton>
@@ -2244,8 +3529,9 @@ export function QuizScreen() {
               <MessageCard
                 body={
                   <>
-                    Need a logic boost? This principle was formulated in 1927 and is central to quantum mechanics. It
-                    relates to the fundamental limit of precision.
+                    Need a logic boost? This principle was formulated in 1927
+                    and is central to quantum mechanics. It relates to the
+                    fundamental limit of precision.
                   </>
                 }
                 label="HINT AVAILABLE"
@@ -2298,7 +3584,11 @@ export function QuizScreen() {
 function HomeIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M3 9.5L10 4l7 5.5V17h-4.5v-4H7.5v4H3V9.5Z" stroke="currentColor" strokeWidth="1.7" />
+      <path
+        d="M3 9.5L10 4l7 5.5V17h-4.5v-4H7.5v4H3V9.5Z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+      />
     </svg>
   );
 }
@@ -2306,8 +3596,16 @@ function HomeIcon() {
 function LearnIcon() {
   return (
     <svg fill="none" viewBox="0 0 24 20">
-      <path d="M2 7l10-5 10 5-10 5L2 7Z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M6 10.5v4.2c0 .8 2.7 2.3 6 2.3s6-1.5 6-2.3v-4.2" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M2 7l10-5 10 5-10 5L2 7Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M6 10.5v4.2c0 .8 2.7 2.3 6 2.3s6-1.5 6-2.3v-4.2"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2315,7 +3613,11 @@ function LearnIcon() {
 function PracticeIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M5 5l10 10M11.5 3.5l5 5-3 3-5-5 3-3ZM3.5 11.5l5 5-3 3-5-5 3-3Z" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M5 5l10 10M11.5 3.5l5 5-3 3-5-5 3-3ZM3.5 11.5l5 5-3 3-5-5 3-3Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2324,7 +3626,11 @@ function ReviewIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
       <path d="M4 4h12v12H4z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M6.5 7.5h7M6.5 10h7M6.5 12.5h4.5" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M6.5 7.5h7M6.5 10h7M6.5 12.5h4.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2333,7 +3639,11 @@ function ProfileIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
       <circle cx="10" cy="7" r="3.2" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M4 17c0-3.2 2.8-5.5 6-5.5s6 2.3 6 5.5" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M4 17c0-3.2 2.8-5.5 6-5.5s6 2.3 6 5.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2341,7 +3651,11 @@ function ProfileIcon() {
 function SettingsIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M10 3.5l1.4 1.8 2.2-.1.5 2.1 1.9 1.1-1 2 1 2-1.9 1.1-.5 2.1-2.2-.1L10 16.5l-1.4-1.8-2.2.1-.5-2.1-1.9-1.1 1-2-1-2 1.9-1.1.5-2.1 2.2.1L10 3.5Z" stroke="currentColor" strokeWidth="1.3" />
+      <path
+        d="M10 3.5l1.4 1.8 2.2-.1.5 2.1 1.9 1.1-1 2 1 2-1.9 1.1-.5 2.1-2.2-.1L10 16.5l-1.4-1.8-2.2.1-.5-2.1-1.9-1.1 1-2-1-2 1.9-1.1.5-2.1 2.2.1L10 3.5Z"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
       <circle cx="10" cy="10" r="2.4" stroke="currentColor" strokeWidth="1.3" />
     </svg>
   );
@@ -2350,7 +3664,10 @@ function SettingsIcon() {
 function FireIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M11.5 2.5c.4 2-1.5 2.9-1.5 4.7 0 .8.4 1.6 1.2 2.2.4-.5.8-1.2.8-1.9 1.6 1.1 3 2.8 3 5.1A5 5 0 0 1 5 12c0-2.2 1.3-4 3-5.2 0 1 .4 1.7.8 2.1.8-.5 1.2-1.3 1.2-2.2 0-1.2-.9-2-1.4-2.7.9-.4 2.2-.7 2.9-1.5Z" fill="currentColor" />
+      <path
+        d="M11.5 2.5c.4 2-1.5 2.9-1.5 4.7 0 .8.4 1.6 1.2 2.2.4-.5.8-1.2.8-1.9 1.6 1.1 3 2.8 3 5.1A5 5 0 0 1 5 12c0-2.2 1.3-4 3-5.2 0 1 .4 1.7.8 2.1.8-.5 1.2-1.3 1.2-2.2 0-1.2-.9-2-1.4-2.7.9-.4 2.2-.7 2.9-1.5Z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
@@ -2358,8 +3675,16 @@ function FireIcon() {
 function TrophyIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M6 3h8v2.5c0 2.2-1.8 4-4 4s-4-1.8-4-4V3Z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M7 15h6M8 12.5h4M5 4H3v1.5A2.5 2.5 0 0 0 5.5 8M15 4h2v1.5A2.5 2.5 0 0 1 14.5 8" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M6 3h8v2.5c0 2.2-1.8 4-4 4s-4-1.8-4-4V3Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M7 15h6M8 12.5h4M5 4H3v1.5A2.5 2.5 0 0 0 5.5 8M15 4h2v1.5A2.5 2.5 0 0 1 14.5 8"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2367,8 +3692,21 @@ function TrophyIcon() {
 function TerminalIcon() {
   return (
     <svg fill="none" viewBox="0 0 28 24">
-      <path d="M4 5l4 4-4 4M11 17h9" stroke="currentColor" strokeLinecap="square" strokeWidth="2.5" />
-      <rect height="20" rx="1" stroke="currentColor" strokeWidth="2" width="24" x="2" y="2" />
+      <path
+        d="M4 5l4 4-4 4M11 17h9"
+        stroke="currentColor"
+        strokeLinecap="square"
+        strokeWidth="2.5"
+      />
+      <rect
+        height="20"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth="2"
+        width="24"
+        x="2"
+        y="2"
+      />
     </svg>
   );
 }
@@ -2376,8 +3714,20 @@ function TerminalIcon() {
 function TerminalFrameIcon() {
   return (
     <svg fill="none" viewBox="0 0 100 80">
-      <rect height="72" rx="2" stroke="currentColor" strokeWidth="6" width="88" x="6" y="4" />
-      <path d="M28 28l12 12-12 12M50 52h18" stroke="currentColor" strokeWidth="6" />
+      <rect
+        height="72"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="6"
+        width="88"
+        x="6"
+        y="4"
+      />
+      <path
+        d="M28 28l12 12-12 12M50 52h18"
+        stroke="currentColor"
+        strokeWidth="6"
+      />
     </svg>
   );
 }
@@ -2393,7 +3743,11 @@ function ArrowRightIcon() {
 function ArrowLeftIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M16 10H5M10 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M16 10H5M10 4l-6 6 6 6"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
     </svg>
   );
 }
@@ -2401,8 +3755,20 @@ function ArrowLeftIcon() {
 function BotIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 28 28">
-      <rect height="14" rx="2" stroke="currentColor" strokeWidth="2" width="18" x="5" y="8" />
-      <path d="M14 4v4M9 13h2M17 13h2M8 22v3M20 22v3M3 14h2M23 14h2" stroke="currentColor" strokeWidth="2" />
+      <rect
+        height="14"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="2"
+        width="18"
+        x="5"
+        y="8"
+      />
+      <path
+        d="M14 4v4M9 13h2M17 13h2M8 22v3M20 22v3M3 14h2M23 14h2"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
@@ -2410,7 +3776,13 @@ function BotIcon({ className }: { className?: string }) {
 function SearchIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <circle cx="8.5" cy="8.5" r="4.5" stroke="currentColor" strokeWidth="1.6" />
+      <circle
+        cx="8.5"
+        cy="8.5"
+        r="4.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
       <path d="M12 12l4.5 4.5" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
@@ -2419,7 +3791,11 @@ function SearchIcon() {
 function FolderIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 18">
-      <path d="M2 4h6l2 2h8v8.5A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5V4Z" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M2 4h6l2 2h8v8.5A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5V4Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
@@ -2439,7 +3815,11 @@ function ShareIcon() {
       <circle cx="5" cy="10" r="2" fill="currentColor" />
       <circle cx="15" cy="5" r="2" fill="currentColor" />
       <circle cx="15" cy="15" r="2" fill="currentColor" />
-      <path d="M6.7 9.1 13 6M6.7 10.9 13 14" stroke="currentColor" strokeWidth="1.4" />
+      <path
+        d="M6.7 9.1 13 6M6.7 10.9 13 14"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
     </svg>
   );
 }
@@ -2447,7 +3827,11 @@ function ShareIcon() {
 function EyeIcon() {
   return (
     <svg fill="none" viewBox="0 0 24 16">
-      <path d="M1 8s4-6 11-6 11 6 11 6-4 6-11 6S1 8 1 8Z" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M1 8s4-6 11-6 11 6 11 6-4 6-11 6S1 8 1 8Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
       <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
@@ -2464,7 +3848,11 @@ function CheckIcon() {
 function CodeIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M7 6 3 10l4 4M13 6l4 4-4 4" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M7 6 3 10l4 4M13 6l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
     </svg>
   );
 }
@@ -2489,7 +3877,11 @@ function BoltIcon() {
 function LayersIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="m10 3 7 4-7 4-7-4 7-4ZM3 11l7 4 7-4M3 7l7 4 7-4" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="m10 3 7 4-7 4-7-4 7-4ZM3 11l7 4 7-4M3 7l7 4 7-4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2497,8 +3889,20 @@ function LayersIcon() {
 function LockIcon() {
   return (
     <svg fill="none" viewBox="0 0 18 20">
-      <rect height="9" rx="1" stroke="currentColor" strokeWidth="1.6" width="12" x="3" y="9" />
-      <path d="M6 9V6a3 3 0 1 1 6 0v3" stroke="currentColor" strokeWidth="1.6" />
+      <rect
+        height="9"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        width="12"
+        x="3"
+        y="9"
+      />
+      <path
+        d="M6 9V6a3 3 0 1 1 6 0v3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2506,9 +3910,24 @@ function LockIcon() {
 function DatabaseIcon() {
   return (
     <svg fill="none" viewBox="0 0 22 18">
-      <ellipse cx="11" cy="4" rx="8" ry="3" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M3 4v10c0 1.7 3.6 3 8 3s8-1.3 8-3V4" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M3 9c0 1.7 3.6 3 8 3s8-1.3 8-3" stroke="currentColor" strokeWidth="1.6" />
+      <ellipse
+        cx="11"
+        cy="4"
+        rx="8"
+        ry="3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M3 4v10c0 1.7 3.6 3 8 3s8-1.3 8-3V4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M3 9c0 1.7 3.6 3 8 3s8-1.3 8-3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2516,7 +3935,11 @@ function DatabaseIcon() {
 function ShieldIcon() {
   return (
     <svg fill="none" viewBox="0 0 18 20">
-      <path d="M9 2 3 4.5v5c0 4.1 2.6 6.9 6 8.5 3.4-1.6 6-4.4 6-8.5v-5L9 2Z" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M9 2 3 4.5v5c0 4.1 2.6 6.9 6 8.5 3.4-1.6 6-4.4 6-8.5v-5L9 2Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2524,7 +3947,11 @@ function ShieldIcon() {
 function BookIcon() {
   return (
     <svg fill="none" viewBox="0 0 22 18">
-      <path d="M3 3.5h7a3 3 0 0 1 3 3V15H6a3 3 0 0 0-3 3V3.5ZM19 3.5h-7a3 3 0 0 0-3 3V15h7a3 3 0 0 1 3 3V3.5Z" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M3 3.5h7a3 3 0 0 1 3 3V15H6a3 3 0 0 0-3 3V3.5ZM19 3.5h-7a3 3 0 0 0-3 3V15h7a3 3 0 0 1 3 3V3.5Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
@@ -2540,7 +3967,11 @@ function CloseIcon() {
 function SparkIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
-      <path d="M10 2 7.5 7.5 2 10l5.5 2.5L10 18l2.5-5.5L18 10l-5.5-2.5L10 2Z" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M10 2 7.5 7.5 2 10l5.5 2.5L10 18l2.5-5.5L18 10l-5.5-2.5L10 2Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
@@ -2549,7 +3980,11 @@ function BotStatusIcon() {
   return (
     <svg fill="none" viewBox="0 0 20 20">
       <path d="M4 6h12v8H4z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M10 2v4M7 10h2M11 10h2" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M10 2v4M7 10h2M11 10h2"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }

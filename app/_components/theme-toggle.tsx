@@ -1,21 +1,15 @@
 "use client";
 
 import { useTheme } from "@/app/_components/theme-provider";
-import {
-  cn,
-  interactiveMotionClass,
-} from "@/app/_components/ui-kit/shared";
+import { cn, interactiveMotionClass } from "@/app/_components/ui-kit/shared";
 
-export function ThemeToggle({
-  theme,
-}: {
-  theme: "dark" | "light";
-}) {
-  const { toggleTheme } = useTheme();
+export function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
 
   return (
     <button
+      suppressHydrationWarning
       className={cn(
         "group inline-flex items-center gap-3 border-2 px-3 py-2",
         interactiveMotionClass,
@@ -27,6 +21,7 @@ export function ThemeToggle({
       type="button"
     >
       <span
+        suppressHydrationWarning
         className={cn(
           "font-display text-[10px] font-bold uppercase tracking-[1.8px]",
           isDark ? "text-[#69daff]" : "text-[#0891b2]",
@@ -34,6 +29,7 @@ export function ThemeToggle({
       >
         {isDark ? "Light Mode" : "Dark Mode"}
       </span>
+
       <span
         className={cn(
           "font-pixel text-[10px] leading-none",
