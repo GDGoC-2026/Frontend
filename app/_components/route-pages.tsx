@@ -11,6 +11,7 @@ import {
   SubjectSelectScreen,
 } from "@/app/_components/cyber-screens";
 import { useTheme } from "@/app/_components/theme-provider";
+import { useSessionQuery } from "@/hooks/use-auth";
 
 export function HomeRoutePage() {
   const { theme } = useTheme();
@@ -48,8 +49,16 @@ export function PracticeFlashcardsRoutePage() {
 
 export function ProfileRoutePage() {
   const { theme } = useTheme();
+  const session = useSessionQuery();
 
-  return <ProfileScreen theme={theme} />;
+  return (
+    <ProfileScreen
+      errorMessage={session.error instanceof Error ? session.error.message : null}
+      isLoading={session.isPending}
+      theme={theme}
+      user={session.data}
+    />
+  );
 }
 
 export function ReviewQuizRoutePage() {

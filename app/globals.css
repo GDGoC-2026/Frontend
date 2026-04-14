@@ -24,6 +24,11 @@ body {
   min-height: 100%;
 }
 
+html {
+  scrollbar-color: #9cff93 #05070a;
+  scrollbar-width: thin;
+}
+
 body {
   background:
     radial-gradient(circle at top, rgba(105, 218, 255, 0.08), transparent 28%),
@@ -45,6 +50,21 @@ img {
   display: block;
 }
 
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid #05070a;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(156, 255, 147, 0.92), rgba(105, 218, 255, 0.78));
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #05070a 0%, #0b1110 100%);
+}
+
 .cyber-scrollbar::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -56,4 +76,171 @@ img {
 
 .cyber-scrollbar::-webkit-scrollbar-track {
   background: transparent;
+}
+
+@keyframes landingTicker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes landingFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.landing-ticker {
+  animation: landingTicker 26s linear infinite;
+}
+
+.landing-float {
+  animation: landingFloat 8s ease-in-out infinite;
+}
+
+.landing-float-delayed {
+  animation: landingFloat 10s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+.landing-scroll-content {
+  will-change: transform;
+}
+
+.landing-title-lens {
+  --lens-x: 50%;
+  --lens-y: 50%;
+  --lens-opacity: 1;
+  display: inline-block;
+  isolation: isolate;
+  overflow: visible;
+  padding: 0.34em 0.2em 0.42em;
+  margin: -0.34em -0.2em -0.42em;
+}
+
+.landing-title-row {
+  position: relative;
+  display: block;
+  min-height: 0.92em;
+  overflow: visible;
+  padding-block: 0.06em;
+  padding-inline: 0.04em;
+}
+
+.landing-title-base {
+  display: block;
+  filter: blur(8px);
+  opacity: 0.72;
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.1),
+    0 0 22px rgba(255, 255, 255, 0.04);
+  transition:
+    filter 360ms ease,
+    opacity 360ms ease;
+}
+
+.landing-title-focus {
+  pointer-events: none;
+  opacity: var(--lens-opacity);
+  overflow: visible;
+  transition: opacity 320ms ease;
+}
+
+.landing-title-soft-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.04em;
+  filter: blur(3.4px);
+  opacity: 0.94;
+  text-shadow:
+    0 0 7px rgba(255, 255, 255, 0.08),
+    0 0 16px rgba(255, 255, 255, 0.04);
+  -webkit-mask-image: radial-gradient(
+    ellipse 560px 240px at var(--lens-x) var(--lens-y),
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 0.95) 16%,
+    rgba(0, 0, 0, 0.86) 34%,
+    rgba(0, 0, 0, 0.66) 52%,
+    rgba(0, 0, 0, 0.38) 70%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 560px 240px at var(--lens-x) var(--lens-y),
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 0.95) 16%,
+    rgba(0, 0, 0, 0.86) 34%,
+    rgba(0, 0, 0, 0.66) 52%,
+    rgba(0, 0, 0, 0.38) 70%,
+    transparent 100%
+  );
+}
+
+.landing-title-focus-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.04em;
+  filter: blur(0px);
+  text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(255, 255, 255, 0.04);
+  -webkit-mask-image: radial-gradient(
+    ellipse 230px 136px at var(--lens-x) var(--lens-y),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.98) 20%,
+    rgba(0, 0, 0, 0.9) 42%,
+    rgba(0, 0, 0, 0.48) 66%,
+    transparent 90%
+  );
+  mask-image: radial-gradient(
+    ellipse 230px 136px at var(--lens-x) var(--lens-y),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.98) 20%,
+    rgba(0, 0, 0, 0.9) 42%,
+    rgba(0, 0, 0, 0.48) 66%,
+    transparent 90%
+  );
+}
+
+.landing-signature-mark {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.48em;
+  text-transform: uppercase;
+  color: rgba(156, 255, 147, 0.26);
+  filter: blur(0.4px);
+  mix-blend-mode: screen;
+}
+
+@media (max-width: 1023px) {
+  .landing-scroll-content {
+    will-change: auto;
+  }
+}
+
+@media (hover: none) {
+  .landing-title-base {
+    filter: blur(7px);
+    opacity: 0.82;
+  }
+
+  .landing-title-focus {
+    opacity: 1;
+  }
 }

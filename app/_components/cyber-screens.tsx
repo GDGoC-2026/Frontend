@@ -1,11 +1,18 @@
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { cloneElement, isValidElement, useState, type ReactNode } from "react";
 import { figmaAssets } from "@/app/_data/cyber-assets";
 import { ThemeToggle } from "@/app/_components/theme-toggle";
 import { FloatingRailShell } from "@/app/_components/ui-kit/floating-rail-shell";
 import { MessageCard } from "@/app/_components/ui-kit/message-card";
 import { PixelButton } from "@/app/_components/ui-kit/pixel-button";
+import {
+  useLogoutMutation,
+  useSessionQuery,
+  useUpdateSubscriptionMutation,
+} from "@/hooks/use-auth";
+import type { UserProfile } from "@/lib/api/auth";
 import {
   cn,
   interactiveMotionClass,
@@ -35,7 +42,8 @@ type SidebarProps = {
   navSize?: "sm" | "md";
 };
 
-const REVIEW_ROUTE = "/review/quiz";
+const DASHBOARD_ROUTE = "/dashboard";
+const REVIEW_ROUTE = "/dashboard/review/quiz";
 
 const navItems: Array<{
   key: NavKey;
@@ -53,15 +61,15 @@ const navItems: Array<{
 function navHref(theme: CyberTheme, key: NavKey) {
   switch (key) {
     case "home":
-      return "/";
+      return DASHBOARD_ROUTE;
     case "learn":
-      return "/learn/path";
+      return "/dashboard/learn/path";
     case "practice":
-      return "/practice/challenge";
+      return "/dashboard/practice/challenge";
     case "review":
       return REVIEW_ROUTE;
     case "profile":
-      return "/profile";
+      return "/dashboard/profile";
     case "settings":
       return null;
   }
@@ -144,57 +152,88 @@ function Sidebar({
   navSize = "sm",
 }: SidebarProps) {
   const dark = theme === "dark";
+  const [collapsed, setCollapsed] = useState(false);
+  const sidebarFooter =
+    footer && isValidElement(footer)
+      ? cloneElement(footer, {
+          collapsed,
+        } as { collapsed: boolean })
+      : footer;
 
   return (
     <>
-      <div aria-hidden className="w-64 shrink-0" />
+      <div aria-hidden className={cn("shrink-0", collapsed ? "w-20" : "w-64")} />
       <aside
         className={cn(
           dark
             ? "bg-[#131313] shadow-[4px_0px_0px_0px_black]"
             : "bg-[#d9e0e6] shadow-[4px_0px_0px_0px_#b5c0ca]",
-          "cyber-scrollbar fixed left-0 top-0 z-40 flex h-screen max-h-screen w-64 overflow-y-auto overscroll-contain flex-col",
+          "cyber-scrollbar fixed left-0 top-0 z-40 flex h-screen max-h-screen overflow-y-auto overscroll-contain flex-col transition-[width] duration-200",
+          collapsed ? "w-20" : "w-64",
         )}
       >
-        <div className="flex flex-col gap-2 p-8">
-          <div
+        <div className={cn("flex flex-col gap-2", collapsed ? "p-3" : "p-8")}>
+          <button
             className={cn(
-              "font-display text-2xl font-bold uppercase tracking-[-0.8px]",
-              dark ? "text-[#9cff93]" : "text-[#006e17]",
+              dark
+                ? "border border-[#262626] bg-[#0e0e0e] text-[#9cff93] hover:bg-[#1a1a1a]"
+                : "border border-[#b5c0ca] bg-[#e7edf1] text-[#006e17] hover:bg-[#cfd7de]",
+              "w-fit px-2 py-1 font-pixel text-[10px] uppercase transition-colors",
             )}
+            aria-label={collapsed ? "Mo rong sidebar" : "Thu gon sidebar"}
+            onClick={() => setCollapsed((value) => !value)}
+            type="button"
           >
-            NEURAL_LINK
-          </div>
-          <div
-            className={cn(
-              subtitleFont === "pixel"
-                ? "font-pixel text-[10px] leading-[15px]"
-                : "font-sans text-[12px] leading-4",
-              subtitleClassName ?? (dark ? "text-[#6b7280]" : "text-[#6c7988]"),
-            )}
-          >
-            {subtitle}
-          </div>
+            {collapsed ? "MO RONG" : "THU GON"}
+          </button>
+          {!collapsed ? (
+            <>
+              <div
+                className={cn(
+                  "font-display text-2xl font-bold uppercase tracking-[-0.8px]",
+                  dark ? "text-[#9cff93]" : "text-[#006e17]",
+                )}
+              >
+                LEARNBRO
+              </div>
+              <div
+                className={cn(
+                  subtitleFont === "pixel"
+                    ? "font-pixel text-[10px] leading-[15px]"
+                    : "font-sans text-[12px] leading-4",
+                  subtitleClassName ?? (dark ? "text-[#6b7280]" : "text-[#6c7988]"),
+                )}
+              >
+                {subtitle}
+              </div>
+            </>
+          ) : null}
         </div>
-        <nav className="flex flex-1 flex-col gap-2 px-4 pb-6">
+        <nav className={cn("flex flex-1 flex-col gap-2 pb-6", collapsed ? "px-2" : "px-4")}>
           {navItems.map((item) => {
             const current = item.key === active;
             const href = navHref(theme, item.key);
             const baseClassName = cn(
-              "flex items-center gap-4 px-4 py-4 uppercase transition-colors",
-              navSize === "md"
-                ? "font-display text-base tracking-[-0.8px]"
-                : "font-display text-[14px] tracking-[-0.8px]",
+              "flex items-center uppercase transition-colors",
+              collapsed ? "justify-center px-0 py-3" : "gap-4 px-4 py-4",
+              !collapsed &&
+                (navSize === "md"
+                  ? "font-display text-base tracking-[-0.8px]"
+                  : "font-display text-[14px] tracking-[-0.8px]"),
               current &&
-                (dark
-                  ? "border-l-4 border-[#9cff93] bg-[#262626] pl-3 text-[#9cff93]"
-                  : "border-l-4 border-[#006e17] bg-[#cfd7de] pl-3 text-[#006e17]"),
+                (collapsed
+                  ? dark
+                    ? "bg-[#262626] text-[#9cff93]"
+                    : "bg-[#cfd7de] text-[#006e17]"
+                  : dark
+                    ? "border-l-4 border-[#9cff93] bg-[#262626] pl-3 text-[#9cff93]"
+                    : "border-l-4 border-[#006e17] bg-[#cfd7de] pl-3 text-[#006e17]"),
               !current && (dark ? "text-[#6b7280]" : "text-[#52606f]"),
             );
             const content = (
               <>
                 <span className="size-5 shrink-0">{item.icon}</span>
-                <span>{item.label}</span>
+                {!collapsed ? <span>{item.label}</span> : null}
               </>
             );
 
@@ -217,7 +256,7 @@ function Sidebar({
             );
           })}
         </nav>
-        {footer ? <div className="mt-auto">{footer}</div> : null}
+        {sidebarFooter ? <div className="mt-auto">{sidebarFooter}</div> : null}
       </aside>
     </>
   );
@@ -230,6 +269,7 @@ function SidebarFooterUser({
   subtitle,
   subtitleTone = "green",
   compact = false,
+  collapsed = false,
 }: {
   theme: CyberTheme;
   src?: string;
@@ -237,8 +277,13 @@ function SidebarFooterUser({
   subtitle: string;
   subtitleTone?: "green" | "cyan" | "muted";
   compact?: boolean;
+  collapsed?: boolean;
 }) {
   const dark = theme === "dark";
+  const session = useSessionQuery();
+  const sessionUser = session.data;
+  const resolvedTitle = sessionUser ? formatProfileAlias(sessionUser) : title;
+  const resolvedSubtitle = sessionUser?.email ?? subtitle;
   const subtitleColor =
     subtitleTone === "green"
       ? dark
@@ -265,34 +310,39 @@ function SidebarFooterUser({
         className={cn(
           dark ? "bg-[#262626]" : "bg-[#cfd7de]",
           compact ? "p-3" : "p-4",
-          "flex items-center gap-3",
+          collapsed ? "flex justify-center" : "flex items-center gap-3",
         )}
       >
         <SafeImage
           alt={title}
-          className="h-10 w-10 object-cover saturate-0"
+          className={cn(
+            "object-cover saturate-0",
+            collapsed ? "h-10 w-10 rounded-full" : "h-10 w-10",
+          )}
           height={40}
           src={src}
           width={40}
         />
-        <div className="min-w-0">
-          <div
-            className={cn(
-              "font-pixel text-[10px] uppercase leading-4",
-              dark ? "text-white" : "text-[#0f172a]",
-            )}
-          >
-            {title}
+        {!collapsed ? (
+          <div className="min-w-0">
+            <div
+              className={cn(
+                "truncate font-pixel text-[10px] uppercase leading-4",
+                dark ? "text-white" : "text-[#0f172a]",
+              )}
+            >
+              {resolvedTitle}
+            </div>
+            <div
+              className={cn(
+                "truncate font-display text-[10px] uppercase leading-[15px]",
+                subtitleColor,
+              )}
+            >
+              {resolvedSubtitle}
+            </div>
           </div>
-          <div
-            className={cn(
-              "font-display text-[10px] uppercase leading-[15px]",
-              subtitleColor,
-            )}
-          >
-            {subtitle}
-          </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );
@@ -2977,9 +3027,79 @@ export function FlashcardScreen() {
   );
 }
 
-export function ProfileScreen({ theme }: { theme: CyberTheme }) {
+function formatProfileName(user?: UserProfile | null) {
+  const fullName = user?.full_name?.trim();
+
+  if (fullName) {
+    return fullName;
+  }
+
+  const emailHandle = user?.email.split("@")[0]?.replace(/[._-]+/g, " ").trim();
+
+  return emailHandle ? emailHandle : "Operator Neo";
+}
+
+function formatProfileAlias(user?: UserProfile | null) {
+  return formatProfileName(user)
+    .replace(/\s+/g, "_")
+    .slice(0, 18)
+    .toUpperCase();
+}
+
+function formatSubscriptionTier(user?: UserProfile | null) {
+  return (user?.subscription_tier || "Free").replace(/[_-]+/g, " ").toUpperCase();
+}
+
+function getProfileSyncValue(user?: UserProfile | null) {
+  const tier = user?.subscription_tier?.toLowerCase();
+
+  if (tier?.includes("enterprise")) {
+    return 10;
+  }
+
+  if (tier?.includes("pro") || tier?.includes("premium")) {
+    return 8;
+  }
+
+  if (tier?.includes("basic")) {
+    return 5;
+  }
+
+  return user?.is_active ? 4 : 2;
+}
+
+export function ProfileScreen({
+  theme,
+  user,
+  isLoading = false,
+  errorMessage = null,
+}: {
+  theme: CyberTheme;
+  user?: UserProfile | null;
+  isLoading?: boolean;
+  errorMessage?: string | null;
+}) {
+  const router = useRouter();
   const dark = theme === "dark";
   const assets = dark ? figmaAssets.darkProfile : figmaAssets.lightProfile;
+  const profileName = formatProfileName(user);
+  const profileAlias = formatProfileAlias(user);
+  const subscriptionTier = formatSubscriptionTier(user);
+  const statusLabel = user?.is_active ? "ACTIVE" : "INACTIVE";
+  const shortUserId = user?.id.slice(0, 8).toUpperCase() ?? "UNKNOWN";
+  const syncValue = getProfileSyncValue(user);
+  const emailAddress = user?.email ?? "No authenticated session email";
+  const updateSubscriptionMutation = useUpdateSubscriptionMutation();
+  const logoutMutation = useLogoutMutation({
+    onSuccess: () => {
+      router.replace("/auth/login");
+    },
+  });
+  const subscriptionOptions = [
+    { label: "FREE", value: "free" },
+    { label: "PRO", value: "pro" },
+    { label: "ENTERPRISE", value: "enterprise" },
+  ] as const;
 
   return (
     <Frame
@@ -3001,7 +3121,7 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                 "px-3 py-1 font-pixel text-[10px]",
               )}
             >
-              XP: 2450
+              TIER: {subscriptionTier}
             </div>
           </div>
         </HeaderBar>
@@ -3023,7 +3143,7 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                   )}
                 />
                 <SafeImage
-                  alt="Operator Neo"
+                  alt={profileName}
                   className={cn(
                     dark
                       ? "border-4 border-[#262626] saturate-0"
@@ -3043,7 +3163,7 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                     "absolute bottom-0 right-0 px-2 py-1 font-pixel text-[10px]",
                   )}
                 >
-                  LVL 15
+                  {statusLabel}
                 </div>
               </div>
               <div className="flex-1">
@@ -3053,7 +3173,7 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                     dark ? "text-white" : "text-[#0f172a]",
                   )}
                 >
-                  OPERATOR_NEO
+                  {profileName}
                 </h1>
                 <div
                   className={cn(
@@ -3061,29 +3181,37 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                     dark ? "text-[#adaaaa]" : "text-[#484847]",
                   )}
                 >
+                  <p>AUTHENTICATED_EMAIL: {emailAddress}</p>
                   <p>
-                    Neural link established. Currently processing advanced
-                    algorithmic patterns.
+                    ACCOUNT_STATUS: {statusLabel} {"//"} SUBSCRIPTION_TIER:{" "}
+                    {subscriptionTier}
                   </p>
                   <p>
-                    Specializing in logic structures and recursive deep-learning
-                    modules.
+                    {isLoading
+                      ? "Synchronizing profile payload from backend..."
+                      : errorMessage
+                        ? `PROFILE_SYNC_WARNING: ${errorMessage}`
+                        : `PROFILE_ID: ${shortUserId} // SESSION_LINK_STABLE.`}
                   </p>
                 </div>
                 <div className="mt-4 grid max-w-[520px] gap-4 md:grid-cols-2">
-                  <MetricTile label="TOTAL XP" theme={theme} value="2,450.00" />
                   <MetricTile
-                    icon={<FireIcon />}
-                    label="CURRENT STREAK"
+                    label="USER ID"
                     theme={theme}
-                    tone="purple"
-                    value="12 DAYS"
+                    value={shortUserId}
                   />
                   <MetricTile
-                    label="GLOBAL RANK"
+                    icon={<FireIcon />}
+                    label="STATUS"
+                    theme={theme}
+                    tone="purple"
+                    value={statusLabel}
+                  />
+                  <MetricTile
+                    label="PLAN"
                     theme={theme}
                     tone="cyan"
-                    value="#1,024"
+                    value={subscriptionTier}
                   />
                 </div>
               </div>
@@ -3178,7 +3306,7 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                         dark ? "text-white" : "text-[#0f172a]",
                       )}
                     >
-                      LEVEL_15
+                      PROFILE
                     </div>
                     <div
                       className={cn(
@@ -3186,7 +3314,7 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                         dark ? "text-white" : "text-[#0f172a]",
                       )}
                     >
-                      EVOLUTION
+                      OVERVIEW
                     </div>
                   </div>
                   <div
@@ -3195,9 +3323,9 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                       dark ? "text-[#9cff93]" : "text-[#16a34a]",
                     )}
                   >
-                    NEXT_UP:
+                    TIER:
                     <br />
-                    DATA_MINING_II
+                    {subscriptionTier}
                   </div>
                 </div>
                 <div
@@ -3206,14 +3334,16 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                     dark ? "text-[#adaaaa]" : "text-[#475569]",
                   )}
                 >
-                  74% Progress to Level 16
+                  {isLoading
+                    ? "Waiting for authenticated profile sync..."
+                    : `Session synchronized for ${profileAlias}.`}
                 </div>
                 <div className="mt-5">
                   <ProgressSegments
                     size="lg"
                     theme={theme}
                     total={10}
-                    value={7}
+                    value={syncValue}
                   />
                 </div>
               </div>
@@ -3230,23 +3360,23 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                       dark ? "text-[#d575ff]" : "text-[#9800d0]",
                     )}
                   >
-                    RECENT_LEARNING <EyeIcon />
+                    ACCOUNT_MATRIX <EyeIcon />
                   </div>
                   <div className="space-y-2">
                     {[
                       [
-                        "SYNTAX_ERRORS",
-                        "98%",
+                        "EMAIL",
+                        emailAddress,
                         dark ? "text-[#9cff93]" : "text-[#006e17]",
                       ],
                       [
-                        "ASYNC_WAIT",
-                        "82%",
+                        "STATUS",
+                        statusLabel,
                         dark ? "text-[#9cff93]" : "text-[#006e17]",
                       ],
                       [
-                        "DATA_MAPPING",
-                        "45%",
+                        "PLAN",
+                        subscriptionTier,
                         dark ? "text-[#d575ff]" : "text-[#9800d0]",
                       ],
                     ].map(([label, value, color]) => (
@@ -3256,7 +3386,9 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                         >
                           {label}
                         </span>
-                        <span className={color}>{value}</span>
+                        <span className={cn("max-w-[12rem] text-right break-all", color)}>
+                          {value}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -3351,18 +3483,22 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                     "min-w-0 break-all font-pixel text-[10px] uppercase leading-5",
                     dark ? "text-[#767575]" : "text-[#484847]",
                   )}
-                >
-                  CURRENT_STATUS:
+                  >
+                    CURRENT_STATUS:
+                    <br />
+                  {statusLabel}_SESSION_VERIFIED
                   <br />
-                  ANALYZING_USER_TRAJECTORY...
+                  AUTH_EMAIL:
                   <br />
-                  NEXT_MILESTONE:
+                  {emailAddress}
                   <br />
-                  320_XP_TO_GO...
+                  PROFILE_ID:
                   <br />
-                  SUGGESTION:
+                  {shortUserId}
                   <br />
-                  REVISIT_RECURSION_MODULES.
+                  TIER:
+                  <br />
+                  {subscriptionTier}
                 </div>
                 <div
                   className={cn(
@@ -3385,6 +3521,80 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
                     RUN_DIAGNOSTICS
                   </PixelButton>
                 </div>
+                <div className="mt-3">
+                  <PixelButton
+                    className="w-full"
+                    disabled={logoutMutation.isPending}
+                    hollow
+                    onClick={() => logoutMutation.mutate()}
+                    theme={theme}
+                    tone="cyan"
+                  >
+                    {logoutMutation.isPending ? "LOGGING_OUT..." : "LOG_OUT"}
+                  </PixelButton>
+                </div>
+                <div className="mt-6 space-y-3">
+                  <div
+                    className={cn(
+                      "font-pixel text-[10px] uppercase tracking-[1.2px]",
+                      dark ? "text-[#69daff]" : "text-[#00677d]",
+                    )}
+                  >
+                    UPDATE_SUBSCRIPTION
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {subscriptionOptions.map((option) => {
+                      const isCurrent =
+                        user?.subscription_tier?.toLowerCase() === option.value;
+
+                      return (
+                        <PixelButton
+                          className="w-full"
+                          disabled={updateSubscriptionMutation.isPending || isCurrent}
+                          hollow={!isCurrent}
+                          key={option.value}
+                          onClick={() =>
+                            updateSubscriptionMutation.mutate({
+                              new_tier: option.value,
+                            })
+                          }
+                          theme={theme}
+                          tone={isCurrent ? "brand" : "cyan"}
+                        >
+                          {updateSubscriptionMutation.isPending && isCurrent
+                            ? "UPDATING..."
+                            : option.label}
+                        </PixelButton>
+                      );
+                    })}
+                  </div>
+                  <div
+                    className={cn(
+                      "min-h-5 text-xs",
+                      updateSubscriptionMutation.isError
+                        ? dark
+                          ? "text-[#d575ff]"
+                          : "text-[#9800d0]"
+                        : dark
+                          ? "text-[#767575]"
+                          : "text-[#475569]",
+                    )}
+                  >
+                    {updateSubscriptionMutation.isError
+                      ? updateSubscriptionMutation.error.message
+                      : "Click a tier button to call /api/v1/users/subscription and sync the profile UI."}
+                  </div>
+                  {logoutMutation.isError ? (
+                    <div
+                      className={cn(
+                        "text-xs",
+                        dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                      )}
+                    >
+                      {logoutMutation.error.message}
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </section>
           </div>
@@ -3398,13 +3608,13 @@ export function ProfileScreen({ theme }: { theme: CyberTheme }) {
             <SidebarFooterUser
               compact
               src={assets.sidebarAvatar}
-              subtitle="CORE_STABLE"
+              subtitle={emailAddress}
               subtitleTone="cyan"
               theme={theme}
-              title="X_PROTOC..."
+              title={profileAlias}
             />
           }
-          subtitle="RANK: NOVICE"
+          subtitle={`TIER: ${subscriptionTier}`}
           subtitleClassName={
             dark
               ? "font-pixel text-[10px] leading-[15px] text-[#d575ff]"

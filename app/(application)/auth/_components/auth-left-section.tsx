@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { getAuthPalette } from "@/app/(application)/auth/_components/auth-theme";
 
 interface AuthLeftSectionProps {
   title: string;
@@ -25,6 +26,8 @@ export function AuthLeftSection({
     encryption: "PIXEL-GRID-88",
   },
 }: AuthLeftSectionProps) {
+  const palette = getAuthPalette(isDarkTheme ? "dark" : "light");
+
   return (
     <div className="flex flex-col justify-between h-full">
       {/* Top Section - Title and Description */}
@@ -32,7 +35,7 @@ export function AuthLeftSection({
         <div
           className="text-xs font-bold uppercase tracking-widest"
           style={{
-            color: isDarkTheme ? "#a0ffc3" : "#006d40",
+            color: palette.primary,
           }}
         >
           SECURITY PROTOCOL
@@ -41,7 +44,7 @@ export function AuthLeftSection({
           <div
             className="text-3xl font-bold font-display"
             style={{
-              color: isDarkTheme ? "#e6e3f5" : "#1d1d2b",
+              color: palette.title,
             }}
           >
             {title}
@@ -50,35 +53,48 @@ export function AuthLeftSection({
             <div
               className="text-3xl font-bold font-display"
               style={{
-                color: isDarkTheme ? "#ff51fa" : "#c100ba",
+                color: palette.secondary,
               }}
             >
               {subtitle}
             </div>
           )}
         </div>
+        {description ? (
+          <p
+            className="max-w-xs text-sm leading-6"
+            style={{
+              color: palette.body,
+            }}
+          >
+            {description}
+          </p>
+        ) : null}
       </div>
 
       {/* Middle Section - Mascot */}
       {mascotUrl && (
         <div className="flex justify-center py-8">
           <div className="relative w-32 h-32">
-            <img
+            <Image
               src={mascotUrl}
               alt="Pixel Mascot"
               className="w-full h-full object-contain"
+              width={128}
+              height={128}
+              unoptimized
             />
             {/* Corner borders */}
             <div
               className="absolute -top-4 -left-4 w-12 h-12 border-l-2 border-t-2"
               style={{
-                borderColor: isDarkTheme ? "#a0ffc3" : "#006d40",
+                borderColor: palette.primary,
               }}
             />
             <div
               className="absolute -bottom-4 -right-4 w-12 h-12 border-r-2 border-b-2"
               style={{
-                borderColor: isDarkTheme ? "#ff51fa" : "#c100ba",
+                borderColor: palette.secondary,
               }}
             />
           </div>
@@ -89,7 +105,7 @@ export function AuthLeftSection({
       <div
         className="text-xs uppercase tracking-wide"
         style={{
-          color: isDarkTheme ? "#aba9ba" : "#595a70",
+          color: palette.muted,
         }}
       >
         <div>SYSTEM VERSION: {systemInfo.version}</div>

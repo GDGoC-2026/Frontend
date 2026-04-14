@@ -1,5 +1,6 @@
 "use client";
 
+import { getAuthPalette } from "@/app/(application)/auth/_components/auth-theme";
 import { InputHTMLAttributes } from "react";
 
 interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -15,12 +16,14 @@ export function AuthInput({
   className,
   ...props
 }: AuthInputProps) {
+  const palette = getAuthPalette(isDarkTheme ? "dark" : "light");
+
   return (
     <div className="w-full space-y-2">
       <label
         className="text-xs font-bold uppercase tracking-wide block"
         style={{
-          color: isDarkTheme ? "#a0ffc3" : "#006d40",
+          color: palette.primary,
         }}
       >
         {label}
@@ -28,7 +31,7 @@ export function AuthInput({
           <span
             className="float-right text-xs font-normal"
             style={{
-              color: isDarkTheme ? "#aba9ba" : "#595a70",
+              color: palette.muted,
             }}
           >
             {helper}
@@ -36,23 +39,26 @@ export function AuthInput({
         )}
       </label>
       <input
-        {...props}
         className={`
           w-full px-4 py-3 rounded-none text-sm font-sans
-          transition-colors duration-200
-          ${
-            isDarkTheme
-              ? "bg-[#242436] text-[rgba(71,71,85,0.5)] placeholder-[rgba(71,71,85,0.5)]"
-              : "bg-[#e6e4e9] text-[rgba(89,90,112,0.5)] placeholder-[rgba(89,90,112,0.5)]"
-          }
+          border border-transparent transition-colors duration-200
+          ${isDarkTheme ? "text-[#f8fafc] placeholder:text-[#7c8b99]" : "text-[#0f172a] placeholder:text-[#64748b]"}
           focus:outline-none focus:ring-2
-          ${
-            isDarkTheme
-              ? "focus:ring-[#a0ffc3] focus:bg-[#2d2d3f]"
-              : "focus:ring-[#006d40] focus:bg-[#f0f0f5]"
-          }
+          ${isDarkTheme ? "focus:ring-[#9cff93]" : "focus:ring-[#006e17]"}
           ${className || ""}
         `}
+        style={{
+          backgroundColor: palette.input,
+        }}
+        {...props}
+        onFocus={(event) => {
+          event.currentTarget.style.backgroundColor = palette.inputFocus;
+          props.onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          event.currentTarget.style.backgroundColor = palette.input;
+          props.onBlur?.(event);
+        }}
       />
     </div>
   );

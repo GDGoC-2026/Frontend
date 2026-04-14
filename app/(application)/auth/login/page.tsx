@@ -1,13 +1,16 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTheme } from "@/app/_components/theme-provider";
+import { getAuthPalette } from "@/app/(application)/auth/_components/auth-theme";
+import { useLoginMutation } from "@/hooks/use-auth";
 import {
   AuthLayout,
   AuthLeftSection,
   AuthInput,
   AuthButton,
-} from "../_components";
+} from "@/app/(application)/auth/_components";
 
 const PIXEL_MASCOT_DARK =
   "https://www.figma.com/api/mcp/asset/792deffd-33cc-44ca-936c-e937c0334c38";
@@ -15,23 +18,25 @@ const PIXEL_MASCOT_LIGHT =
   "https://www.figma.com/api/mcp/asset/f2f74f69-0eb2-4aec-a414-c1962f37273e";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { theme, toggleTheme } = useTheme();
   const isDarkTheme = theme === "dark";
+  const palette = getAuthPalette(theme);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const loginMutation = useLoginMutation({
+    onSuccess: () => {
+      router.replace(searchParams.get("next") || "/dashboard");
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
     try {
-      // TODO: Implement login logic
-      console.log("Login attempt:", { email, password });
-    } finally {
-      setIsLoading(false);
-    }
+      await loginMutation.mutateAsync({ email, password });
+    } catch {}
   };
 
   return (
@@ -46,35 +51,30 @@ export default function LoginPage() {
       }
       isDarkTheme={isDarkTheme}
     >
-      {/* Login Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md space-y-8 relative"
+        className="relative w-full max-w-md space-y-8"
       >
-        {/* Theme Toggle Button */}
         <button
           suppressHydrationWarning
           type="button"
           onClick={toggleTheme}
-          className="absolute -top-12 right-0 p-2 rounded-lg transition-colors"
+          className="absolute -top-12 right-0 rounded-lg p-2 transition-colors"
           style={{
-            backgroundColor: isDarkTheme
-              ? "rgba(160, 255, 195, 0.1)"
-              : "rgba(0, 109, 64, 0.1)",
-            border: `2px solid ${isDarkTheme ? "#a0ffc3" : "#006d40"}`,
-            color: isDarkTheme ? "#a0ffc3" : "#006d40",
+            backgroundColor: `${palette.primary}1a`,
+            border: `2px solid ${palette.primary}`,
+            color: palette.primary,
           }}
           title="Toggle theme"
         >
           {isDarkTheme ? "☀️" : "🌙"}
         </button>
 
-        {/* Header */}
         <div className="space-y-2">
           <h2
             className="text-2xl font-bold font-display"
             style={{
-              color: isDarkTheme ? "#e1e0fb" : "#2d2d3d",
+              color: palette.title,
             }}
           >
             {`> USER_LOGIN`}
@@ -82,14 +82,13 @@ export default function LoginPage() {
           <p
             className="text-sm"
             style={{
-              color: isDarkTheme ? "#aba9ba" : "#595a70",
+              color: palette.body,
             }}
           >
             Enter your credentials to initialize the session.
           </p>
         </div>
 
-        {/* Form Fields */}
         <div className="space-y-6">
           <AuthInput
             label="Email Identifier"
@@ -113,22 +112,31 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Submit Button */}
         <AuthButton
           type="submit"
-          disabled={isLoading}
+          disabled={loginMutation.isPending}
           isDarkTheme={isDarkTheme}
           className="w-full"
         >
-          {isLoading ? "INITIALIZING..." : "INITIALIZE SESSION"}
+          {loginMutation.isPending ? "INITIALIZING..." : "INITIALIZE SESSION"}
         </AuthButton>
 
-        {/* Footer Links */}
+        {loginMutation.error ? (
+          <p
+            className="text-sm"
+            style={{
+              color: "#f87171",
+            }}
+          >
+            {loginMutation.error.message}
+          </p>
+        ) : null}
+
         <div className="space-y-3 text-center">
           <p
-            className="text-xs space-x-2"
+            className="space-x-2 text-xs"
             style={{
-              color: isDarkTheme ? "#aba9ba" : "#595a70",
+              color: palette.muted,
             }}
           >
             <span>[ GITHUB ]</span>
@@ -140,7 +148,7 @@ export default function LoginPage() {
               href="/auth/register"
               className="hover:underline"
               style={{
-                color: isDarkTheme ? "#ff51fa" : "#c100ba",
+                color: palette.secondary,
               }}
             >
               [ CREATE_ACCOUNT ]
@@ -148,11 +156,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Footer */}
         <div
-          className="text-center text-xs space-y-1"
+          className="space-y-1 text-center text-xs"
           style={{
-            color: isDarkTheme ? "#aba9ba" : "#595a70",
+            color: palette.muted,
           }}
         >
           <p className="space-x-2">

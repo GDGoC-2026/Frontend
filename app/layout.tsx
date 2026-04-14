@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Press_Start_2P, Space_Grotesk } from "next/font/google";
+import { QueryProvider } from "@/app/_components/query-provider";
 import { ThemeProvider } from "@/app/_components/theme-provider";
 import "./globals.css";
 
@@ -35,7 +36,9 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${pressStart.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background font-sans text-foreground">
-        <ThemeProvider>{children}</ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

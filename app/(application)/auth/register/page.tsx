@@ -1,13 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTheme } from "@/app/_components/theme-provider";
+import { getAuthPalette } from "@/app/(application)/auth/_components/auth-theme";
+import { useRegisterMutation } from "@/hooks/use-auth";
 import {
   AuthLayout,
   AuthLeftSection,
   AuthInput,
   AuthButton,
-} from "../_components";
+} from "@/app/(application)/auth/_components";
 
 const PIXEL_SPRITE_DARK =
   "https://www.figma.com/api/mcp/asset/775daeb5-b11f-4cea-a70b-6bbe487517dd";
@@ -15,14 +18,20 @@ const PIXEL_SPRITE_LIGHT =
   "https://www.figma.com/api/mcp/asset/8bd21c9c-d02d-41d7-bd85-c1e3f0f0eede";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const isDarkTheme = theme === "dark";
+  const palette = getAuthPalette(theme);
 
-  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const registerMutation = useRegisterMutation({
+    onSuccess: () => {
+      router.replace("/dashboard");
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,14 +41,13 @@ export default function RegisterPage() {
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      // TODO: Implement registration logic
-      console.log("Registration attempt:", { username, email, password });
-    } finally {
-      setIsLoading(false);
-    }
+      await registerMutation.mutateAsync({
+        email,
+        full_name: fullName || null,
+        password,
+      });
+    } catch {}
   };
 
   return (
@@ -55,55 +63,48 @@ export default function RegisterPage() {
       }
       isDarkTheme={isDarkTheme}
     >
-      {/* Register Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md space-y-6 relative"
+        className="relative w-full max-w-md space-y-6"
       >
-        {/* Theme Toggle Button */}
         <button
           type="button"
           onClick={toggleTheme}
-          className="absolute -top-12 right-0 p-2 rounded-lg transition-colors"
+          className="absolute -top-12 right-0 rounded-lg p-2 transition-colors"
           style={{
-            backgroundColor: isDarkTheme
-              ? "rgba(160, 255, 195, 0.1)"
-              : "rgba(0, 109, 64, 0.1)",
-            border: `2px solid ${isDarkTheme ? "#a0ffc3" : "#006d40"}`,
-            color: isDarkTheme ? "#a0ffc3" : "#006d40",
+            backgroundColor: `${palette.primary}1a`,
+            border: `2px solid ${palette.primary}`,
+            color: palette.primary,
           }}
           title="Toggle theme"
         >
           {isDarkTheme ? "☀️" : "🌙"}
         </button>
 
-        {/* Header */}
-        <div className="space-y-3 mb-8">
+        <div className="mb-8 space-y-3">
           <h2
             className="text-xl font-bold font-display uppercase"
             style={{
-              color: isDarkTheme ? "#e6e3f5" : "#181827",
+              color: palette.title,
             }}
           >
             {`> REGISTER ACCOUNT`}
           </h2>
           <div
-            className="w-12 h-0.5"
+            className="h-0.5 w-12"
             style={{
-              backgroundColor: isDarkTheme ? "#a0ffc3" : "#006d40",
+              backgroundColor: palette.primary,
             }}
           />
         </div>
 
-        {/* Form Fields - Two Column Grid */}
         <div className="grid grid-cols-2 gap-6">
           <AuthInput
-            label="Username"
+            label="Full Name"
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="USER_01"
-            required
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Void Runner"
             isDarkTheme={isDarkTheme}
           />
 
@@ -118,7 +119,6 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Password Field - Full Width */}
         <div>
           <AuthInput
             label="Access Key (Password)"
@@ -131,21 +131,20 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Terms Checkbox */}
-        <label className="flex items-center space-x-3 cursor-pointer">
+        <label className="flex cursor-pointer items-center space-x-3">
           <input
             type="checkbox"
             checked={agreeTerms}
             onChange={(e) => setAgreeTerms(e.target.checked)}
-            className="w-4 h-4 rounded"
+            className="h-4 w-4 rounded"
             style={{
-              accentColor: isDarkTheme ? "#a0ffc3" : "#006d40",
+              accentColor: palette.primary,
             }}
           />
           <span
             className="text-xs"
             style={{
-              color: isDarkTheme ? "#aba9ba" : "#595a70",
+              color: palette.muted,
             }}
           >
             I acknowledge the{" "}
@@ -153,7 +152,7 @@ export default function RegisterPage() {
               href="#"
               className="hover:underline"
               style={{
-                color: isDarkTheme ? "#a0ffc3" : "#006d40",
+                color: palette.primary,
               }}
             >
               TERMS OF SERVICE
@@ -162,15 +161,14 @@ export default function RegisterPage() {
           </span>
         </label>
 
-        {/* Action Buttons */}
         <div className="flex gap-4 pt-4">
           <AuthButton
             type="submit"
-            disabled={isLoading || !agreeTerms}
+            disabled={registerMutation.isPending || !agreeTerms}
             isDarkTheme={isDarkTheme}
             className="flex-1"
           >
-            {isLoading ? "INITIALIZING..." : "INITIALIZE ACCOUNT"}
+            {registerMutation.isPending ? "INITIALIZING..." : "INITIALIZE ACCOUNT"}
           </AuthButton>
 
           <AuthButton
@@ -183,12 +181,22 @@ export default function RegisterPage() {
           </AuthButton>
         </div>
 
-        {/* External Auth */}
+        {registerMutation.error ? (
+          <p
+            className="text-sm"
+            style={{
+              color: "#f87171",
+            }}
+          >
+            {registerMutation.error.message}
+          </p>
+        ) : null}
+
         <div className="space-y-4 pt-4">
           <p
-            className="text-xs text-center uppercase"
+            className="text-center text-xs uppercase"
             style={{
-              color: isDarkTheme ? "#aba9ba" : "#595a70",
+              color: palette.muted,
             }}
           >
             EXTERNAL AUTH
@@ -196,15 +204,13 @@ export default function RegisterPage() {
           <div className="flex gap-3">
             <button
               type="button"
-              className="flex-1 py-2 rounded text-xs font-bold transition-colors"
+              className="flex-1 rounded py-2 text-xs font-bold transition-colors"
               style={{
-                border: `1px solid ${isDarkTheme ? "#aba9ba" : "#595a70"}`,
-                color: isDarkTheme ? "#aba9ba" : "#595a70",
+                border: `1px solid ${palette.muted}`,
+                color: palette.muted,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = isDarkTheme
-                  ? "#242436"
-                  : "#ebebf5";
+                e.currentTarget.style.backgroundColor = palette.input;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = "transparent";
@@ -214,15 +220,13 @@ export default function RegisterPage() {
             </button>
             <button
               type="button"
-              className="flex-1 py-2 rounded text-xs font-bold transition-colors"
+              className="flex-1 rounded py-2 text-xs font-bold transition-colors"
               style={{
-                border: `1px solid ${isDarkTheme ? "#aba9ba" : "#595a70"}`,
-                color: isDarkTheme ? "#aba9ba" : "#595a70",
+                border: `1px solid ${palette.muted}`,
+                color: palette.muted,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = isDarkTheme
-                  ? "#242436"
-                  : "#ebebf5";
+                e.currentTarget.style.backgroundColor = palette.input;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = "transparent";

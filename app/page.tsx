@@ -1,1 +1,5 @@
-export { HomeRoutePage as default } from "@/app/_components/route-pages";
+import { LandingPage } from "@/app/_components/landing-page";
+
+export default function Page() {
+  return <LandingPage />;
+}

@@ -2,6 +2,7 @@
 
 import { useTheme } from "@/app/_components/theme-provider";
 import { ReactNode } from "react";
+import { getAuthPalette } from "@/app/(application)/auth/_components/auth-theme";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -12,20 +13,15 @@ interface AuthLayoutProps {
 export function AuthLayout({ children, leftSection }: AuthLayoutProps) {
   const { theme } = useTheme();
   const isDarkTheme = theme === "dark";
+  const palette = getAuthPalette(theme);
   return (
     <div
       suppressHydrationWarning
-      className={`min-h-screen flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 ${isDarkTheme ? "bg-[#0f0f1a]" : "bg-[#fafafa]"}`}
+      className={`min-h-screen flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 ${palette.page}`}
       data-theme={isDarkTheme ? "dark" : "light"}
     >
       <div
-        className={`w-full max-w-4xl rounded-lg overflow-hidden shadow-2xl border
-          ${
-            isDarkTheme
-              ? "bg-[#12121f] border-[rgba(71,71,85,0.15)]"
-              : "bg-[#f5f3f7] border-[#d3d2ec]"
-          }
-        `}
+        className={`w-full max-w-4xl rounded-lg overflow-hidden border shadow-2xl ${palette.shell} ${palette.shellBorder}`}
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
@@ -34,18 +30,14 @@ export function AuthLayout({ children, leftSection }: AuthLayoutProps) {
       >
         {/* Left Section */}
         <div
-          className={`flex flex-col justify-between p-8 sm:p-12 rounded-l-lg
-            ${isDarkTheme ? "bg-[#1e1e2e]" : "bg-[#efedf2]"}
-          `}
+          className={`flex flex-col justify-between rounded-l-lg p-8 sm:p-12 ${palette.leftPanel}`}
         >
           {leftSection}
         </div>
 
         {/* Right Section - Form */}
         <div
-          className={`flex flex-col justify-center p-8 sm:p-16
-            ${isDarkTheme ? "bg-[#181827]" : "bg-white"}
-          `}
+          className={`flex flex-col justify-center p-8 sm:p-16 ${palette.rightPanel}`}
         >
           {children}
         </div>
