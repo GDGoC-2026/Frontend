@@ -10,9 +10,10 @@ export async function loginWithBackend(payload: LoginPayload) {
   const { data, error, response } = await backendClient.POST("/api/v1/auth/login", {
     body: payload,
   });
+  const status = response?.status ?? "unknown";
 
   if (error || !data) {
-    throw new Error(`Login failed with status ${response.status}`);
+    throw new Error(`Login failed with status ${status}`);
   }
 
   return data;
@@ -22,9 +23,10 @@ export async function registerWithBackend(payload: RegisterPayload) {
   const { data, error, response } = await backendClient.POST("/api/v1/auth/register", {
     body: payload,
   });
+  const status = response?.status ?? "unknown";
 
   if (error || !data) {
-    throw new Error(`Register failed with status ${response.status}`);
+    throw new Error(`Register failed with status ${status}`);
   }
 
   return data;
@@ -36,9 +38,10 @@ export async function getMeFromBackend(token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  const status = response?.status ?? "unknown";
 
   if (error || !data) {
-    throw new Error(`Session lookup failed with status ${response.status}`);
+    throw new Error(`Session lookup failed with status ${status}`);
   }
 
   return data;

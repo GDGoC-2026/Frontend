@@ -17,9 +17,10 @@ export async function updateSubscriptionWithBackend(
       },
     },
   );
+  const status = response?.status ?? "unknown";
 
   if (error || !data) {
-    throw new Error(`Subscription update failed with status ${response.status}`);
+    throw new Error(`Subscription update failed with status ${status}`);
   }
 
   return data;

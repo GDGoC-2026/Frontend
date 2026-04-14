@@ -77,9 +77,9 @@ function useAuthMutation<TPayload>(
         body: JSON.stringify(payload),
         method: "POST",
       }),
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       await queryClient.invalidateQueries({ queryKey: sessionKey });
-      await options?.onSuccess?.(data, variables, context);
+      await options?.onSuccess?.(data, variables, onMutateResult, context);
     },
   });
 }
@@ -106,10 +106,10 @@ export function useUpdateSubscriptionMutation(
         body: JSON.stringify(payload),
         method: "PUT",
       }),
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       queryClient.setQueryData(sessionKey, data);
       await queryClient.invalidateQueries({ queryKey: sessionKey });
-      await options?.onSuccess?.(data, variables, context);
+      await options?.onSuccess?.(data, variables, onMutateResult, context);
     },
   });
 }
@@ -123,10 +123,10 @@ export function useLogoutMutation(options?: UseMutationOptions<{ ok: boolean }, 
       requestJson<{ ok: boolean }>("/api/auth/logout", {
         method: "POST",
       }),
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       queryClient.setQueryData(sessionKey, null);
       await queryClient.invalidateQueries({ queryKey: sessionKey });
-      await options?.onSuccess?.(data, variables, context);
+      await options?.onSuccess?.(data, variables, onMutateResult, context);
     },
   });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useTheme } from "@/app/_components/theme-provider";
 import { getAuthPalette } from "@/app/(application)/auth/_components/auth-theme";
 import { useLoginMutation } from "@/hooks/use-auth";
@@ -17,7 +17,7 @@ const PIXEL_MASCOT_DARK =
 const PIXEL_MASCOT_LIGHT =
   "https://www.figma.com/api/mcp/asset/f2f74f69-0eb2-4aec-a414-c1962f37273e";
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme, toggleTheme } = useTheme();
@@ -177,5 +177,13 @@ export default function LoginPage() {
         </div>
       </form>
     </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
