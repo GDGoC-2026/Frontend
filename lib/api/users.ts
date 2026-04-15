@@ -1,8 +1,27 @@
 import type { components } from "@/types/api.generated";
 import { backendClient } from "@/lib/api/backend-client";
 
-export type SubscriptionUpdatePayload = components["schemas"]["SubscriptionUpdate"];
+export type SubscriptionUpdatePayload =
+  components["schemas"]["SubscriptionUpdate"];
 export type UserProfile = components["schemas"]["UserProfile"];
+
+export async function getUserProfile(token: string) {
+  const { data, error, response } = await backendClient.GET(
+    "/api/v1/users/profile",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  const status = response?.status ?? "unknown";
+
+  if (error || !data) {
+    throw new Error(`Failed to fetch user profile with status ${status}`);
+  }
+
+  return data;
+}
 
 export async function updateSubscriptionWithBackend(
   token: string,
