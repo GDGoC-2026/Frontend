@@ -134,6 +134,7 @@ const gains = [
 
 const pricingPlans = [
   {
+    id: "free",
     name: "Free",
     price: "$0",
     subtitle: "For curious learners getting started.",
@@ -142,6 +143,7 @@ const pricingPlans = [
     featured: false,
   },
   {
+    id: "pro",
     name: "Pro",
     price: "$9.99",
     subtitle: "per month",
@@ -151,6 +153,7 @@ const pricingPlans = [
     badge: "Most Popular",
   },
   {
+    id: "developer",
     name: "Developer",
     price: "$29.99",
     subtitle: "per month",
@@ -420,58 +423,40 @@ export function LandingPage() {
 
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
         gsap.from(element, {
-          duration: 1,
-          ease: "power3.out",
+          duration: 0.62,
+          ease: "power2.out",
           opacity: 0,
           scrollTrigger: {
             once: true,
-            start: "top 86%",
+            start: "top 90%",
             trigger: element,
           },
-          y: 72,
+          y: 24,
         });
       });
 
       gsap.utils.toArray<HTMLElement>("[data-card]").forEach((element, index) => {
         gsap.from(element, {
           delay: Math.min(index * 0.03, 0.18),
-          duration: 0.7,
-          ease: "power3.out",
+          duration: 0.64,
+          ease: "power2.out",
           opacity: 0,
-          rotateX: -6,
           scrollTrigger: {
             once: true,
-            start: "top 92%",
+            start: "top 91%",
             trigger: element,
           },
-          transformPerspective: 1200,
-          y: 44,
-        });
-      });
-
-      gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((element) => {
-        const distance = Number(element.dataset.distance ?? 80);
-
-        gsap.to(element, {
-          ease: "none",
-          scrollTrigger: {
-            scrub: 0.35,
-            start: "top bottom",
-            trigger: element,
-          },
-          y: -(distance * 0.45),
+          y: 28,
         });
       });
 
       gsap.to("[data-cube]", {
-        rotate: 14,
-        scrollTrigger: {
-          end: "bottom top",
-          scrub: 0.45,
-          start: "top bottom",
-          trigger: "[data-cube-wrap]",
-        },
-        scale: 1.03,
+        duration: 6.8,
+        ease: "sine.inOut",
+        repeat: -1,
+        rotate: 6,
+        y: -8,
+        yoyo: true,
       });
 
       gsap.to("[data-hero-shell]", {
@@ -492,15 +477,15 @@ export function LandingPage() {
           element,
           {
             opacity: 0,
-            y: 56 + index * 10,
+            y: 22 + index * 4,
           },
           {
-            duration: 0.9,
-            ease: "power3.out",
+            duration: 0.66,
+            ease: "power2.out",
             opacity: 1,
             scrollTrigger: {
               once: true,
-              start: "top 90%",
+              start: "top 92%",
               trigger: element,
             },
             y: 0,
@@ -915,7 +900,7 @@ export function LandingPage() {
                 </ul>
                 <div className="mt-12">
                         <SignalButton
-                          href="/auth/register"
+                          href={`/checkout?plan=${plan.id}`}
                           hollow={!plan.featured}
                           size="pricing"
                           fullWidth

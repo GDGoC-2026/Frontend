@@ -21,7 +21,12 @@ export async function GET(request: Request) {
   const requestedNextPath = normalizeNextPath(requestUrl.searchParams.get("next"));
 
   try {
-    const oauthRedirect = await createProviderRedirect("github", requestUrl, requestedNextPath);
+    const oauthRedirect = await createProviderRedirect(
+      "github",
+      requestUrl,
+      request.headers,
+      requestedNextPath,
+    );
     const response = NextResponse.redirect(oauthRedirect.providerUrl);
     const cookieConfig = getOAuthCookieConfig();
 

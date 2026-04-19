@@ -1,4 +1,4 @@
-import { APP_ORIGIN, BACKEND_API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 
 export const OAUTH_SESSION_COOKIE_NAME = "versera_oauth_session";
 export const OAUTH_NEXT_COOKIE_NAME = "versera_oauth_next";
@@ -70,9 +70,13 @@ export async function readResponseError(response: Response) {
 export async function createProviderRedirect(
   provider: OAuthProvider,
   requestUrl: URL,
+  requestHeaders: Headers,
   nextPath: string,
 ) {
-  const callbackOrigin = APP_ORIGIN || requestUrl.origin;
+  const forwardedHost = requestHeaders.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const forwardedProto = requestHeaders.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const callbackOrigin =
+    forwardedHost && forwardedProto ? `${forwardedProto}://${forwardedHost}` : requestUrl.origin;
   const callbackUrl = `${callbackOrigin}/api/auth/${provider}/callback`;
   const backendLoginUrl = new URL(`/api/v1/auth/${provider}/login`, `${BACKEND_API_URL}/`);
   backendLoginUrl.searchParams.set("redirect_uri", callbackUrl);
