@@ -1,7 +1,8 @@
 import type { components } from "@/types/api.generated";
 import { backendClient } from "@/lib/api/backend-client";
 
-export type SubscriptionUpdatePayload = components["schemas"]["SubscriptionUpdate"];
+export type SubscriptionUpdatePayload =
+  components["schemas"]["SubscriptionUpdate"];
 export type UserProfile = components["schemas"]["UserProfile"];
 
 export async function getProfileFromBackend(token: string) {
