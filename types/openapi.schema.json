@@ -457,15 +457,13 @@
             }
           }
         }
-      }
-    },
-    "/api/v1/notes/{folder_id}": {
+      },
       "delete": {
         "tags": [
           "notes"
         ],
         "summary": "Delete Folder",
-        "operationId": "delete_folder_api_v1_notes__folder_id__delete",
+        "operationId": "delete_folder_api_v1_notes_folders__folder_id__delete",
         "security": [
           {
             "OAuth2PasswordBearer": []
@@ -804,6 +802,284 @@
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/knowledge/ingest": {
+      "post": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Ingest raw notes into knowledge graph",
+        "description": "Process raw notes through Formatter Agent and ingest into LightRAG.\n\nFlow:\n1. Receive raw notes from user\n2. Format and enhance using Gemini Formatter Agent\n3. Ingest formatted content into LightRAG knowledge graph\n4. Return formatted content for user review",
+        "operationId": "ingest_notes_api_v1_knowledge_ingest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteIngestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteIngestResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/knowledge/query": {
+      "post": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Query knowledge graph",
+        "description": "Query the user's knowledge graph using LightRAG.\n\nSupported modes:\n- `local`: Search local context only\n- `global`: Search entire graph with global context\n- `hybrid`: Combine local and global for best results\n- `mix`: Mix mode with custom parameters",
+        "operationId": "query_knowledge_api_v1_knowledge_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KnowledgeQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeQueryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/knowledge/graph": {
+      "get": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Get graph data for visualization",
+        "description": "Retrieve the complete knowledge graph for the user.\n\nReturns nodes and edges in JSON format suitable for visualization\nwith libraries like React Flow, D3.js, or vis.js.",
+        "operationId": "get_graph_api_v1_knowledge_graph_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphDataResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Delete user's knowledge graph",
+        "description": "Delete the user's entire knowledge graph and stored data.\n\nThis action is irreversible. The knowledge base will be reset.",
+        "operationId": "delete_graph_api_v1_knowledge_graph_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/knowledge/ingest-status": {
+      "get": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Get ingestion status for notes and graph",
+        "description": "Retrieve ingestion pipeline status for the current user,\nincluding counts and per-document processing state.",
+        "operationId": "get_ingest_status_api_v1_knowledge_ingest_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestStatusResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recommendations/stream": {
+      "post": {
+        "tags": [
+          "recommendations"
+        ],
+        "summary": "Stream Recommendations",
+        "description": "Stream real-time AI recommendations for user's code or English text.\n\nUses Server-Sent Events (SSE) to stream recommendations as they're generated.\n\nArgs:\n    request: RecommendationRequest containing content and type\n    current_user: Authenticated user\n    \nReturns:\n    StreamingResponse with SSE recommendations\n    \nExample:\n    POST /api/v1/recommendations/stream\n    {\n        \"content\": \"def hello(name):\\n    print(f'Hello {name}')\",\n        \"content_type\": \"code\",\n        \"user_context\": \"Python beginner\"\n    }",
+        "operationId": "stream_recommendations_api_v1_recommendations_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recommendations/add-to-rag": {
+      "post": {
+        "tags": [
+          "recommendations"
+        ],
+        "summary": "Add Content To Rag",
+        "description": "Add user's content to RAG knowledge base for future recommendations.\n\nThis helps build a personalized knowledge base that improves recommendations over time.\n\nArgs:\n    request: Content to add to RAG\n    current_user: Authenticated user\n    \nReturns:\n    AddToRAGResponse with success status\n    \nExample:\n    POST /api/v1/recommendations/add-to-rag\n    {\n        \"content\": \"Function to process CSV files efficiently\",\n        \"content_type\": \"code\",\n        \"source_type\": \"user_note\"\n    }",
+        "operationId": "add_content_to_rag_api_v1_recommendations_add_to_rag_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToRAGRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddToRAGResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recommendations/health": {
+      "get": {
+        "tags": [
+          "recommendations"
+        ],
+        "summary": "Recommendation Health",
+        "description": "Check if recommendation service is available",
+        "operationId": "recommendation_health_api_v1_recommendations_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           }
@@ -1284,6 +1560,1355 @@
         ]
       }
     },
+    "/api/v1/judge/sessions/{problem_id}": {
+      "get": {
+        "tags": [
+          "judge"
+        ],
+        "summary": "Get Coding Problem Session",
+        "description": "Get saved code session for a generated coding problem.",
+        "operationId": "get_coding_problem_session_api_v1_judge_sessions__problem_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Problem Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "judge"
+        ],
+        "summary": "Upsert Coding Problem Session",
+        "description": "Create or update code session for a generated coding problem.",
+        "operationId": "upsert_coding_problem_session_api_v1_judge_sessions__problem_id__put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Problem Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeSessionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chatbot/ask": {
+      "post": {
+        "tags": [
+          "chatbot"
+        ],
+        "summary": "Ask Copilot",
+        "operationId": "ask_copilot_api_v1_chatbot_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/documents/upload": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Upload General Document",
+        "operationId": "upload_general_document_api_v1_documents_upload_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "folder_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Folder Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_general_document_api_v1_documents_upload_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/quiz/generate": {
+      "post": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "Generate Quiz",
+        "description": "Generate a personalized quiz by routing the request through ExerciseOrchestrator.",
+        "operationId": "generate_quiz_api_v1_quiz_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuizGenerationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizGenerationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/quiz/evaluate": {
+      "post": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "Evaluate Quiz",
+        "description": "Evaluate submitted quiz answers and return detailed scoring diagnostics.",
+        "operationId": "evaluate_quiz_api_v1_quiz_evaluate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuizEvaluationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizEvaluationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/quiz/attempts": {
+      "get": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "List Quiz Attempts",
+        "description": "Return quiz attempt history for the authenticated user.",
+        "operationId": "list_quiz_attempts_api_v1_quiz_attempts_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "topic",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Topic"
+            }
+          },
+          {
+            "name": "quiz_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quiz Id"
+            }
+          },
+          {
+            "name": "retries_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Retries Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuizAttemptSummary"
+                  },
+                  "title": "Response List Quiz Attempts Api V1 Quiz Attempts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/quiz/attempts/{attempt_id}": {
+      "get": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "Get Quiz Attempt",
+        "description": "Return full details of a single quiz attempt.",
+        "operationId": "get_quiz_attempt_api_v1_quiz_attempts__attempt_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizAttemptDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/quiz/retries/{quiz_id}": {
+      "get": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "Get Quiz Retries",
+        "description": "Return all attempts for a quiz id to track retries and progress over time.",
+        "operationId": "get_quiz_retries_api_v1_quiz_retries__quiz_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "quiz_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Quiz Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuizAttemptSummary"
+                  },
+                  "title": "Response Get Quiz Retries Api V1 Quiz Retries  Quiz Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/quiz/analytics": {
+      "get": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "Get Quiz Analytics",
+        "description": "Return aggregate quiz analytics for the authenticated user.",
+        "operationId": "get_quiz_analytics_api_v1_quiz_analytics_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "topic",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Topic"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/quiz/analytics/lessons/{source_lesson_id}": {
+      "get": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "Get Lesson Quiz Analytics",
+        "description": "Return quiz analytics scoped to a single saved lesson.",
+        "operationId": "get_lesson_quiz_analytics_api_v1_quiz_analytics_lessons__source_lesson_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "source_lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Source Lesson Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonQuizAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/quiz/health": {
+      "get": {
+        "tags": [
+          "quiz"
+        ],
+        "summary": "Quiz Health",
+        "description": "Health check for quiz service and orchestrator integration.",
+        "operationId": "quiz_health_api_v1_quiz_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Quiz Health Api V1 Quiz Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lessons/generate": {
+      "post": {
+        "tags": [
+          "lessons"
+        ],
+        "summary": "Generate Lesson",
+        "description": "Generate a multi-page lesson from user prompt and optional uploaded documents.\n\nThe response contains a pages array for frontend navigation between lesson sections\n(overview, theory, flashcards, quiz, and optional mindmap/resources).",
+        "operationId": "generate_lesson_api_v1_lessons_generate_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_generate_lesson_api_v1_lessons_generate_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonGenerationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/lessons/save": {
+      "post": {
+        "tags": [
+          "lessons"
+        ],
+        "summary": "Save Lesson",
+        "description": "Persist a generated lesson so the user can reopen it later.",
+        "operationId": "save_lesson_api_v1_lessons_save_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonSaveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/lessons": {
+      "get": {
+        "tags": [
+          "lessons"
+        ],
+        "summary": "List Saved Lessons",
+        "description": "List persisted lessons for the current user, newest first.",
+        "operationId": "list_saved_lessons_api_v1_lessons_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SavedLessonSummary"
+                  },
+                  "title": "Response List Saved Lessons Api V1 Lessons Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lessons/{lesson_id}": {
+      "get": {
+        "tags": [
+          "lessons"
+        ],
+        "summary": "Get Saved Lesson",
+        "description": "Get a persisted lesson in full detail for rendering and resume.",
+        "operationId": "get_saved_lesson_api_v1_lessons__lesson_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lessons/{lesson_id}/progress": {
+      "patch": {
+        "tags": [
+          "lessons"
+        ],
+        "summary": "Update Saved Lesson Progress",
+        "description": "Update resume progress (current page and completed pages) for a saved lesson.",
+        "operationId": "update_saved_lesson_progress_api_v1_lessons__lesson_id__progress_patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonProgressUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lessons/health": {
+      "get": {
+        "tags": [
+          "lessons"
+        ],
+        "summary": "Lessons Health",
+        "description": "Health check for lesson-generation endpoint and orchestrator wiring.",
+        "operationId": "lessons_health_api_v1_lessons_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Lessons Health Api V1 Lessons Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lessons/{lesson_id}/coding-problems/generate": {
+      "post": {
+        "tags": [
+          "coding"
+        ],
+        "summary": "Generate Coding Problems For Lesson",
+        "operationId": "generate_coding_problems_for_lesson_api_v1_lessons__lesson_id__coding_problems_generate_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodingProblemGenerateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodingProblemsGenerationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lessons/{lesson_id}/coding-problems": {
+      "get": {
+        "tags": [
+          "coding"
+        ],
+        "summary": "List Lesson Coding Problems",
+        "operationId": "list_lesson_coding_problems_api_v1_lessons__lesson_id__coding_problems_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CodingProblemSummary"
+                  },
+                  "title": "Response List Lesson Coding Problems Api V1 Lessons  Lesson Id  Coding Problems Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/coding-problems/{problem_id}": {
+      "get": {
+        "tags": [
+          "coding"
+        ],
+        "summary": "Get Coding Problem",
+        "operationId": "get_coding_problem_api_v1_coding_problems__problem_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Problem Id"
+            }
+          },
+          {
+            "name": "include_solution",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Solution"
+            }
+          },
+          {
+            "name": "include_hidden_tests",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Hidden Tests"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodingProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/coding-problems/{problem_id}/run": {
+      "post": {
+        "tags": [
+          "coding"
+        ],
+        "summary": "Run Coding Problem",
+        "operationId": "run_coding_problem_api_v1_coding_problems__problem_id__run_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Problem Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeRunRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeRunResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/coding-problems/{problem_id}/submit": {
+      "post": {
+        "tags": [
+          "coding"
+        ],
+        "summary": "Submit Coding Problem",
+        "operationId": "submit_coding_problem_api_v1_coding_problems__problem_id__submit_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Problem Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeSubmitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeSubmitResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/coding-problems/{problem_id}/submit/stream": {
+      "post": {
+        "tags": [
+          "coding"
+        ],
+        "summary": "Submit Coding Problem Stream",
+        "operationId": "submit_coding_problem_stream_api_v1_coding_problems__problem_id__submit_stream_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Problem Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeSubmitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/coding-problems/{problem_id}/attempts": {
+      "get": {
+        "tags": [
+          "coding"
+        ],
+        "summary": "List Coding Problem Attempts",
+        "operationId": "list_coding_problem_attempts_api_v1_coding_problems__problem_id__attempts_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Problem Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodingAttemptsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health Check",
@@ -1303,6 +2928,217 @@
   },
   "components": {
     "schemas": {
+      "AddToRAGRequest": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Content to add"
+          },
+          "content_type": {
+            "type": "string",
+            "title": "Content Type",
+            "description": "'code' or 'english'"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Additional metadata"
+          },
+          "source_type": {
+            "type": "string",
+            "title": "Source Type",
+            "description": "Source type: 'user_note', 'tip', 'resource', etc.",
+            "default": "user_note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content",
+          "content_type"
+        ],
+        "title": "AddToRAGRequest",
+        "description": "Request to add content to RAG knowledge base"
+      },
+      "AddToRAGResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "content_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "title": "AddToRAGResponse",
+        "description": "Response from adding to RAG"
+      },
+      "Body_generate_lesson_api_v1_lessons_generate_post": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 10,
+            "title": "Prompt"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject"
+          },
+          "subtopics": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtopics"
+          },
+          "learning_objectives": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Learning Objectives"
+          },
+          "current_level": {
+            "type": "string",
+            "title": "Current Level",
+            "default": "intermediate"
+          },
+          "learning_style": {
+            "type": "string",
+            "title": "Learning Style",
+            "default": "reading/writing"
+          },
+          "learning_pace": {
+            "type": "string",
+            "title": "Learning Pace",
+            "default": "normal"
+          },
+          "daily_study_time_minutes": {
+            "type": "integer",
+            "maximum": 300,
+            "minimum": 5,
+            "title": "Daily Study Time Minutes",
+            "default": 30
+          },
+          "max_quiz_questions": {
+            "type": "integer",
+            "maximum": 50,
+            "minimum": 1,
+            "title": "Max Quiz Questions",
+            "default": 10
+          },
+          "quiz_question_types": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiz Question Types"
+          },
+          "include_mindmap": {
+            "type": "boolean",
+            "title": "Include Mindmap",
+            "default": false
+          },
+          "include_coding_exercises": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Include Coding Exercises"
+          },
+          "include_answer_key": {
+            "type": "boolean",
+            "title": "Include Answer Key",
+            "default": false
+          },
+          "files": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "contentMediaType": "application/octet-stream"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Files"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "title": "Body_generate_lesson_api_v1_lessons_generate_post"
+      },
+      "Body_upload_general_document_api_v1_documents_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_general_document_api_v1_documents_upload_post"
+      },
       "Body_upload_markdown_note_api_v1_notes_upload_post": {
         "properties": {
           "file": {
@@ -1316,6 +3152,165 @@
           "file"
         ],
         "title": "Body_upload_markdown_note_api_v1_notes_upload_post"
+      },
+      "ChatRequest": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "User question for the learning copilot"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ChatRequest"
+      },
+      "ChatResponse": {
+        "properties": {
+          "reply": {
+            "type": "string",
+            "title": "Reply"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reply",
+          "mode"
+        ],
+        "title": "ChatResponse"
+      },
+      "CodeRunRequest": {
+        "properties": {
+          "source_code": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Source Code"
+          },
+          "language_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language Id"
+          },
+          "stdin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stdin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_code"
+        ],
+        "title": "CodeRunRequest"
+      },
+      "CodeRunResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Attempt Id"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "stdout": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stdout"
+          },
+          "stderr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stderr"
+          },
+          "compile_output": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compile Output"
+          },
+          "time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time"
+          },
+          "memory": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory"
+          },
+          "raw_result": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Raw Result"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "attempt_id"
+        ],
+        "title": "CodeRunResponse"
       },
       "CodeSessionSave": {
         "properties": {
@@ -1338,6 +3333,18 @@
               }
             ],
             "title": "Exercise Id"
+          },
+          "coding_problem_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coding Problem Id"
           }
         },
         "type": "object",
@@ -1346,6 +3353,24 @@
           "language_id"
         ],
         "title": "CodeSessionSave"
+      },
+      "CodeSessionUpdate": {
+        "properties": {
+          "current_code": {
+            "type": "string",
+            "title": "Current Code"
+          },
+          "language_id": {
+            "type": "integer",
+            "title": "Language Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current_code",
+          "language_id"
+        ],
+        "title": "CodeSessionUpdate"
       },
       "CodeSubmission": {
         "properties": {
@@ -1370,6 +3395,423 @@
           "exercise_id"
         ],
         "title": "CodeSubmission"
+      },
+      "CodeSubmitRequest": {
+        "properties": {
+          "source_code": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Source Code"
+          },
+          "language_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_code"
+        ],
+        "title": "CodeSubmitRequest"
+      },
+      "CodeSubmitResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Attempt Id"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "total_tests": {
+            "type": "integer",
+            "title": "Total Tests"
+          },
+          "passed_tests": {
+            "type": "integer",
+            "title": "Passed Tests"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/TestCaseResult"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "attempt_id",
+          "passed",
+          "total_tests",
+          "passed_tests"
+        ],
+        "title": "CodeSubmitResponse"
+      },
+      "CodingAttemptSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "coding_problem_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Coding Problem Id"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "language_id": {
+            "type": "integer",
+            "title": "Language Id"
+          },
+          "overall_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overall Status"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "total_tests": {
+            "type": "integer",
+            "title": "Total Tests"
+          },
+          "passed_tests": {
+            "type": "integer",
+            "title": "Passed Tests"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "coding_problem_id",
+          "mode",
+          "language_id",
+          "passed",
+          "total_tests",
+          "passed_tests",
+          "created_at"
+        ],
+        "title": "CodingAttemptSummary"
+      },
+      "CodingAttemptsResponse": {
+        "properties": {
+          "attempts": {
+            "items": {
+              "$ref": "#/components/schemas/CodingAttemptSummary"
+            },
+            "type": "array",
+            "title": "Attempts"
+          }
+        },
+        "type": "object",
+        "title": "CodingAttemptsResponse"
+      },
+      "CodingProblemDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "source_lesson_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Lesson Id"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "language_id": {
+            "type": "integer",
+            "title": "Language Id"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          },
+          "include_in_lesson": {
+            "type": "boolean",
+            "title": "Include In Lesson"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "instructions": {
+            "type": "string",
+            "title": "Instructions"
+          },
+          "starter_code": {
+            "type": "string",
+            "title": "Starter Code"
+          },
+          "solution_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solution Code"
+          },
+          "test_cases": {
+            "items": {
+              "$ref": "#/components/schemas/CodingTestCase"
+            },
+            "type": "array",
+            "title": "Test Cases"
+          },
+          "hints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hints"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "topic",
+          "title",
+          "language",
+          "language_id",
+          "include_in_lesson",
+          "created_at",
+          "updated_at",
+          "instructions",
+          "starter_code"
+        ],
+        "title": "CodingProblemDetail"
+      },
+      "CodingProblemGenerateRequest": {
+        "properties": {
+          "decision_mode": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "force",
+              "skip"
+            ],
+            "title": "Decision Mode",
+            "default": "auto"
+          },
+          "max_problems": {
+            "type": "integer",
+            "maximum": 5,
+            "minimum": 1,
+            "title": "Max Problems",
+            "default": 2
+          }
+        },
+        "type": "object",
+        "title": "CodingProblemGenerateRequest"
+      },
+      "CodingProblemSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "source_lesson_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Lesson Id"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "language_id": {
+            "type": "integer",
+            "title": "Language Id"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          },
+          "include_in_lesson": {
+            "type": "boolean",
+            "title": "Include In Lesson"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "topic",
+          "title",
+          "language",
+          "language_id",
+          "include_in_lesson",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CodingProblemSummary"
+      },
+      "CodingProblemsGenerationResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "include_coding_exercises": {
+            "type": "boolean",
+            "title": "Include Coding Exercises"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "generated_count": {
+            "type": "integer",
+            "title": "Generated Count"
+          },
+          "problems": {
+            "items": {
+              "$ref": "#/components/schemas/CodingProblemSummary"
+            },
+            "type": "array",
+            "title": "Problems"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "include_coding_exercises",
+          "reason",
+          "generated_count"
+        ],
+        "title": "CodingProblemsGenerationResponse"
+      },
+      "CodingTestCase": {
+        "properties": {
+          "input": {
+            "type": "string",
+            "title": "Input",
+            "default": ""
+          },
+          "expected_output": {
+            "type": "string",
+            "title": "Expected Output"
+          },
+          "is_hidden": {
+            "type": "boolean",
+            "title": "Is Hidden",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "expected_output"
+        ],
+        "title": "CodingTestCase"
       },
       "FlashcardCreateUpdate": {
         "properties": {
@@ -1528,6 +3970,86 @@
         ],
         "title": "FolderResponse"
       },
+      "GraphDataResponse": {
+        "properties": {
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/GraphNode"
+            },
+            "type": "array",
+            "title": "Nodes"
+          },
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/GraphEdge"
+            },
+            "type": "array",
+            "title": "Edges"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nodes",
+          "edges"
+        ],
+        "title": "GraphDataResponse",
+        "description": "Response schema for complete graph data visualization."
+      },
+      "GraphEdge": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "target": {
+            "type": "string",
+            "title": "Target"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "properties": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Properties",
+            "default": {}
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "target",
+          "label"
+        ],
+        "title": "GraphEdge",
+        "description": "Represents an edge/relationship in the knowledge graph."
+      },
+      "GraphNode": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "properties": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Properties",
+            "default": {}
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "GraphNode",
+        "description": "Represents a node in the knowledge graph."
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1540,6 +4062,629 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "IngestDocumentStatus": {
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "chunks_count": {
+            "type": "integer",
+            "title": "Chunks Count",
+            "default": 0
+          },
+          "content_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Summary"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "doc_id",
+          "status"
+        ],
+        "title": "IngestDocumentStatus",
+        "description": "Represents ingestion status for one document in LightRAG pipeline."
+      },
+      "IngestStatusResponse": {
+        "properties": {
+          "total_docs": {
+            "type": "integer",
+            "title": "Total Docs"
+          },
+          "processing_docs": {
+            "type": "integer",
+            "title": "Processing Docs"
+          },
+          "processed_docs": {
+            "type": "integer",
+            "title": "Processed Docs"
+          },
+          "failed_docs": {
+            "type": "integer",
+            "title": "Failed Docs"
+          },
+          "graph_nodes": {
+            "type": "integer",
+            "title": "Graph Nodes"
+          },
+          "graph_edges": {
+            "type": "integer",
+            "title": "Graph Edges"
+          },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/IngestDocumentStatus"
+            },
+            "type": "array",
+            "title": "Documents"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_docs",
+          "processing_docs",
+          "processed_docs",
+          "failed_docs",
+          "graph_nodes",
+          "graph_edges",
+          "documents"
+        ],
+        "title": "IngestStatusResponse",
+        "description": "Aggregated ingestion status for the current user."
+      },
+      "KnowledgeQueryRequest": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "default": "hybrid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "title": "KnowledgeQueryRequest",
+        "description": "Request schema for querying the knowledge graph."
+      },
+      "KnowledgeQueryResponse": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer",
+          "mode"
+        ],
+        "title": "KnowledgeQueryResponse",
+        "description": "Response schema for knowledge query results."
+      },
+      "LessonGenerationResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "lesson_id": {
+            "type": "string",
+            "title": "Lesson Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/LessonPage"
+            },
+            "type": "array",
+            "title": "Pages"
+          },
+          "navigation": {
+            "$ref": "#/components/schemas/LessonNavigation"
+          },
+          "source_documents": {
+            "items": {
+              "$ref": "#/components/schemas/LessonSourceDocument"
+            },
+            "type": "array",
+            "title": "Source Documents"
+          },
+          "execution_summary": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Execution Summary"
+          },
+          "quality_metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Quality Metrics"
+          },
+          "workflow_issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Workflow Issues"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "lesson_id",
+          "title",
+          "topic",
+          "prompt",
+          "pages",
+          "navigation"
+        ],
+        "title": "LessonGenerationResponse"
+      },
+      "LessonNavigation": {
+        "properties": {
+          "total_pages": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Total Pages"
+          },
+          "page_order": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Page Order"
+          },
+          "default_page_id": {
+            "type": "string",
+            "title": "Default Page Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_pages",
+          "page_order",
+          "default_page_id"
+        ],
+        "title": "LessonNavigation"
+      },
+      "LessonPage": {
+        "properties": {
+          "page_id": {
+            "type": "string",
+            "title": "Page Id"
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Order"
+          },
+          "page_type": {
+            "type": "string",
+            "enum": [
+              "overview",
+              "theory",
+              "flashcards",
+              "quiz",
+              "coding",
+              "mindmap",
+              "resources"
+            ],
+            "title": "Page Type"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "estimated_time_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Time Minutes"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "page_id",
+          "order",
+          "page_type",
+          "title"
+        ],
+        "title": "LessonPage"
+      },
+      "LessonProgressSnapshot": {
+        "properties": {
+          "current_page_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Page Id"
+          },
+          "completed_page_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Completed Page Ids"
+          },
+          "total_pages": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Total Pages"
+          },
+          "progress_percent": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Progress Percent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_pages",
+          "progress_percent"
+        ],
+        "title": "LessonProgressSnapshot"
+      },
+      "LessonProgressUpdateRequest": {
+        "properties": {
+          "current_page_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Page Id"
+          },
+          "completed_page_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed Page Ids"
+          }
+        },
+        "type": "object",
+        "title": "LessonProgressUpdateRequest"
+      },
+      "LessonQuizAnalyticsItem": {
+        "properties": {
+          "quiz_id": {
+            "type": "string",
+            "title": "Quiz Id"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "average_score": {
+            "type": "number",
+            "title": "Average Score"
+          },
+          "best_score": {
+            "type": "number",
+            "title": "Best Score"
+          },
+          "pass_rate": {
+            "type": "number",
+            "title": "Pass Rate"
+          },
+          "retry_attempts": {
+            "type": "integer",
+            "title": "Retry Attempts"
+          },
+          "latest_attempt_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Latest Attempt At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quiz_id",
+          "topic",
+          "attempts",
+          "average_score",
+          "best_score",
+          "pass_rate",
+          "retry_attempts",
+          "latest_attempt_at"
+        ],
+        "title": "LessonQuizAnalyticsItem"
+      },
+      "LessonQuizAnalyticsResponse": {
+        "properties": {
+          "source_lesson_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Source Lesson Id"
+          },
+          "total_attempts": {
+            "type": "integer",
+            "title": "Total Attempts"
+          },
+          "unique_quizzes": {
+            "type": "integer",
+            "title": "Unique Quizzes"
+          },
+          "average_score": {
+            "type": "number",
+            "title": "Average Score"
+          },
+          "best_score": {
+            "type": "number",
+            "title": "Best Score"
+          },
+          "pass_rate": {
+            "type": "number",
+            "title": "Pass Rate"
+          },
+          "retry_attempts": {
+            "type": "integer",
+            "title": "Retry Attempts"
+          },
+          "retry_success_rate": {
+            "type": "number",
+            "title": "Retry Success Rate"
+          },
+          "first_attempt_pass_rate": {
+            "type": "number",
+            "title": "First Attempt Pass Rate"
+          },
+          "improved_quiz_count": {
+            "type": "integer",
+            "title": "Improved Quiz Count"
+          },
+          "total_xp_from_quizzes": {
+            "type": "integer",
+            "title": "Total Xp From Quizzes"
+          },
+          "quizzes": {
+            "items": {
+              "$ref": "#/components/schemas/LessonQuizAnalyticsItem"
+            },
+            "type": "array",
+            "title": "Quizzes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_lesson_id",
+          "total_attempts",
+          "unique_quizzes",
+          "average_score",
+          "best_score",
+          "pass_rate",
+          "retry_attempts",
+          "retry_success_rate",
+          "first_attempt_pass_rate",
+          "improved_quiz_count",
+          "total_xp_from_quizzes"
+        ],
+        "title": "LessonQuizAnalyticsResponse"
+      },
+      "LessonSaveRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "topic": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Topic"
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Prompt"
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/LessonPage"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Pages"
+          },
+          "navigation": {
+            "$ref": "#/components/schemas/LessonNavigation"
+          },
+          "source_documents": {
+            "items": {
+              "$ref": "#/components/schemas/LessonSourceDocument"
+            },
+            "type": "array",
+            "title": "Source Documents"
+          },
+          "execution_summary": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Execution Summary"
+          },
+          "quality_metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Quality Metrics"
+          },
+          "workflow_issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Workflow Issues"
+          },
+          "current_page_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Page Id"
+          },
+          "completed_page_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Completed Page Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "topic",
+          "prompt",
+          "pages",
+          "navigation"
+        ],
+        "title": "LessonSaveRequest"
+      },
+      "LessonSourceDocument": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "file_type": {
+            "type": "string",
+            "title": "File Type"
+          },
+          "extracted_characters": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Extracted Characters"
+          },
+          "excerpt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excerpt"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "file_type",
+          "extracted_characters"
+        ],
+        "title": "LessonSourceDocument"
       },
       "NoteCreate": {
         "properties": {
@@ -1570,6 +4715,55 @@
           "content"
         ],
         "title": "NoteCreate"
+      },
+      "NoteIngestRequest": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "NoteIngestRequest",
+        "description": "Request schema for ingesting raw notes into LightRAG."
+      },
+      "NoteIngestResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "formatted_content": {
+            "type": "string",
+            "title": "Formatted Content"
+          },
+          "original_content": {
+            "type": "string",
+            "title": "Original Content"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "formatted_content",
+          "original_content"
+        ],
+        "title": "NoteIngestResponse",
+        "description": "Response schema after note ingestion and formatting."
       },
       "NoteResponse": {
         "properties": {
@@ -1683,6 +4877,1059 @@
         ],
         "title": "PushSubCreate"
       },
+      "QuestionEvaluationResult": {
+        "properties": {
+          "question_id": {
+            "type": "integer",
+            "title": "Question Id"
+          },
+          "question_type": {
+            "type": "string",
+            "title": "Question Type"
+          },
+          "is_correct": {
+            "type": "boolean",
+            "title": "Is Correct"
+          },
+          "user_answer": {
+            "title": "User Answer"
+          },
+          "expected_answer": {
+            "title": "Expected Answer"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "subtopic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtopic"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_id",
+          "question_type",
+          "is_correct"
+        ],
+        "title": "QuestionEvaluationResult"
+      },
+      "QuizAnalyticsResponse": {
+        "properties": {
+          "total_attempts": {
+            "type": "integer",
+            "title": "Total Attempts"
+          },
+          "unique_quizzes": {
+            "type": "integer",
+            "title": "Unique Quizzes"
+          },
+          "average_score": {
+            "type": "number",
+            "title": "Average Score"
+          },
+          "best_score": {
+            "type": "number",
+            "title": "Best Score"
+          },
+          "pass_rate": {
+            "type": "number",
+            "title": "Pass Rate"
+          },
+          "retry_attempts": {
+            "type": "integer",
+            "title": "Retry Attempts"
+          },
+          "retry_success_rate": {
+            "type": "number",
+            "title": "Retry Success Rate"
+          },
+          "first_attempt_pass_rate": {
+            "type": "number",
+            "title": "First Attempt Pass Rate"
+          },
+          "improved_quiz_count": {
+            "type": "integer",
+            "title": "Improved Quiz Count"
+          },
+          "total_xp_from_quizzes": {
+            "type": "integer",
+            "title": "Total Xp From Quizzes"
+          },
+          "topic_analytics": {
+            "items": {
+              "$ref": "#/components/schemas/QuizTopicAnalytics"
+            },
+            "type": "array",
+            "title": "Topic Analytics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_attempts",
+          "unique_quizzes",
+          "average_score",
+          "best_score",
+          "pass_rate",
+          "retry_attempts",
+          "retry_success_rate",
+          "first_attempt_pass_rate",
+          "improved_quiz_count",
+          "total_xp_from_quizzes"
+        ],
+        "title": "QuizAnalyticsResponse"
+      },
+      "QuizAnswerInput": {
+        "properties": {
+          "question_id": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Question Id"
+          },
+          "answer": {
+            "title": "Answer"
+          },
+          "time_spent_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Spent Seconds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_id",
+          "answer"
+        ],
+        "title": "QuizAnswerInput"
+      },
+      "QuizAttemptDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "quiz_id": {
+            "type": "string",
+            "title": "Quiz Id"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "source_lesson_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Lesson Id"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "is_retry": {
+            "type": "boolean",
+            "title": "Is Retry"
+          },
+          "total_questions": {
+            "type": "integer",
+            "title": "Total Questions"
+          },
+          "answered_questions": {
+            "type": "integer",
+            "title": "Answered Questions"
+          },
+          "correct_answers": {
+            "type": "integer",
+            "title": "Correct Answers"
+          },
+          "score_percent": {
+            "type": "number",
+            "title": "Score Percent"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "xp_awarded": {
+            "type": "integer",
+            "title": "Xp Awarded"
+          },
+          "current_level_after": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Level After"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "passing_score": {
+            "type": "number",
+            "title": "Passing Score"
+          },
+          "time_spent_seconds": {
+            "type": "integer",
+            "title": "Time Spent Seconds"
+          },
+          "unanswered_question_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Unanswered Question Ids"
+          },
+          "submitted_answers": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Submitted Answers"
+          },
+          "per_question_results": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionEvaluationResult"
+            },
+            "type": "array",
+            "title": "Per Question Results"
+          },
+          "performance_by_type": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Performance By Type"
+          },
+          "performance_by_subtopic": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Performance By Subtopic"
+          },
+          "recommendations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Recommendations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "quiz_id",
+          "topic",
+          "attempt_number",
+          "is_retry",
+          "total_questions",
+          "answered_questions",
+          "correct_answers",
+          "score_percent",
+          "passed",
+          "xp_awarded",
+          "created_at",
+          "passing_score",
+          "time_spent_seconds"
+        ],
+        "title": "QuizAttemptDetail"
+      },
+      "QuizAttemptSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "quiz_id": {
+            "type": "string",
+            "title": "Quiz Id"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "source_lesson_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Lesson Id"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "is_retry": {
+            "type": "boolean",
+            "title": "Is Retry"
+          },
+          "total_questions": {
+            "type": "integer",
+            "title": "Total Questions"
+          },
+          "answered_questions": {
+            "type": "integer",
+            "title": "Answered Questions"
+          },
+          "correct_answers": {
+            "type": "integer",
+            "title": "Correct Answers"
+          },
+          "score_percent": {
+            "type": "number",
+            "title": "Score Percent"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "xp_awarded": {
+            "type": "integer",
+            "title": "Xp Awarded"
+          },
+          "current_level_after": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Level After"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "quiz_id",
+          "topic",
+          "attempt_number",
+          "is_retry",
+          "total_questions",
+          "answered_questions",
+          "correct_answers",
+          "score_percent",
+          "passed",
+          "xp_awarded",
+          "created_at"
+        ],
+        "title": "QuizAttemptSummary"
+      },
+      "QuizEvaluationRequest": {
+        "properties": {
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/QuizQuestion"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Questions"
+          },
+          "answers": {
+            "items": {
+              "$ref": "#/components/schemas/QuizAnswerInput"
+            },
+            "type": "array",
+            "title": "Answers"
+          },
+          "quiz_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiz Id",
+            "description": "Stable quiz identifier used for retry tracking"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic",
+            "description": "Optional topic override for analytics grouping"
+          },
+          "source_lesson_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Lesson Id",
+            "description": "Optional lesson identifier if quiz came from a saved lesson"
+          },
+          "passing_score": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Passing Score",
+            "default": 70
+          },
+          "case_sensitive": {
+            "type": "boolean",
+            "title": "Case Sensitive",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "questions"
+        ],
+        "title": "QuizEvaluationRequest"
+      },
+      "QuizEvaluationResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "attempt_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attempt Id"
+          },
+          "quiz_id": {
+            "type": "string",
+            "title": "Quiz Id"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number",
+            "default": 1
+          },
+          "is_retry": {
+            "type": "boolean",
+            "title": "Is Retry",
+            "default": false
+          },
+          "previous_best_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Best Score"
+          },
+          "total_questions": {
+            "type": "integer",
+            "title": "Total Questions"
+          },
+          "answered_questions": {
+            "type": "integer",
+            "title": "Answered Questions"
+          },
+          "correct_answers": {
+            "type": "integer",
+            "title": "Correct Answers"
+          },
+          "score_percent": {
+            "type": "number",
+            "title": "Score Percent"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "unanswered_question_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Unanswered Question Ids"
+          },
+          "per_question_results": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionEvaluationResult"
+            },
+            "type": "array",
+            "title": "Per Question Results"
+          },
+          "performance_by_type": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Performance By Type"
+          },
+          "performance_by_subtopic": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Performance By Subtopic"
+          },
+          "recommendations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Recommendations"
+          },
+          "gamification": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gamification"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "quiz_id",
+          "topic",
+          "total_questions",
+          "answered_questions",
+          "correct_answers",
+          "score_percent",
+          "passed",
+          "unanswered_question_ids",
+          "per_question_results",
+          "performance_by_type",
+          "performance_by_subtopic"
+        ],
+        "title": "QuizEvaluationResponse"
+      },
+      "QuizGenerationRequest": {
+        "properties": {
+          "topic": {
+            "type": "string",
+            "minLength": 2,
+            "title": "Topic",
+            "description": "Primary quiz topic"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject",
+            "description": "Subject/domain. Defaults to topic when omitted"
+          },
+          "subtopics": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Subtopics"
+          },
+          "learning_objectives": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Learning Objectives"
+          },
+          "student_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Student Name",
+            "description": "Optional learner display name"
+          },
+          "current_level": {
+            "type": "string",
+            "enum": [
+              "beginner",
+              "intermediate",
+              "advanced"
+            ],
+            "title": "Current Level",
+            "default": "intermediate"
+          },
+          "learning_style": {
+            "type": "string",
+            "enum": [
+              "visual",
+              "auditory",
+              "kinesthetic",
+              "reading/writing"
+            ],
+            "title": "Learning Style",
+            "default": "visual"
+          },
+          "learning_pace": {
+            "type": "string",
+            "enum": [
+              "slow",
+              "normal",
+              "fast"
+            ],
+            "title": "Learning Pace",
+            "default": "normal"
+          },
+          "knowledge_gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Knowledge Gaps"
+          },
+          "strengths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Strengths"
+          },
+          "max_questions": {
+            "type": "integer",
+            "maximum": 50,
+            "minimum": 1,
+            "title": "Max Questions",
+            "default": 10
+          },
+          "preferred_question_types": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "multiple_choice",
+                "fill_blank",
+                "true_false"
+              ]
+            },
+            "type": "array",
+            "title": "Preferred Question Types"
+          },
+          "daily_study_time_minutes": {
+            "type": "integer",
+            "maximum": 300,
+            "minimum": 5,
+            "title": "Daily Study Time Minutes",
+            "default": 30
+          },
+          "include_debug": {
+            "type": "boolean",
+            "title": "Include Debug",
+            "description": "Include workflow execution debug payload",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "topic"
+        ],
+        "title": "QuizGenerationRequest"
+      },
+      "QuizGenerationResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "quiz_id": {
+            "type": "string",
+            "title": "Quiz Id"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "quiz": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Quiz"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/QuizQuestion"
+            },
+            "type": "array",
+            "title": "Questions"
+          },
+          "total_questions": {
+            "type": "integer",
+            "title": "Total Questions"
+          },
+          "question_types": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Question Types"
+          },
+          "difficulty_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Difficulty Distribution"
+          },
+          "estimated_duration_minutes": {
+            "type": "integer",
+            "title": "Estimated Duration Minutes"
+          },
+          "quality_score": {
+            "type": "number",
+            "title": "Quality Score"
+          },
+          "quality_passed": {
+            "type": "boolean",
+            "title": "Quality Passed"
+          },
+          "execution_summary": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Execution Summary"
+          },
+          "workflow_issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Workflow Issues"
+          },
+          "workflow_debug": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workflow Debug"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "quiz_id",
+          "topic",
+          "quiz",
+          "questions",
+          "total_questions",
+          "question_types",
+          "difficulty_distribution",
+          "estimated_duration_minutes",
+          "quality_score",
+          "quality_passed",
+          "execution_summary"
+        ],
+        "title": "QuizGenerationResponse"
+      },
+      "QuizQuestion": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "multiple_choice",
+              "fill_blank",
+              "true_false"
+            ],
+            "title": "Type"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "subtopic": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtopic"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "correct_answer": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correct Answer"
+          },
+          "correct_answers": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correct Answers"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          },
+          "learning_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Learning Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "question"
+        ],
+        "title": "QuizQuestion"
+      },
+      "QuizTopicAnalytics": {
+        "properties": {
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "average_score": {
+            "type": "number",
+            "title": "Average Score"
+          },
+          "best_score": {
+            "type": "number",
+            "title": "Best Score"
+          },
+          "pass_rate": {
+            "type": "number",
+            "title": "Pass Rate"
+          },
+          "retry_attempts": {
+            "type": "integer",
+            "title": "Retry Attempts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "topic",
+          "attempts",
+          "average_score",
+          "best_score",
+          "pass_rate",
+          "retry_attempts"
+        ],
+        "title": "QuizTopicAnalytics"
+      },
+      "RecommendationRequest": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Code snippet or English text to analyze"
+          },
+          "content_type": {
+            "type": "string",
+            "title": "Content Type",
+            "description": "Type of content: 'code' or 'english'"
+          },
+          "user_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Context",
+            "description": "User's skill level, goals, or additional context"
+          },
+          "trigger_lines": {
+            "type": "integer",
+            "title": "Trigger Lines",
+            "description": "Minimum lines to trigger recommendation",
+            "default": 10
+          }
+        },
+        "type": "object",
+        "required": [
+          "content",
+          "content_type"
+        ],
+        "title": "RecommendationRequest",
+        "description": "Request for generating recommendations"
+      },
       "ReviewSubmit": {
         "properties": {
           "grade": {
@@ -1696,6 +5943,139 @@
         ],
         "title": "ReviewSubmit"
       },
+      "SavedLessonDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "last_opened_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Opened At"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/LessonProgressSnapshot"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/LessonPage"
+            },
+            "type": "array",
+            "title": "Pages"
+          },
+          "navigation": {
+            "$ref": "#/components/schemas/LessonNavigation"
+          },
+          "source_documents": {
+            "items": {
+              "$ref": "#/components/schemas/LessonSourceDocument"
+            },
+            "type": "array",
+            "title": "Source Documents"
+          },
+          "execution_summary": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Execution Summary"
+          },
+          "quality_metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Quality Metrics"
+          },
+          "workflow_issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Workflow Issues"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "topic",
+          "created_at",
+          "updated_at",
+          "last_opened_at",
+          "progress",
+          "prompt",
+          "pages",
+          "navigation"
+        ],
+        "title": "SavedLessonDetail"
+      },
+      "SavedLessonSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "last_opened_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Opened At"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/LessonProgressSnapshot"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "topic",
+          "created_at",
+          "updated_at",
+          "last_opened_at",
+          "progress"
+        ],
+        "title": "SavedLessonSummary"
+      },
       "SubscriptionUpdate": {
         "properties": {
           "new_tier": {
@@ -1708,6 +6088,105 @@
           "new_tier"
         ],
         "title": "SubscriptionUpdate"
+      },
+      "TestCaseResult": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "input": {
+            "type": "string",
+            "title": "Input"
+          },
+          "expected_output": {
+            "type": "string",
+            "title": "Expected Output"
+          },
+          "actual_output": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Output"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "stderr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stderr"
+          },
+          "compile_output": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compile Output"
+          },
+          "time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time"
+          },
+          "memory": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory"
+          },
+          "is_hidden": {
+            "type": "boolean",
+            "title": "Is Hidden",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "index",
+          "input",
+          "expected_output",
+          "passed"
+        ],
+        "title": "TestCaseResult"
       },
       "Token": {
         "properties": {

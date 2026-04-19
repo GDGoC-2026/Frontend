@@ -1,22 +1,23 @@
 "use client";
 
 import {
-  DashboardScreen,
   DocsExplorerScreen,
   FlashcardScreen,
   PathScreen,
-  PracticeChallengeScreen,
-  ProfileScreen,
-  QuizScreen,
   SubjectSelectScreen,
 } from "@/app/_components/cyber-screens";
+import {
+  HomeLearningWorkspace,
+  ProfileLearningWorkspace,
+  PracticeLearningWorkspace,
+  ReviewLearningWorkspace,
+} from "@/app/_components/learning-workspace";
 import { useTheme } from "@/app/_components/theme-provider";
-import { useSessionQuery } from "@/hooks/use-auth";
 
 export function HomeRoutePage() {
   const { theme } = useTheme();
 
-  return <DashboardScreen theme={theme} />;
+  return <HomeLearningWorkspace theme={theme} />;
 }
 
 export function SubjectsRoutePage() {
@@ -40,7 +41,7 @@ export function LearnDocsRoutePage() {
 export function PracticeChallengeRoutePage() {
   const { theme } = useTheme();
 
-  return <PracticeChallengeScreen theme={theme} />;
+  return <PracticeLearningWorkspace theme={theme} />;
 }
 
 export function PracticeFlashcardsRoutePage() {
@@ -49,18 +50,12 @@ export function PracticeFlashcardsRoutePage() {
 
 export function ProfileRoutePage() {
   const { theme } = useTheme();
-  const session = useSessionQuery();
 
-  return (
-    <ProfileScreen
-      errorMessage={session.error instanceof Error ? session.error.message : null}
-      isLoading={session.isPending}
-      theme={theme}
-      user={session.data}
-    />
-  );
+  return <ProfileLearningWorkspace theme={theme} />;
 }
 
 export function ReviewQuizRoutePage() {
-  return <QuizScreen />;
+  const { theme } = useTheme();
+
+  return <ReviewLearningWorkspace theme={theme} />;
 }

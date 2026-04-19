@@ -119,6 +119,125 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/chatbot/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ask Copilot */
+        post: operations["ask_copilot_api_v1_chatbot_ask_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/coding-problems/{problem_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Coding Problem */
+        get: operations["get_coding_problem_api_v1_coding_problems__problem_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/coding-problems/{problem_id}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Coding Problem Attempts */
+        get: operations["list_coding_problem_attempts_api_v1_coding_problems__problem_id__attempts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/coding-problems/{problem_id}/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run Coding Problem */
+        post: operations["run_coding_problem_api_v1_coding_problems__problem_id__run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/coding-problems/{problem_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Coding Problem */
+        post: operations["submit_coding_problem_api_v1_coding_problems__problem_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/coding-problems/{problem_id}/submit/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Coding Problem Stream */
+        post: operations["submit_coding_problem_stream_api_v1_coding_problems__problem_id__submit_stream_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/documents/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload General Document */
+        post: operations["upload_general_document_api_v1_documents_upload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/gamification/leaderboard": {
         parameters: {
             query?: never;
@@ -193,6 +312,132 @@ export interface paths {
          * @description Save code state to resume later.
          */
         post: operations["save_code_session_api_v1_judge_sessions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/judge/sessions/{problem_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Coding Problem Session
+         * @description Get saved code session for a generated coding problem.
+         */
+        get: operations["get_coding_problem_session_api_v1_judge_sessions__problem_id__get"];
+        /**
+         * Upsert Coding Problem Session
+         * @description Create or update code session for a generated coding problem.
+         */
+        put: operations["upsert_coding_problem_session_api_v1_judge_sessions__problem_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/knowledge/graph": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get graph data for visualization
+         * @description Retrieve the complete knowledge graph for the user.
+         *
+         *     Returns nodes and edges in JSON format suitable for visualization
+         *     with libraries like React Flow, D3.js, or vis.js.
+         */
+        get: operations["get_graph_api_v1_knowledge_graph_get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete user's knowledge graph
+         * @description Delete the user's entire knowledge graph and stored data.
+         *
+         *     This action is irreversible. The knowledge base will be reset.
+         */
+        delete: operations["delete_graph_api_v1_knowledge_graph_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/knowledge/ingest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ingest raw notes into knowledge graph
+         * @description Process raw notes through Formatter Agent and ingest into LightRAG.
+         *
+         *     Flow:
+         *     1. Receive raw notes from user
+         *     2. Format and enhance using Gemini Formatter Agent
+         *     3. Ingest formatted content into LightRAG knowledge graph
+         *     4. Return formatted content for user review
+         */
+        post: operations["ingest_notes_api_v1_knowledge_ingest_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/knowledge/ingest-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get ingestion status for notes and graph
+         * @description Retrieve ingestion pipeline status for the current user,
+         *     including counts and per-document processing state.
+         */
+        get: operations["get_ingest_status_api_v1_knowledge_ingest_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/knowledge/query": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Query knowledge graph
+         * @description Query the user's knowledge graph using LightRAG.
+         *
+         *     Supported modes:
+         *     - `local`: Search local context only
+         *     - `global`: Search entire graph with global context
+         *     - `hybrid`: Combine local and global for best results
+         *     - `mix`: Mix mode with custom parameters
+         */
+        post: operations["query_knowledge_api_v1_knowledge_query_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -287,6 +532,163 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/lessons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Saved Lessons
+         * @description List persisted lessons for the current user, newest first.
+         */
+        get: operations["list_saved_lessons_api_v1_lessons_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/{lesson_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Saved Lesson
+         * @description Get a persisted lesson in full detail for rendering and resume.
+         */
+        get: operations["get_saved_lesson_api_v1_lessons__lesson_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/{lesson_id}/coding-problems": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Lesson Coding Problems */
+        get: operations["list_lesson_coding_problems_api_v1_lessons__lesson_id__coding_problems_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/{lesson_id}/coding-problems/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate Coding Problems For Lesson */
+        post: operations["generate_coding_problems_for_lesson_api_v1_lessons__lesson_id__coding_problems_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/{lesson_id}/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Saved Lesson Progress
+         * @description Update resume progress (current page and completed pages) for a saved lesson.
+         */
+        patch: operations["update_saved_lesson_progress_api_v1_lessons__lesson_id__progress_patch"];
+        trace?: never;
+    };
+    "/api/v1/lessons/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Lesson
+         * @description Generate a multi-page lesson from user prompt and optional uploaded documents.
+         *
+         *     The response contains a pages array for frontend navigation between lesson sections
+         *     (overview, theory, flashcards, quiz, and optional mindmap/resources).
+         */
+        post: operations["generate_lesson_api_v1_lessons_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lessons Health
+         * @description Health check for lesson-generation endpoint and orchestrator wiring.
+         */
+        get: operations["lessons_health_api_v1_lessons_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Save Lesson
+         * @description Persist a generated lesson so the user can reopen it later.
+         */
+        post: operations["save_lesson_api_v1_lessons_save_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notes/": {
         parameters: {
             query?: never;
@@ -303,23 +705,6 @@ export interface paths {
         /** Create Note */
         post: operations["create_note_api_v1_notes__post"];
         delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/notes/{folder_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Delete Folder */
-        delete: operations["delete_folder_api_v1_notes__folder_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -379,7 +764,8 @@ export interface paths {
         get: operations["get_folder_details_api_v1_notes_folders__folder_id__get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** Delete Folder */
+        delete: operations["delete_folder_api_v1_notes_folders__folder_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -433,6 +819,260 @@ export interface paths {
         put?: never;
         /** Subscribe Push */
         post: operations["subscribe_push_api_v1_notifications_subscribe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Quiz Analytics
+         * @description Return aggregate quiz analytics for the authenticated user.
+         */
+        get: operations["get_quiz_analytics_api_v1_quiz_analytics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/analytics/lessons/{source_lesson_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Lesson Quiz Analytics
+         * @description Return quiz analytics scoped to a single saved lesson.
+         */
+        get: operations["get_lesson_quiz_analytics_api_v1_quiz_analytics_lessons__source_lesson_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Quiz Attempts
+         * @description Return quiz attempt history for the authenticated user.
+         */
+        get: operations["list_quiz_attempts_api_v1_quiz_attempts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/attempts/{attempt_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Quiz Attempt
+         * @description Return full details of a single quiz attempt.
+         */
+        get: operations["get_quiz_attempt_api_v1_quiz_attempts__attempt_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Evaluate Quiz
+         * @description Evaluate submitted quiz answers and return detailed scoring diagnostics.
+         */
+        post: operations["evaluate_quiz_api_v1_quiz_evaluate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Generate Quiz
+         * @description Generate a personalized quiz by routing the request through ExerciseOrchestrator.
+         */
+        post: operations["generate_quiz_api_v1_quiz_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Quiz Health
+         * @description Health check for quiz service and orchestrator integration.
+         */
+        get: operations["quiz_health_api_v1_quiz_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/quiz/retries/{quiz_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Quiz Retries
+         * @description Return all attempts for a quiz id to track retries and progress over time.
+         */
+        get: operations["get_quiz_retries_api_v1_quiz_retries__quiz_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recommendations/add-to-rag": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Content To Rag
+         * @description Add user's content to RAG knowledge base for future recommendations.
+         *
+         *     This helps build a personalized knowledge base that improves recommendations over time.
+         *
+         *     Args:
+         *         request: Content to add to RAG
+         *         current_user: Authenticated user
+         *
+         *     Returns:
+         *         AddToRAGResponse with success status
+         *
+         *     Example:
+         *         POST /api/v1/recommendations/add-to-rag
+         *         {
+         *             "content": "Function to process CSV files efficiently",
+         *             "content_type": "code",
+         *             "source_type": "user_note"
+         *         }
+         */
+        post: operations["add_content_to_rag_api_v1_recommendations_add_to_rag_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recommendations/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Recommendation Health
+         * @description Check if recommendation service is available
+         */
+        get: operations["recommendation_health_api_v1_recommendations_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recommendations/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Stream Recommendations
+         * @description Stream real-time AI recommendations for user's code or English text.
+         *
+         *     Uses Server-Sent Events (SSE) to stream recommendations as they're generated.
+         *
+         *     Args:
+         *         request: RecommendationRequest containing content and type
+         *         current_user: Authenticated user
+         *
+         *     Returns:
+         *         StreamingResponse with SSE recommendations
+         *
+         *     Example:
+         *         POST /api/v1/recommendations/stream
+         *         {
+         *             "content": "def hello(name):\n    print(f'Hello {name}')",
+         *             "content_type": "code",
+         *             "user_context": "Python beginner"
+         *         }
+         */
+        post: operations["stream_recommendations_api_v1_recommendations_stream_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -497,17 +1137,176 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AddToRAGRequest
+         * @description Request to add content to RAG knowledge base
+         */
+        AddToRAGRequest: {
+            /**
+             * Content
+             * @description Content to add
+             */
+            content: string;
+            /**
+             * Content Type
+             * @description 'code' or 'english'
+             */
+            content_type: string;
+            /**
+             * Metadata
+             * @description Additional metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Source Type
+             * @description Source type: 'user_note', 'tip', 'resource', etc.
+             * @default user_note
+             */
+            source_type: string;
+        };
+        /**
+         * AddToRAGResponse
+         * @description Response from adding to RAG
+         */
+        AddToRAGResponse: {
+            /** Content Id */
+            content_id?: number | null;
+            /** Message */
+            message: string;
+            /** Success */
+            success: boolean;
+        };
+        /** Body_generate_lesson_api_v1_lessons_generate_post */
+        Body_generate_lesson_api_v1_lessons_generate_post: {
+            /**
+             * Current Level
+             * @default intermediate
+             */
+            current_level: string;
+            /**
+             * Daily Study Time Minutes
+             * @default 30
+             */
+            daily_study_time_minutes: number;
+            /** Files */
+            files?: File[] | null;
+            /**
+             * Include Answer Key
+             * @default false
+             */
+            include_answer_key: boolean;
+            /** Include Coding Exercises */
+            include_coding_exercises?: boolean | null;
+            /**
+             * Include Mindmap
+             * @default false
+             */
+            include_mindmap: boolean;
+            /** Learning Objectives */
+            learning_objectives?: string | null;
+            /**
+             * Learning Pace
+             * @default normal
+             */
+            learning_pace: string;
+            /**
+             * Learning Style
+             * @default reading/writing
+             */
+            learning_style: string;
+            /**
+             * Max Quiz Questions
+             * @default 10
+             */
+            max_quiz_questions: number;
+            /** Prompt */
+            prompt: string;
+            /** Quiz Question Types */
+            quiz_question_types?: string | null;
+            /** Subject */
+            subject?: string | null;
+            /** Subtopics */
+            subtopics?: string | null;
+            /** Topic */
+            topic?: string | null;
+        };
+        /** Body_upload_general_document_api_v1_documents_upload_post */
+        Body_upload_general_document_api_v1_documents_upload_post: {
+            /** File */
+            file: File;
+        };
         /** Body_upload_markdown_note_api_v1_notes_upload_post */
         Body_upload_markdown_note_api_v1_notes_upload_post: {
             /** File */
-            file: string;
+            file: File;
+        };
+        /** ChatRequest */
+        ChatRequest: {
+            /**
+             * Message
+             * @description User question for the learning copilot
+             */
+            message: string;
+        };
+        /** ChatResponse */
+        ChatResponse: {
+            /** Mode */
+            mode: string;
+            /** Reply */
+            reply: string;
+        };
+        /** CodeRunRequest */
+        CodeRunRequest: {
+            /** Language Id */
+            language_id?: number | null;
+            /** Source Code */
+            source_code: string;
+            /** Stdin */
+            stdin?: string | null;
+        };
+        /** CodeRunResponse */
+        CodeRunResponse: {
+            /**
+             * Attempt Id
+             * Format: uuid
+             */
+            attempt_id: string;
+            /** Compile Output */
+            compile_output?: string | null;
+            /** Memory */
+            memory?: number | null;
+            /** Raw Result */
+            raw_result?: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status?: string | null;
+            /** Stderr */
+            stderr?: string | null;
+            /** Stdout */
+            stdout?: string | null;
+            /** Success */
+            success: boolean;
+            /** Time */
+            time?: string | null;
         };
         /** CodeSessionSave */
         CodeSessionSave: {
+            /** Coding Problem Id */
+            coding_problem_id?: string | null;
             /** Current Code */
             current_code: string;
             /** Exercise Id */
             exercise_id?: string | null;
+            /** Language Id */
+            language_id: number;
+        };
+        /** CodeSessionUpdate */
+        CodeSessionUpdate: {
+            /** Current Code */
+            current_code: string;
             /** Language Id */
             language_id: number;
         };
@@ -522,6 +1321,184 @@ export interface components {
             language_id: number;
             /** Source Code */
             source_code: string;
+        };
+        /** CodeSubmitRequest */
+        CodeSubmitRequest: {
+            /** Language Id */
+            language_id?: number | null;
+            /** Source Code */
+            source_code: string;
+        };
+        /** CodeSubmitResponse */
+        CodeSubmitResponse: {
+            /**
+             * Attempt Id
+             * Format: uuid
+             */
+            attempt_id: string;
+            /** Passed */
+            passed: boolean;
+            /** Passed Tests */
+            passed_tests: number;
+            /** Results */
+            results?: components["schemas"]["TestCaseResult"][];
+            /** Status */
+            status?: string | null;
+            /** Success */
+            success: boolean;
+            /** Total Tests */
+            total_tests: number;
+        };
+        /** CodingAttemptsResponse */
+        CodingAttemptsResponse: {
+            /** Attempts */
+            attempts?: components["schemas"]["CodingAttemptSummary"][];
+        };
+        /** CodingAttemptSummary */
+        CodingAttemptSummary: {
+            /**
+             * Coding Problem Id
+             * Format: uuid
+             */
+            coding_problem_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Language Id */
+            language_id: number;
+            /** Mode */
+            mode: string;
+            /** Overall Status */
+            overall_status?: string | null;
+            /** Passed */
+            passed: boolean;
+            /** Passed Tests */
+            passed_tests: number;
+            /** Total Tests */
+            total_tests: number;
+        };
+        /** CodingProblemDetail */
+        CodingProblemDetail: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Difficulty */
+            difficulty?: string | null;
+            /** Hints */
+            hints?: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Include In Lesson */
+            include_in_lesson: boolean;
+            /** Instructions */
+            instructions: string;
+            /** Language */
+            language: string;
+            /** Language Id */
+            language_id: number;
+            /** Solution Code */
+            solution_code?: string | null;
+            /** Source Lesson Id */
+            source_lesson_id?: string | null;
+            /** Starter Code */
+            starter_code: string;
+            /** Test Cases */
+            test_cases?: components["schemas"]["CodingTestCase"][];
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** CodingProblemGenerateRequest */
+        CodingProblemGenerateRequest: {
+            /**
+             * Decision Mode
+             * @default auto
+             * @enum {string}
+             */
+            decision_mode: "auto" | "force" | "skip";
+            /**
+             * Max Problems
+             * @default 2
+             */
+            max_problems: number;
+        };
+        /** CodingProblemsGenerationResponse */
+        CodingProblemsGenerationResponse: {
+            /** Generated Count */
+            generated_count: number;
+            /** Include Coding Exercises */
+            include_coding_exercises: boolean;
+            /** Problems */
+            problems?: components["schemas"]["CodingProblemSummary"][];
+            /** Reason */
+            reason: string;
+            /** Success */
+            success: boolean;
+        };
+        /** CodingProblemSummary */
+        CodingProblemSummary: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Difficulty */
+            difficulty?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Include In Lesson */
+            include_in_lesson: boolean;
+            /** Language */
+            language: string;
+            /** Language Id */
+            language_id: number;
+            /** Source Lesson Id */
+            source_lesson_id?: string | null;
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** CodingTestCase */
+        CodingTestCase: {
+            /** Expected Output */
+            expected_output: string;
+            /**
+             * Input
+             * @default
+             */
+            input: string;
+            /**
+             * Is Hidden
+             * @default false
+             */
+            is_hidden: boolean;
         };
         /** FlashcardCreateUpdate */
         FlashcardCreateUpdate: {
@@ -593,10 +1570,290 @@ export interface components {
             /** Parent Id */
             parent_id?: string | null;
         };
+        /**
+         * GraphDataResponse
+         * @description Response schema for complete graph data visualization.
+         */
+        GraphDataResponse: {
+            /** Edges */
+            edges: components["schemas"]["GraphEdge"][];
+            /** Nodes */
+            nodes: components["schemas"]["GraphNode"][];
+        };
+        /**
+         * GraphEdge
+         * @description Represents an edge/relationship in the knowledge graph.
+         */
+        GraphEdge: {
+            /** Label */
+            label: string;
+            /**
+             * Properties
+             * @default {}
+             */
+            properties: {
+                [key: string]: unknown;
+            };
+            /** Source */
+            source: string;
+            /** Target */
+            target: string;
+        };
+        /**
+         * GraphNode
+         * @description Represents a node in the knowledge graph.
+         */
+        GraphNode: {
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+            /**
+             * Properties
+             * @default {}
+             */
+            properties: {
+                [key: string]: unknown;
+            };
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * IngestDocumentStatus
+         * @description Represents ingestion status for one document in LightRAG pipeline.
+         */
+        IngestDocumentStatus: {
+            /**
+             * Chunks Count
+             * @default 0
+             */
+            chunks_count: number;
+            /** Content Summary */
+            content_summary?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Doc Id */
+            doc_id: string;
+            /** Error */
+            error?: string | null;
+            /** Status */
+            status: string;
+            /** Updated At */
+            updated_at?: string | null;
+        };
+        /**
+         * IngestStatusResponse
+         * @description Aggregated ingestion status for the current user.
+         */
+        IngestStatusResponse: {
+            /** Documents */
+            documents: components["schemas"]["IngestDocumentStatus"][];
+            /** Failed Docs */
+            failed_docs: number;
+            /** Graph Edges */
+            graph_edges: number;
+            /** Graph Nodes */
+            graph_nodes: number;
+            /** Processed Docs */
+            processed_docs: number;
+            /** Processing Docs */
+            processing_docs: number;
+            /** Total Docs */
+            total_docs: number;
+        };
+        /**
+         * KnowledgeQueryRequest
+         * @description Request schema for querying the knowledge graph.
+         */
+        KnowledgeQueryRequest: {
+            /**
+             * Mode
+             * @default hybrid
+             */
+            mode: string;
+            /** Question */
+            question: string;
+        };
+        /**
+         * KnowledgeQueryResponse
+         * @description Response schema for knowledge query results.
+         */
+        KnowledgeQueryResponse: {
+            /** Answer */
+            answer: string;
+            /** Mode */
+            mode: string;
+        };
+        /** LessonGenerationResponse */
+        LessonGenerationResponse: {
+            /** Execution Summary */
+            execution_summary?: {
+                [key: string]: unknown;
+            };
+            /** Lesson Id */
+            lesson_id: string;
+            navigation: components["schemas"]["LessonNavigation"];
+            /** Pages */
+            pages: components["schemas"]["LessonPage"][];
+            /** Prompt */
+            prompt: string;
+            /** Quality Metrics */
+            quality_metrics?: {
+                [key: string]: unknown;
+            };
+            /** Source Documents */
+            source_documents?: components["schemas"]["LessonSourceDocument"][];
+            /** Success */
+            success: boolean;
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /** Workflow Issues */
+            workflow_issues?: string[];
+        };
+        /** LessonNavigation */
+        LessonNavigation: {
+            /** Default Page Id */
+            default_page_id: string;
+            /** Page Order */
+            page_order: string[];
+            /** Total Pages */
+            total_pages: number;
+        };
+        /** LessonPage */
+        LessonPage: {
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            };
+            /** Description */
+            description?: string | null;
+            /** Estimated Time Minutes */
+            estimated_time_minutes?: number | null;
+            /** Order */
+            order: number;
+            /** Page Id */
+            page_id: string;
+            /**
+             * Page Type
+             * @enum {string}
+             */
+            page_type: "overview" | "theory" | "flashcards" | "quiz" | "coding" | "mindmap" | "resources";
+            /** Title */
+            title: string;
+        };
+        /** LessonProgressSnapshot */
+        LessonProgressSnapshot: {
+            /** Completed Page Ids */
+            completed_page_ids?: string[];
+            /** Current Page Id */
+            current_page_id?: string | null;
+            /** Progress Percent */
+            progress_percent: number;
+            /** Total Pages */
+            total_pages: number;
+        };
+        /** LessonProgressUpdateRequest */
+        LessonProgressUpdateRequest: {
+            /** Completed Page Ids */
+            completed_page_ids?: string[] | null;
+            /** Current Page Id */
+            current_page_id?: string | null;
+        };
+        /** LessonQuizAnalyticsItem */
+        LessonQuizAnalyticsItem: {
+            /** Attempts */
+            attempts: number;
+            /** Average Score */
+            average_score: number;
+            /** Best Score */
+            best_score: number;
+            /**
+             * Latest Attempt At
+             * Format: date-time
+             */
+            latest_attempt_at: string;
+            /** Pass Rate */
+            pass_rate: number;
+            /** Quiz Id */
+            quiz_id: string;
+            /** Retry Attempts */
+            retry_attempts: number;
+            /** Topic */
+            topic: string;
+        };
+        /** LessonQuizAnalyticsResponse */
+        LessonQuizAnalyticsResponse: {
+            /** Average Score */
+            average_score: number;
+            /** Best Score */
+            best_score: number;
+            /** First Attempt Pass Rate */
+            first_attempt_pass_rate: number;
+            /** Improved Quiz Count */
+            improved_quiz_count: number;
+            /** Pass Rate */
+            pass_rate: number;
+            /** Quizzes */
+            quizzes?: components["schemas"]["LessonQuizAnalyticsItem"][];
+            /** Retry Attempts */
+            retry_attempts: number;
+            /** Retry Success Rate */
+            retry_success_rate: number;
+            /**
+             * Source Lesson Id
+             * Format: uuid
+             */
+            source_lesson_id: string;
+            /** Total Attempts */
+            total_attempts: number;
+            /** Total Xp From Quizzes */
+            total_xp_from_quizzes: number;
+            /** Unique Quizzes */
+            unique_quizzes: number;
+        };
+        /** LessonSaveRequest */
+        LessonSaveRequest: {
+            /** Completed Page Ids */
+            completed_page_ids?: string[];
+            /** Current Page Id */
+            current_page_id?: string | null;
+            /** Execution Summary */
+            execution_summary?: {
+                [key: string]: unknown;
+            };
+            navigation: components["schemas"]["LessonNavigation"];
+            /** Pages */
+            pages: components["schemas"]["LessonPage"][];
+            /** Prompt */
+            prompt: string;
+            /** Quality Metrics */
+            quality_metrics?: {
+                [key: string]: unknown;
+            };
+            /** Source Documents */
+            source_documents?: components["schemas"]["LessonSourceDocument"][];
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /** Workflow Issues */
+            workflow_issues?: string[];
+        };
+        /** LessonSourceDocument */
+        LessonSourceDocument: {
+            /** Excerpt */
+            excerpt?: string | null;
+            /** Extracted Characters */
+            extracted_characters: number;
+            /** File Name */
+            file_name: string;
+            /** File Type */
+            file_type: string;
         };
         /** NoteCreate */
         NoteCreate: {
@@ -606,6 +1863,28 @@ export interface components {
             folder_id?: string | null;
             /** Title */
             title: string;
+        };
+        /**
+         * NoteIngestRequest
+         * @description Request schema for ingesting raw notes into LightRAG.
+         */
+        NoteIngestRequest: {
+            /** Content */
+            content: string;
+            /** Title */
+            title?: string | null;
+        };
+        /**
+         * NoteIngestResponse
+         * @description Response schema after note ingestion and formatting.
+         */
+        NoteIngestResponse: {
+            /** Formatted Content */
+            formatted_content: string;
+            /** Message */
+            message: string;
+            /** Original Content */
+            original_content: string;
         };
         /** NoteResponse */
         NoteResponse: {
@@ -651,15 +1930,523 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /** QuestionEvaluationResult */
+        QuestionEvaluationResult: {
+            /** Expected Answer */
+            expected_answer?: unknown;
+            /** Explanation */
+            explanation?: string | null;
+            /** Is Correct */
+            is_correct: boolean;
+            /** Question Id */
+            question_id: number;
+            /** Question Type */
+            question_type: string;
+            /** Subtopic */
+            subtopic?: string | null;
+            /** User Answer */
+            user_answer?: unknown;
+        };
+        /** QuizAnalyticsResponse */
+        QuizAnalyticsResponse: {
+            /** Average Score */
+            average_score: number;
+            /** Best Score */
+            best_score: number;
+            /** First Attempt Pass Rate */
+            first_attempt_pass_rate: number;
+            /** Improved Quiz Count */
+            improved_quiz_count: number;
+            /** Pass Rate */
+            pass_rate: number;
+            /** Retry Attempts */
+            retry_attempts: number;
+            /** Retry Success Rate */
+            retry_success_rate: number;
+            /** Topic Analytics */
+            topic_analytics?: components["schemas"]["QuizTopicAnalytics"][];
+            /** Total Attempts */
+            total_attempts: number;
+            /** Total Xp From Quizzes */
+            total_xp_from_quizzes: number;
+            /** Unique Quizzes */
+            unique_quizzes: number;
+        };
+        /** QuizAnswerInput */
+        QuizAnswerInput: {
+            /** Answer */
+            answer: unknown;
+            /** Question Id */
+            question_id: number;
+            /** Time Spent Seconds */
+            time_spent_seconds?: number | null;
+        };
+        /** QuizAttemptDetail */
+        QuizAttemptDetail: {
+            /** Answered Questions */
+            answered_questions: number;
+            /** Attempt Number */
+            attempt_number: number;
+            /** Correct Answers */
+            correct_answers: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Current Level After */
+            current_level_after?: number | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Retry */
+            is_retry: boolean;
+            /** Passed */
+            passed: boolean;
+            /** Passing Score */
+            passing_score: number;
+            /** Per Question Results */
+            per_question_results?: components["schemas"]["QuestionEvaluationResult"][];
+            /** Performance By Subtopic */
+            performance_by_subtopic?: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
+            /** Performance By Type */
+            performance_by_type?: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
+            /** Quiz Id */
+            quiz_id: string;
+            /** Recommendations */
+            recommendations?: string[];
+            /** Score Percent */
+            score_percent: number;
+            /** Source Lesson Id */
+            source_lesson_id?: string | null;
+            /** Submitted Answers */
+            submitted_answers?: {
+                [key: string]: unknown;
+            }[];
+            /** Time Spent Seconds */
+            time_spent_seconds: number;
+            /** Topic */
+            topic: string;
+            /** Total Questions */
+            total_questions: number;
+            /** Unanswered Question Ids */
+            unanswered_question_ids?: number[];
+            /** Xp Awarded */
+            xp_awarded: number;
+        };
+        /** QuizAttemptSummary */
+        QuizAttemptSummary: {
+            /** Answered Questions */
+            answered_questions: number;
+            /** Attempt Number */
+            attempt_number: number;
+            /** Correct Answers */
+            correct_answers: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Current Level After */
+            current_level_after?: number | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Retry */
+            is_retry: boolean;
+            /** Passed */
+            passed: boolean;
+            /** Quiz Id */
+            quiz_id: string;
+            /** Score Percent */
+            score_percent: number;
+            /** Source Lesson Id */
+            source_lesson_id?: string | null;
+            /** Topic */
+            topic: string;
+            /** Total Questions */
+            total_questions: number;
+            /** Xp Awarded */
+            xp_awarded: number;
+        };
+        /** QuizEvaluationRequest */
+        QuizEvaluationRequest: {
+            /** Answers */
+            answers?: components["schemas"]["QuizAnswerInput"][];
+            /**
+             * Case Sensitive
+             * @default false
+             */
+            case_sensitive: boolean;
+            /**
+             * Passing Score
+             * @default 70
+             */
+            passing_score: number;
+            /** Questions */
+            questions: components["schemas"]["QuizQuestion"][];
+            /**
+             * Quiz Id
+             * @description Stable quiz identifier used for retry tracking
+             */
+            quiz_id?: string | null;
+            /**
+             * Source Lesson Id
+             * @description Optional lesson identifier if quiz came from a saved lesson
+             */
+            source_lesson_id?: string | null;
+            /**
+             * Topic
+             * @description Optional topic override for analytics grouping
+             */
+            topic?: string | null;
+        };
+        /** QuizEvaluationResponse */
+        QuizEvaluationResponse: {
+            /** Answered Questions */
+            answered_questions: number;
+            /** Attempt Id */
+            attempt_id?: string | null;
+            /**
+             * Attempt Number
+             * @default 1
+             */
+            attempt_number: number;
+            /** Correct Answers */
+            correct_answers: number;
+            /** Gamification */
+            gamification?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Is Retry
+             * @default false
+             */
+            is_retry: boolean;
+            /** Passed */
+            passed: boolean;
+            /** Per Question Results */
+            per_question_results: components["schemas"]["QuestionEvaluationResult"][];
+            /** Performance By Subtopic */
+            performance_by_subtopic: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
+            /** Performance By Type */
+            performance_by_type: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
+            /** Previous Best Score */
+            previous_best_score?: number | null;
+            /** Quiz Id */
+            quiz_id: string;
+            /** Recommendations */
+            recommendations?: string[];
+            /** Score Percent */
+            score_percent: number;
+            /** Success */
+            success: boolean;
+            /** Topic */
+            topic: string;
+            /** Total Questions */
+            total_questions: number;
+            /** Unanswered Question Ids */
+            unanswered_question_ids: number[];
+        };
+        /** QuizGenerationRequest */
+        QuizGenerationRequest: {
+            /**
+             * Current Level
+             * @default intermediate
+             * @enum {string}
+             */
+            current_level: "beginner" | "intermediate" | "advanced";
+            /**
+             * Daily Study Time Minutes
+             * @default 30
+             */
+            daily_study_time_minutes: number;
+            /**
+             * Include Debug
+             * @description Include workflow execution debug payload
+             * @default false
+             */
+            include_debug: boolean;
+            /** Knowledge Gaps */
+            knowledge_gaps?: string[];
+            /** Learning Objectives */
+            learning_objectives?: string[];
+            /**
+             * Learning Pace
+             * @default normal
+             * @enum {string}
+             */
+            learning_pace: "slow" | "normal" | "fast";
+            /**
+             * Learning Style
+             * @default visual
+             * @enum {string}
+             */
+            learning_style: "visual" | "auditory" | "kinesthetic" | "reading/writing";
+            /**
+             * Max Questions
+             * @default 10
+             */
+            max_questions: number;
+            /** Preferred Question Types */
+            preferred_question_types?: ("multiple_choice" | "fill_blank" | "true_false")[];
+            /** Strengths */
+            strengths?: string[];
+            /**
+             * Student Name
+             * @description Optional learner display name
+             */
+            student_name?: string | null;
+            /**
+             * Subject
+             * @description Subject/domain. Defaults to topic when omitted
+             */
+            subject?: string | null;
+            /** Subtopics */
+            subtopics?: string[];
+            /**
+             * Topic
+             * @description Primary quiz topic
+             */
+            topic: string;
+        };
+        /** QuizGenerationResponse */
+        QuizGenerationResponse: {
+            /** Difficulty Distribution */
+            difficulty_distribution: {
+                [key: string]: number;
+            };
+            /** Estimated Duration Minutes */
+            estimated_duration_minutes: number;
+            /** Execution Summary */
+            execution_summary: {
+                [key: string]: unknown;
+            };
+            /** Quality Passed */
+            quality_passed: boolean;
+            /** Quality Score */
+            quality_score: number;
+            /** Question Types */
+            question_types: string[];
+            /** Questions */
+            questions: components["schemas"]["QuizQuestion"][];
+            /** Quiz */
+            quiz: {
+                [key: string]: unknown;
+            };
+            /** Quiz Id */
+            quiz_id: string;
+            /** Success */
+            success: boolean;
+            /** Topic */
+            topic: string;
+            /** Total Questions */
+            total_questions: number;
+            /** Workflow Debug */
+            workflow_debug?: {
+                [key: string]: unknown;
+            } | null;
+            /** Workflow Issues */
+            workflow_issues?: string[];
+        };
+        /** QuizQuestion */
+        QuizQuestion: {
+            /** Correct Answer */
+            correct_answer?: number | string | boolean | null;
+            /** Correct Answers */
+            correct_answers?: string[] | null;
+            /** Difficulty */
+            difficulty?: string | null;
+            /** Explanation */
+            explanation?: string | null;
+            /** Id */
+            id: number;
+            /** Learning Value */
+            learning_value?: string | null;
+            /** Options */
+            options?: string[] | null;
+            /** Question */
+            question: string;
+            /** Subtopic */
+            subtopic?: string | null;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "multiple_choice" | "fill_blank" | "true_false";
+        };
+        /** QuizTopicAnalytics */
+        QuizTopicAnalytics: {
+            /** Attempts */
+            attempts: number;
+            /** Average Score */
+            average_score: number;
+            /** Best Score */
+            best_score: number;
+            /** Pass Rate */
+            pass_rate: number;
+            /** Retry Attempts */
+            retry_attempts: number;
+            /** Topic */
+            topic: string;
+        };
+        /**
+         * RecommendationRequest
+         * @description Request for generating recommendations
+         */
+        RecommendationRequest: {
+            /**
+             * Content
+             * @description Code snippet or English text to analyze
+             */
+            content: string;
+            /**
+             * Content Type
+             * @description Type of content: 'code' or 'english'
+             */
+            content_type: string;
+            /**
+             * Trigger Lines
+             * @description Minimum lines to trigger recommendation
+             * @default 10
+             */
+            trigger_lines: number;
+            /**
+             * User Context
+             * @description User's skill level, goals, or additional context
+             */
+            user_context?: string | null;
+        };
         /** ReviewSubmit */
         ReviewSubmit: {
             /** Grade */
             grade: number;
         };
+        /** SavedLessonDetail */
+        SavedLessonDetail: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Execution Summary */
+            execution_summary?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Last Opened At
+             * Format: date-time
+             */
+            last_opened_at: string;
+            navigation: components["schemas"]["LessonNavigation"];
+            /** Pages */
+            pages: components["schemas"]["LessonPage"][];
+            progress: components["schemas"]["LessonProgressSnapshot"];
+            /** Prompt */
+            prompt: string;
+            /** Quality Metrics */
+            quality_metrics?: {
+                [key: string]: unknown;
+            };
+            /** Source Documents */
+            source_documents?: components["schemas"]["LessonSourceDocument"][];
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Workflow Issues */
+            workflow_issues?: string[];
+        };
+        /** SavedLessonSummary */
+        SavedLessonSummary: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Last Opened At
+             * Format: date-time
+             */
+            last_opened_at: string;
+            progress: components["schemas"]["LessonProgressSnapshot"];
+            /** Title */
+            title: string;
+            /** Topic */
+            topic: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
         /** SubscriptionUpdate */
         SubscriptionUpdate: {
             /** New Tier */
             new_tier: string;
+        };
+        /** TestCaseResult */
+        TestCaseResult: {
+            /** Actual Output */
+            actual_output?: string | null;
+            /** Compile Output */
+            compile_output?: string | null;
+            /** Expected Output */
+            expected_output: string;
+            /** Index */
+            index: number;
+            /** Input */
+            input: string;
+            /**
+             * Is Hidden
+             * @default false
+             */
+            is_hidden: boolean;
+            /** Memory */
+            memory?: number | null;
+            /** Passed */
+            passed: boolean;
+            /** Status */
+            status?: string | null;
+            /** Stderr */
+            stderr?: string | null;
+            /** Time */
+            time?: string | null;
         };
         /** Token */
         Token: {
@@ -900,6 +2687,247 @@ export interface operations {
             };
         };
     };
+    ask_copilot_api_v1_chatbot_ask_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_coding_problem_api_v1_coding_problems__problem_id__get: {
+        parameters: {
+            query?: {
+                include_hidden_tests?: boolean;
+                include_solution?: boolean;
+            };
+            header?: never;
+            path: {
+                problem_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodingProblemDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_coding_problem_attempts_api_v1_coding_problems__problem_id__attempts_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                problem_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodingAttemptsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_coding_problem_api_v1_coding_problems__problem_id__run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                problem_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodeRunRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeRunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_coding_problem_api_v1_coding_problems__problem_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                problem_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodeSubmitRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSubmitResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_coding_problem_stream_api_v1_coding_problems__problem_id__submit_stream_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                problem_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodeSubmitRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_general_document_api_v1_documents_upload_post: {
+        parameters: {
+            query?: {
+                folder_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_general_document_api_v1_documents_upload_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_leaderboard_api_v1_gamification_leaderboard_get: {
         parameters: {
             query?: never;
@@ -995,6 +3023,196 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_coding_problem_session_api_v1_judge_sessions__problem_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                problem_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upsert_coding_problem_session_api_v1_judge_sessions__problem_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                problem_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodeSessionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_graph_api_v1_knowledge_graph_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GraphDataResponse"];
+                };
+            };
+        };
+    };
+    delete_graph_api_v1_knowledge_graph_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ingest_notes_api_v1_knowledge_ingest_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoteIngestRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoteIngestResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ingest_status_api_v1_knowledge_ingest_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestStatusResponse"];
+                };
+            };
+        };
+    };
+    query_knowledge_api_v1_knowledge_query_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KnowledgeQueryRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KnowledgeQueryResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1206,6 +3424,258 @@ export interface operations {
             };
         };
     };
+    list_saved_lessons_api_v1_lessons_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedLessonSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_saved_lesson_api_v1_lessons__lesson_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lesson_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedLessonDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_lesson_coding_problems_api_v1_lessons__lesson_id__coding_problems_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lesson_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodingProblemSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_coding_problems_for_lesson_api_v1_lessons__lesson_id__coding_problems_generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lesson_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodingProblemGenerateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodingProblemsGenerationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_saved_lesson_progress_api_v1_lessons__lesson_id__progress_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lesson_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LessonProgressUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedLessonDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_lesson_api_v1_lessons_generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_generate_lesson_api_v1_lessons_generate_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LessonGenerationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lessons_health_api_v1_lessons_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    save_lesson_api_v1_lessons_save_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LessonSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SavedLessonDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_notes_api_v1_notes__get: {
         parameters: {
             query?: {
@@ -1258,35 +3728,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["NoteResponse"];
                 };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    delete_folder_api_v1_notes__folder_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                folder_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -1478,6 +3919,35 @@ export interface operations {
             };
         };
     };
+    delete_folder_api_v1_notes_folders__folder_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                folder_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_knowledge_graph_api_v1_notes_graph_visualizer_get: {
         parameters: {
             query?: never;
@@ -1548,6 +4018,339 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_quiz_analytics_api_v1_quiz_analytics_get: {
+        parameters: {
+            query?: {
+                topic?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuizAnalyticsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_lesson_quiz_analytics_api_v1_quiz_analytics_lessons__source_lesson_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_lesson_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LessonQuizAnalyticsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_quiz_attempts_api_v1_quiz_attempts_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                quiz_id?: string | null;
+                retries_only?: boolean;
+                topic?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuizAttemptSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_quiz_attempt_api_v1_quiz_attempts__attempt_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attempt_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuizAttemptDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evaluate_quiz_api_v1_quiz_evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuizEvaluationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuizEvaluationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_quiz_api_v1_quiz_generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuizGenerationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuizGenerationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    quiz_health_api_v1_quiz_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    get_quiz_retries_api_v1_quiz_retries__quiz_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quiz_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuizAttemptSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_content_to_rag_api_v1_recommendations_add_to_rag_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddToRAGRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddToRAGResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recommendation_health_api_v1_recommendations_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    stream_recommendations_api_v1_recommendations_stream_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecommendationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

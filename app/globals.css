@@ -244,3 +244,7 @@ img {
     opacity: 1;
   }
 }
+
+.pixel-workspace :is(div, section, article, aside, header, footer, nav, button, input, textarea, select, a, pre) {
+  border-radius: 0 !important;
+}
