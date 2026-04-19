@@ -636,6 +636,7 @@ export function useBackendSubmitCodingProblemMutation() {
     }) => submitCodingProblemFromFrontend(problemId, payload),
     onSuccess: async (_, { problemId }) => {
       await queryClient.invalidateQueries({ queryKey: backendKeys.codingAttempts(problemId) });
+      await queryClient.invalidateQueries({ queryKey: backendKeys.myStats });
     },
   });
 }
@@ -655,6 +656,7 @@ export function useBackendStreamSubmitCodingProblemMutation() {
     }) => submitCodingProblemStreamFromFrontend(problemId, payload, onEvent),
     onSuccess: async (_, { problemId }) => {
       await queryClient.invalidateQueries({ queryKey: backendKeys.codingAttempts(problemId) });
+      await queryClient.invalidateQueries({ queryKey: backendKeys.myStats });
     },
   });
 }

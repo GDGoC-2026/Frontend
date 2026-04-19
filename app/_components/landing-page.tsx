@@ -9,6 +9,7 @@ import {
 } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { useSessionQuery } from "@/hooks/use-auth";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -272,6 +273,10 @@ function MicroIcon() {
 }
 
 export function LandingPage() {
+  const session = useSessionQuery();
+  const isAuthenticated = Boolean(session.data);
+  const navAuthHref = isAuthenticated ? "/dashboard" : "/auth/login";
+  const navAuthLabel = isAuthenticated ? "Dashboard" : "Sign In";
   const rootRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const heroLensRef = useRef<HTMLDivElement>(null);
@@ -553,8 +558,8 @@ export function LandingPage() {
             <NavLink href="#solution">Knowledge Graph</NavLink>
             <NavLink href="#pricing">Pricing</NavLink>
           </nav>
-            <SignalButton href="/auth/login" size="nav">
-              Sign In
+            <SignalButton href={navAuthHref} size="nav">
+              {navAuthLabel}
             </SignalButton>
         </div>
       </header>
@@ -985,8 +990,8 @@ export function LandingPage() {
             <a href="#pricing" className="transition-colors hover:text-[#9cff93]">
               Pricing
             </a>
-            <Link href="/auth/login" className="transition-colors hover:text-[#9cff93]">
-              Sign In
+            <Link href={navAuthHref} className="transition-colors hover:text-[#9cff93]">
+              {navAuthLabel}
             </Link>
           </div>
         </div>

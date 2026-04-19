@@ -171,7 +171,7 @@ export async function getFolderDetails(token: string, folderId: string) {
 
 export async function deleteFolder(token: string, folderId: string) {
   const { error, response } = await backendClient.DELETE(
-    "/api/v1/notes/{folder_id}",
+    "/api/v1/notes/folders/{folder_id}",
     {
       params: { path: { folder_id: folderId } },
       headers: {
@@ -223,7 +223,7 @@ export async function uploadMarkdownNote(
   const { data, error, response } = await backendClient.POST(
     "/api/v1/notes/upload",
     {
-      body: formData ,
+      body: formData,
       ...(query && { query }),
       headers: {
         Authorization: `Bearer ${token}`,

@@ -26,6 +26,16 @@ function LoginPageContent() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const nextPath = (() => {
+    const next = searchParams.get("next");
+    if (!next || !next.startsWith("/") || next.startsWith("//")) {
+      return "/dashboard";
+    }
+    return next;
+  })();
+  const oauthError = searchParams.get("oauth_error");
+  const googleLoginHref = `/api/auth/google/login?next=${encodeURIComponent(nextPath)}`;
+  const githubLoginHref = `/api/auth/github/login?next=${encodeURIComponent(nextPath)}`;
   const loginMutation = useLoginMutation({
     onSuccess: () => {
       router.replace(searchParams.get("next") || "/dashboard");
@@ -132,16 +142,51 @@ function LoginPageContent() {
           </p>
         ) : null}
 
-        <div className="space-y-3 text-center">
+        {oauthError ? (
           <p
-            className="space-x-2 text-xs"
+            className="text-sm"
+            style={{
+              color: "#f87171",
+            }}
+          >
+            {oauthError}
+          </p>
+        ) : null}
+
+        <div className="space-y-2">
+          <p
+            className="text-center text-xs uppercase tracking-[0.2em]"
             style={{
               color: palette.muted,
             }}
           >
-            <span>[ GITHUB ]</span>
-            <span>[ DISCORD ]</span>
+            External Auth
           </p>
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              className="rounded-none border px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.14em] transition-all hover:opacity-90"
+              href={googleLoginHref}
+              style={{
+                borderColor: palette.secondary,
+                color: palette.secondary,
+              }}
+            >
+              Google
+            </a>
+            <a
+              className="rounded-none border px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.14em] transition-all hover:opacity-90"
+              href={githubLoginHref}
+              style={{
+                borderColor: palette.secondary,
+                color: palette.secondary,
+              }}
+            >
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <div className="space-y-3 text-center">
           <p className="text-xs">
             New entity?{" "}
             <a

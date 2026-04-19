@@ -44,7 +44,7 @@ import {
   useBackendUploadedDocumentsQuery,
   useBackendUpsertCodingProblemSessionMutation,
 } from "@/hooks/use-backend-api";
-import { useSessionQuery } from "@/hooks/use-auth";
+import { useLogoutMutation, useSessionQuery } from "@/hooks/use-auth";
 import type {
   FlashcardResponse,
   LessonGenerationResponse,
@@ -804,7 +804,13 @@ function WorkspaceShell({
   title: string;
 }) {
   const palette = getThemeSurface();
+  const router = useRouter();
   const session = useSessionQuery();
+  const logoutMutation = useLogoutMutation({
+    onSuccess: () => {
+      router.replace("/auth/login");
+    },
+  });
   const profileAlias = formatProfileAlias(session.data);
   const subscriptionTier = formatSubscriptionTier(session.data);
 
@@ -920,6 +926,24 @@ function WorkspaceShell({
               <div className="mt-3 truncate text-xs text-[#6b7280]">
                 {session.data?.email ?? "session not loaded"}
               </div>
+              <button
+                className={cn(
+                  "mt-4 w-full border px-3 py-2 font-pixel text-[10px] uppercase tracking-[0.14em] transition",
+                  logoutMutation.isPending
+                    ? "border-[#334155] bg-[#111827] text-white/55"
+                    : "border-[#7f1d1d] bg-[#180808] text-[#fca5a5] hover:border-[#ef4444] hover:text-[#fecaca]",
+                )}
+                disabled={logoutMutation.isPending}
+                onClick={() => logoutMutation.mutate()}
+                type="button"
+              >
+                {logoutMutation.isPending ? "LOGGING OUT..." : "LOG OUT"}
+              </button>
+              {logoutMutation.isError ? (
+                <div className="mt-2 text-xs text-[#fca5a5]">
+                  {logoutMutation.error.message}
+                </div>
+              ) : null}
             </div>
           </div>
         </aside>
