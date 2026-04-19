@@ -828,7 +828,7 @@ function WorkspaceShell({
             <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-[#9cff93]/0 via-[#9cff93]/80 to-[#9cff93]/0" />
             <div className="absolute right-3 top-3 h-2 w-2 rounded-none border border-[#69daff]/60 bg-[#69daff]/35" />
             <div className={cn("font-display text-2xl font-bold uppercase tracking-[0.08em]", palette.accent)}>
-              Versera
+              Learnbro
             </div>
             <div className={cn("mt-2 font-pixel text-[9px] uppercase leading-4", palette.muted)}>
               LEARNING_TERMINAL

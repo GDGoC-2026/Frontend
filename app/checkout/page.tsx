@@ -68,7 +68,7 @@ export default function CheckoutPage({ searchParams }: { searchParams?: SearchPa
               Subscription Checkout
             </div>
             <h1 className="mt-3 font-display text-3xl font-bold uppercase tracking-[-0.04em] text-[#9cff93]">
-              Payment Gateway UI
+              Payment Gateway
             </h1>
           </div>
           <div className="flex flex-wrap gap-3">

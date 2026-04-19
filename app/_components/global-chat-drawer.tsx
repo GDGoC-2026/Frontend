@@ -17,7 +17,7 @@ type ChatMessage = {
 const INITIAL_MESSAGE: ChatMessage = {
   id: "assistant-welcome",
   role: "assistant",
-  text: "Hi, I am your learning copilot. Ask anything about your lessons or practice tasks.",
+  text: "Hi, I am Mixi Bot. Ask anything about your lessons or practice tasks.",
 };
 
 function makeMessageId() {
@@ -93,7 +93,7 @@ export function GlobalChatDrawer() {
           text:
             error instanceof Error
               ? error.message
-              : "Unable to connect to copilot right now.",
+              : "Unable to connect to Mixi Bot right now.",
         },
       ]);
     }
@@ -107,7 +107,7 @@ export function GlobalChatDrawer() {
   return (
     <>
       <button
-        aria-label="Open chatbot"
+        aria-label="Open Mixi Bot"
         className={cn(
           "fixed bottom-6 right-32 z-50 rounded-none border px-4 py-3 font-pixel text-[10px] uppercase tracking-[0.12em] transition-colors",
           dark
@@ -140,7 +140,7 @@ export function GlobalChatDrawer() {
                   dark ? "text-[#69daff]" : "text-[#00677d]",
                 )}
               >
-                Learning Copilot
+                Mixi Bot
               </div>
               <div
                 className={cn(
@@ -165,7 +165,7 @@ export function GlobalChatDrawer() {
                 New Chat
               </button>
               <button
-                aria-label="Close chatbot"
+                aria-label="Close Mixi Bot"
                 className={cn(
                   "border px-2 py-1 font-pixel text-[10px] uppercase",
                   dark
@@ -213,7 +213,7 @@ export function GlobalChatDrawer() {
                           : "text-[#00677d]",
                     )}
                   >
-                    <span>{userMessage ? "You" : "Copilot"}</span>
+                    <span>{userMessage ? "You" : "Mixi Bot"}</span>
                     {message.mode ? <span>mode: {message.mode}</span> : null}
                   </div>
                   <div
@@ -241,7 +241,7 @@ export function GlobalChatDrawer() {
                     dark ? "text-[#69daff]" : "text-[#00677d]",
                   )}
                 >
-                  Copilot is thinking...
+                  Mixi Bot is thinking...
                 </div>
               </div>
             ) : null}
