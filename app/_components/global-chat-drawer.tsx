@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@/app/_components/theme-provider";
+import { useChatDrawerState } from "@/app/_components/chat-drawer-context";
 import { cn } from "@/app/_components/ui-kit/shared";
 import { useBackendAskChatbotMutation } from "@/hooks/use-backend-api";
 
@@ -27,16 +28,23 @@ function makeMessageId() {
 export function GlobalChatDrawer() {
   const { theme } = useTheme();
   const dark = theme === "dark";
+  const { open, setOpen, width, setWidth } = useChatDrawerState();
   const askMutation = useBackendAskChatbotMutation();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const resizeRef = useRef<HTMLDivElement | null>(null);
 
-  const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
+  const [isResizing, setIsResizing] = useState(false);
 
+  // Keyboard shortcut for toggle
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === "k") {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.shiftKey &&
+        event.key.toLowerCase() === "k"
+      ) {
         event.preventDefault();
         setOpen((current) => !current);
       }
@@ -46,12 +54,36 @@ export function GlobalChatDrawer() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  // Resize logic
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const delta = e.clientX - window.innerWidth;
+      const newWidth = Math.max(300, Math.min(800, -delta));
+      setWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing]);
+
   useEffect(() => {
     if (!scrollContainerRef.current) {
       return;
     }
 
-    scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    scrollContainerRef.current.scrollTop =
+      scrollContainerRef.current.scrollHeight;
   }, [messages, askMutation.isPending]);
 
   async function handleSendMessage() {
@@ -106,27 +138,29 @@ export function GlobalChatDrawer() {
 
   return (
     <>
-      <button
-        aria-label="Open Mixi Bot"
-        className={cn(
-          "fixed bottom-6 right-32 z-50 rounded-none border px-4 py-3 font-pixel text-[10px] uppercase tracking-[0.12em] transition-colors",
-          dark
-            ? "border-[#262626] bg-[#131313] text-[#69daff] hover:bg-[#1f1f1f]"
-            : "border-[#9aa7b3] bg-[#e7edf1] text-[#00677d] hover:bg-[#d9e0e6]",
-        )}
-        onClick={() => setOpen((current) => !current)}
-        type="button"
-      >
-        Chat
-      </button>
-
       {open ? (
         <section
           className={cn(
-            "fixed bottom-20 right-6 z-[55] flex h-[min(70vh,640px)] w-[min(460px,calc(100vw-1.5rem))] flex-col border shadow-2xl",
-            dark ? "border-[#262626] bg-[#0e0e0e]" : "border-[#b5c0ca] bg-[#f3f7fb]",
+            "fixed right-0 top-0 z-[55] flex h-screen flex-col border-l shadow-2xl transition-all",
+            dark
+              ? "border-[#262626] bg-[#0e0e0e]"
+              : "border-[#b5c0ca] bg-[#f3f7fb]",
           )}
+          style={{ width: `${width}px` }}
         >
+          {/* Resize handle - left edge */}
+          <div
+            ref={resizeRef}
+            className={cn(
+              "absolute left-0 top-0 w-1 h-full cursor-col-resize transition-colors",
+              dark
+                ? "bg-[#262626] hover:bg-[#69daff]"
+                : "bg-[#b5c0ca] hover:bg-[#00677d]",
+              isResizing && (dark ? "bg-[#69daff]" : "bg-[#00677d]"),
+            )}
+            onMouseDown={() => setIsResizing(true)}
+          />
+
           <header
             className={cn(
               "flex items-center justify-between border-b px-4 py-3",
@@ -175,7 +209,7 @@ export function GlobalChatDrawer() {
                 onClick={() => setOpen(false)}
                 type="button"
               >
-                Close
+                ✕
               </button>
             </div>
           </header>
@@ -232,7 +266,9 @@ export function GlobalChatDrawer() {
               <div
                 className={cn(
                   "mr-auto max-w-[85%] border px-3 py-2 text-sm",
-                  dark ? "border-[#262626] bg-[#131313]" : "border-[#b5c0ca] bg-white",
+                  dark
+                    ? "border-[#262626] bg-[#131313]"
+                    : "border-[#b5c0ca] bg-white",
                 )}
               >
                 <div
@@ -250,7 +286,9 @@ export function GlobalChatDrawer() {
           <footer
             className={cn(
               "border-t p-3",
-              dark ? "border-[#262626] bg-[#101010]" : "border-[#b5c0ca] bg-white",
+              dark
+                ? "border-[#262626] bg-[#101010]"
+                : "border-[#b5c0ca] bg-white",
             )}
           >
             <div className="flex gap-2">
@@ -288,6 +326,23 @@ export function GlobalChatDrawer() {
             </div>
           </footer>
         </section>
+      ) : null}
+
+      {/* Toggle button - floating at top right when chat is closed */}
+      {!open ? (
+        <button
+          aria-label="Open Mixi Bot"
+          className={cn(
+            "fixed top-6 right-6 z-50 rounded-none border px-3 py-2 font-pixel text-[10px] uppercase tracking-[0.12em] transition-colors",
+            dark
+              ? "border-[#262626] bg-[#131313] text-[#69daff] hover:bg-[#1f1f1f]"
+              : "border-[#9aa7b3] bg-[#e7edf1] text-[#00677d] hover:bg-[#d9e0e6]",
+          )}
+          onClick={() => setOpen(true)}
+          type="button"
+        >
+          ≡
+        </button>
       ) : null}
     </>
   );

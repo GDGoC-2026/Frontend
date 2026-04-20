@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Learnbro Frontend
 
-## Getting Started
+Pixel-perfect Next.js 15+ frontend for the **Learnbro** learning platform. Integrates deeply with the backend for AI-driven lesson generation, knowledge graphs, markdown notes, and gamification.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Core Features
+
+- **Authentication:** JWT & OAuth2 (Google, GitHub)
+- **Lesson Builder:** AI-powered lesson generation with external sources, file upload, and custom objectives
+- **Notes:** Markdown editor, folder tree, and knowledge graph visualization
+- **Coding:** Monaco-based code editor, real-time code execution via WebSocket
+- **Gamification:** XP, streaks, and spaced-repetition flashcards
+- **Notifications:** Push notifications for reviews and reminders
+
+## 🛠 Tech Stack
+
+| Component     | Technology                        |
+| :------------ | :-------------------------------- |
+| **Framework** | Next.js 15+, React 19, TypeScript |
+| **Styling**   | Tailwind CSS (pixel font), Geist  |
+| **State**     | Zustand, TanStack Query           |
+| **Editor**    | Monaco Editor                     |
+| **API**       | OpenAPI client, REST, WebSocket   |
+
+## 🏗️ Folder Structure
+
+```
+Frontend/
+├── app/                # Main app directory (Next.js app router)
+│   ├── _components/    # UI components
+│   ├── _data/          # Data loaders
+│   ├── api/            # API route handlers
+│   └── ...
+├── hooks/              # React hooks
+├── lib/                # API clients, config
+├── public/             # Static assets
+├── scripts/            # Utility scripts (e.g. OpenAPI sync)
+├── types/              # TypeScript types (OpenAPI, domain)
+├── ...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚡ Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Install dependencies:**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   pnpm install
+   # or yarn install / npm install
+   ```
 
-## Learn More
+2. **Sync OpenAPI types:**
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   pnpm api:sync
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Run development server:**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   pnpm dev
+   # or yarn dev / npm run dev
+   ```
 
-## Deploy on Vercel
+4. **Open:** [http://localhost:3000](http://localhost:3000)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🐳 Docker
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To build and run the frontend container:
+
+```bash
+docker compose -f Frontend/docker-compose.yml up --build
+```
+
+## 🔗 API Integration
+
+- All API endpoints are documented in [FRONTEND_API_ENDPOINTS_GUIDE.md](FRONTEND_API_ENDPOINTS_GUIDE.md)
+- Backend base URL (dev): `http://localhost:8000`
+- Most endpoints require `Authorization: Bearer <token>`
+- Lesson generation, file upload, and markdown ingestion use `multipart/form-data`
+
+## 🧩 Key Features
+
+- **Lesson Builder:**
+  - Supports all backend-required fields: prompt, topic, subject, subtopics, objectives, level, style, pace, daily study time, quiz settings, mindmap, coding, answer key, external sources, file upload
+  - Pixel-perfect UI with Tailwind CSS
+- **Notes & Knowledge Graph:**
+  - Markdown editor, folder tree, Neo4j graph visualization
+- **Coding:**
+  - Monaco editor, real-time Judge0 execution, gamification hooks
+- **Notifications:**
+  - Push API integration, Celery/Redis backend
+
+## 🧪 Testing & Linting
+
+```bash
+pnpm lint
+# or yarn lint / npm run lint
+```
+
+## 📦 Build & Deploy
+
+```bash
+pnpm build
+pnpm start
+# or yarn build/start / npm run build/start
+```
+
+Deploy easily on [Vercel](https://vercel.com/) or any Node.js hosting.
+
+## 📚 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+
+---
+
+> See [FRONTEND_API_ENDPOINTS_GUIDE.md](FRONTEND_API_ENDPOINTS_GUIDE.md) for full API usage and integration details.

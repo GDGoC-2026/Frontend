@@ -61,7 +61,9 @@ import type {
 
 const REVIEW_SESSION_STORAGE_KEY = "versera.review-session";
 const SELECTED_LESSON_STORAGE_KEY = "versera.selected-lesson-id";
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+});
 
 type NavKey = "home" | "practice" | "interview" | "notes" | "profile";
 
@@ -86,7 +88,9 @@ type LessonModule = {
   totalPages: number;
 };
 
-type PendingDraftAction = (savedLesson: SavedLessonDetail | null) => void | Promise<void>;
+type PendingDraftAction = (
+  savedLesson: SavedLessonDetail | null,
+) => void | Promise<void>;
 
 type BuilderState = {
   current_level: LessonGeneratePayload["current_level"];
@@ -94,6 +98,9 @@ type BuilderState = {
   include_answer_key: boolean;
   include_coding_exercises: boolean;
   include_mindmap: boolean;
+  include_external_sources: boolean;
+  external_search_query: string;
+  max_external_sources: number;
   learningObjectives: string;
   learning_pace: LessonGeneratePayload["learning_pace"];
   learning_style: LessonGeneratePayload["learning_style"];
@@ -111,7 +118,9 @@ type PracticeQuizFormState = {
   learning_pace: "slow" | "normal" | "fast";
   learning_style: "visual" | "auditory" | "kinesthetic" | "reading/writing";
   max_questions: number;
-  preferred_question_types: Array<"multiple_choice" | "fill_blank" | "true_false">;
+  preferred_question_types: Array<
+    "multiple_choice" | "fill_blank" | "true_false"
+  >;
 };
 
 const defaultBuilderState: BuilderState = {
@@ -120,6 +129,9 @@ const defaultBuilderState: BuilderState = {
   include_answer_key: false,
   include_coding_exercises: true,
   include_mindmap: true,
+  include_external_sources: false,
+  external_search_query: "",
+  max_external_sources: 6,
   learningObjectives: "",
   learning_pace: "normal",
   learning_style: "reading/writing",
@@ -228,7 +240,10 @@ function resolveLanguageOptionByJudgeId(judge0Id: number | null | undefined) {
     return null;
   }
 
-  return CODING_LANGUAGE_OPTIONS.find((option) => option.judge0Id === judge0Id) ?? null;
+  return (
+    CODING_LANGUAGE_OPTIONS.find((option) => option.judge0Id === judge0Id) ??
+    null
+  );
 }
 
 function resolveLanguageOptionByName(language: string | null | undefined) {
@@ -251,72 +266,72 @@ function resolveLanguageOptionByName(language: string | null | undefined) {
 function getDefaultCodingStarterTemplate(languageValue: string) {
   if (languageValue === "javascript") {
     return (
-      "const fs = require(\"fs\");\n\n"
-      + "function solve(rawInput) {\n"
-      + "  // TODO: write your logic here\n"
-      + "  const normalized = rawInput.trim();\n"
-      + "  return normalized.toUpperCase();\n"
-      + "}\n\n"
-      + "const input = fs.readFileSync(0, \"utf8\");\n"
-      + "const output = solve(input);\n"
-      + "process.stdout.write(String(output));\n"
+      'const fs = require("fs");\n\n' +
+      "function solve(rawInput) {\n" +
+      "  // TODO: write your logic here\n" +
+      "  const normalized = rawInput.trim();\n" +
+      "  return normalized.toUpperCase();\n" +
+      "}\n\n" +
+      'const input = fs.readFileSync(0, "utf8");\n' +
+      "const output = solve(input);\n" +
+      "process.stdout.write(String(output));\n"
     );
   }
 
   if (languageValue === "java") {
     return (
-      "import java.io.BufferedReader;\n"
-      + "import java.io.InputStreamReader;\n"
-      + "import java.util.stream.Collectors;\n\n"
-      + "public class Main {\n"
-      + "    static String solve(String rawInput) {\n"
-      + "        // TODO: write your logic here\n"
-      + "        String normalized = rawInput.trim();\n"
-      + "        return normalized.toUpperCase();\n"
-      + "    }\n\n"
-      + "    public static void main(String[] args) throws Exception {\n"
-      + "        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));\n"
-      + "        String input = reader.lines().collect(Collectors.joining(\"\\\\n\"));\n"
-      + "        System.out.print(solve(input));\n"
-      + "    }\n"
-      + "}\n"
+      "import java.io.BufferedReader;\n" +
+      "import java.io.InputStreamReader;\n" +
+      "import java.util.stream.Collectors;\n\n" +
+      "public class Main {\n" +
+      "    static String solve(String rawInput) {\n" +
+      "        // TODO: write your logic here\n" +
+      "        String normalized = rawInput.trim();\n" +
+      "        return normalized.toUpperCase();\n" +
+      "    }\n\n" +
+      "    public static void main(String[] args) throws Exception {\n" +
+      "        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));\n" +
+      '        String input = reader.lines().collect(Collectors.joining("\\\\n"));\n' +
+      "        System.out.print(solve(input));\n" +
+      "    }\n" +
+      "}\n"
     );
   }
 
   if (languageValue === "cpp") {
     return (
-      "#include <bits/stdc++.h>\n"
-      + "using namespace std;\n\n"
-      + "string solve(const string& rawInput) {\n"
-      + "    // TODO: write your logic here\n"
-      + "    string normalized = rawInput;\n"
-      + "    auto is_space = [](unsigned char ch) { return std::isspace(ch) != 0; };\n"
-      + "    while (!normalized.empty() && is_space((unsigned char)normalized.back())) normalized.pop_back();\n"
-      + "    size_t left = 0;\n"
-      + "    while (left < normalized.size() && is_space((unsigned char)normalized[left])) left++;\n"
-      + "    normalized = normalized.substr(left);\n"
-      + "    for (char& ch : normalized) ch = (char)toupper((unsigned char)ch);\n"
-      + "    return normalized;\n"
-      + "}\n\n"
-      + "int main() {\n"
-      + "    ios::sync_with_stdio(false);\n"
-      + "    cin.tie(nullptr);\n\n"
-      + "    string input((istreambuf_iterator<char>(cin)), istreambuf_iterator<char>());\n"
-      + "    cout << solve(input);\n"
-      + "    return 0;\n"
-      + "}\n"
+      "#include <bits/stdc++.h>\n" +
+      "using namespace std;\n\n" +
+      "string solve(const string& rawInput) {\n" +
+      "    // TODO: write your logic here\n" +
+      "    string normalized = rawInput;\n" +
+      "    auto is_space = [](unsigned char ch) { return std::isspace(ch) != 0; };\n" +
+      "    while (!normalized.empty() && is_space((unsigned char)normalized.back())) normalized.pop_back();\n" +
+      "    size_t left = 0;\n" +
+      "    while (left < normalized.size() && is_space((unsigned char)normalized[left])) left++;\n" +
+      "    normalized = normalized.substr(left);\n" +
+      "    for (char& ch : normalized) ch = (char)toupper((unsigned char)ch);\n" +
+      "    return normalized;\n" +
+      "}\n\n" +
+      "int main() {\n" +
+      "    ios::sync_with_stdio(false);\n" +
+      "    cin.tie(nullptr);\n\n" +
+      "    string input((istreambuf_iterator<char>(cin)), istreambuf_iterator<char>());\n" +
+      "    cout << solve(input);\n" +
+      "    return 0;\n" +
+      "}\n"
     );
   }
 
   return (
-    "import sys\n\n"
-    + "def solve(raw_input: str) -> str:\n"
-    + "    # TODO: write your logic here\n"
-    + "    normalized = raw_input.strip()\n"
-    + "    return normalized.upper()\n\n"
-    + "if __name__ == \"__main__\":\n"
-    + "    data = sys.stdin.read()\n"
-    + "    sys.stdout.write(solve(data))\n"
+    "import sys\n\n" +
+    "def solve(raw_input: str) -> str:\n" +
+    "    # TODO: write your logic here\n" +
+    "    normalized = raw_input.strip()\n" +
+    "    return normalized.upper()\n\n" +
+    'if __name__ == "__main__":\n' +
+    "    data = sys.stdin.read()\n" +
+    "    sys.stdout.write(solve(data))\n"
   );
 }
 
@@ -369,7 +384,12 @@ function uniqueStrings(values: string[]) {
   return Array.from(new Set(values.filter(Boolean)));
 }
 
-function clampNumber(value: number, min: number, max: number, fallback: number) {
+function clampNumber(
+  value: number,
+  min: number,
+  max: number,
+  fallback: number,
+) {
   if (!Number.isFinite(value)) {
     return fallback;
   }
@@ -440,7 +460,11 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     cta: "Upgrade to Pro",
     description: "More power for consistent daily learning.",
-    features: ["Higher limits", "Priority requests", "Advanced recommendations"],
+    features: [
+      "Higher limits",
+      "Priority requests",
+      "Advanced recommendations",
+    ],
     name: "Pro",
     price: "$9/mo",
     tier: "pro",
@@ -448,7 +472,11 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     cta: "Upgrade to Developer",
     description: "Full coding workspace workflow and sandbox focus.",
-    features: ["Developer sandbox", "Richer coding workflows", "Faster support lane"],
+    features: [
+      "Developer sandbox",
+      "Richer coding workflows",
+      "Faster support lane",
+    ],
     name: "Developer",
     price: "$19/mo",
     tier: "developer",
@@ -456,7 +484,11 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     cta: "Upgrade to Enterprise",
     description: "Team-scale collaboration and premium controls.",
-    features: ["Enterprise limits", "Priority SLA", "Organization-level access"],
+    features: [
+      "Enterprise limits",
+      "Priority SLA",
+      "Organization-level access",
+    ],
     name: "Enterprise",
     price: "$49/mo",
     tier: "enterprise",
@@ -470,9 +502,15 @@ const SUBSCRIPTION_ORDER: Record<SubscriptionPlan["tier"], number> = {
   pro: 1,
 };
 
-function normalizeSubscriptionTier(value: string | null | undefined): SubscriptionPlan["tier"] {
+function normalizeSubscriptionTier(
+  value: string | null | undefined,
+): SubscriptionPlan["tier"] {
   const normalized = (value ?? "").trim().toLowerCase();
-  if (normalized === "pro" || normalized === "developer" || normalized === "enterprise") {
+  if (
+    normalized === "pro" ||
+    normalized === "developer" ||
+    normalized === "enterprise"
+  ) {
     return normalized;
   }
   return "freemium";
@@ -524,7 +562,10 @@ function formatProfileAlias(
     full_name?: string | null;
   } | null,
 ) {
-  return formatProfileName(user).replace(/\s+/g, "_").slice(0, 18).toUpperCase();
+  return formatProfileName(user)
+    .replace(/\s+/g, "_")
+    .slice(0, 18)
+    .toUpperCase();
 }
 
 function formatSubscriptionTier(
@@ -532,14 +573,19 @@ function formatSubscriptionTier(
     subscription_tier?: string | null;
   } | null,
 ) {
-  return (user?.subscription_tier || "Free").replace(/[_-]+/g, " ").toUpperCase();
+  return (user?.subscription_tier || "Free")
+    .replace(/[_-]+/g, " ")
+    .toUpperCase();
 }
 
 function isSavedLesson(lesson: ActiveLesson): lesson is SavedLessonDetail {
   return "id" in lesson;
 }
 
-function getLessonCompletedPageIds(lesson: ActiveLesson | null, draftCompletedPageIds: string[]) {
+function getLessonCompletedPageIds(
+  lesson: ActiveLesson | null,
+  draftCompletedPageIds: string[],
+) {
   if (!lesson) {
     return [];
   }
@@ -551,7 +597,10 @@ function getLessonCompletedPageIds(lesson: ActiveLesson | null, draftCompletedPa
   return draftCompletedPageIds;
 }
 
-function getLessonCurrentPageId(lesson: ActiveLesson | null, activePageId: string) {
+function getLessonCurrentPageId(
+  lesson: ActiveLesson | null,
+  activePageId: string,
+) {
   if (!lesson) {
     return null;
   }
@@ -567,12 +616,18 @@ function getLessonCurrentPageId(lesson: ActiveLesson | null, activePageId: strin
   return lesson.navigation.default_page_id;
 }
 
-function computeDraftProgressPercent(lesson: LessonGenerationResponse | null, completedPageIds: string[]) {
+function computeDraftProgressPercent(
+  lesson: LessonGenerationResponse | null,
+  completedPageIds: string[],
+) {
   if (!lesson || lesson.navigation.total_pages <= 0) {
     return 0;
   }
 
-  return Math.round((uniqueStrings(completedPageIds).length / lesson.navigation.total_pages) * 100);
+  return Math.round(
+    (uniqueStrings(completedPageIds).length / lesson.navigation.total_pages) *
+      100,
+  );
 }
 
 function groupLessonsByTopic(lessons: SavedLessonSummary[] | undefined) {
@@ -581,7 +636,9 @@ function groupLessonsByTopic(lessons: SavedLessonSummary[] | undefined) {
   for (const lesson of lessons ?? []) {
     const key = lesson.topic || "Untitled topic";
     const current = map.get(key);
-    const totalPages = current ? current.totalPages + lesson.progress.total_pages : lesson.progress.total_pages;
+    const totalPages = current
+      ? current.totalPages + lesson.progress.total_pages
+      : lesson.progress.total_pages;
     const progressPercent = current
       ? current.progressPercent + lesson.progress.progress_percent
       : lesson.progress.progress_percent;
@@ -601,7 +658,10 @@ function groupLessonsByTopic(lessons: SavedLessonSummary[] | undefined) {
         ? Math.round(module.progressPercent / module.lessons.length)
         : 0,
     }))
-    .sort((a, b) => b.lessons.length - a.lessons.length || a.topic.localeCompare(b.topic));
+    .sort(
+      (a, b) =>
+        b.lessons.length - a.lessons.length || a.topic.localeCompare(b.topic),
+    );
 }
 
 function buildReviewSessionFromLesson(
@@ -611,7 +671,9 @@ function buildReviewSessionFromLesson(
 ) {
   const pageData = getRecord(page.data) ?? {};
   const quizConfig = getRecord(pageData.quiz) ?? {};
-  const questions = getArray(pageData.questions).filter(isRecord) as QuizQuestion[];
+  const questions = getArray(pageData.questions).filter(
+    isRecord,
+  ) as QuizQuestion[];
 
   if (!questions.length) {
     return null;
@@ -650,7 +712,10 @@ function persistReviewSession(session: ReviewSession) {
     return;
   }
 
-  window.localStorage.setItem(REVIEW_SESSION_STORAGE_KEY, JSON.stringify(session));
+  window.localStorage.setItem(
+    REVIEW_SESSION_STORAGE_KEY,
+    JSON.stringify(session),
+  );
 }
 
 function readSelectedLessonId() {
@@ -697,10 +762,12 @@ function StatBadge({
             ? "border-[#33203d] bg-[#140a18] text-fuchsia-200"
             : tone === "amber"
               ? "border-[#4b320c] bg-[#1b1305] text-amber-200"
-            : "border-[#1f2937] bg-[#0b0d0f] text-white/80",
+              : "border-[#1f2937] bg-[#0b0d0f] text-white/80",
       )}
     >
-      <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">{label}</div>
+      <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
+        {label}
+      </div>
       <div className="mt-1 font-display text-base font-semibold uppercase tracking-[0.05em]">
         {value}
       </div>
@@ -749,7 +816,9 @@ function WorkspaceSelect(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
   );
 }
 
-function WorkspaceTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+function WorkspaceTextarea(
+  props: React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+) {
   return (
     <textarea
       {...props}
@@ -815,7 +884,10 @@ function WorkspaceShell({
   const subscriptionTier = formatSubscriptionTier(session.data);
 
   return (
-    <div className={cn("pixel-workspace min-h-screen", palette.bg, palette.text)} data-theme={theme}>
+    <div
+      className={cn("pixel-workspace min-h-screen", palette.bg, palette.text)}
+      data-theme={theme}
+    >
       <div className="grid min-h-screen lg:grid-cols-[320px_minmax(0,1fr)]">
         <aside
           className={cn(
@@ -824,18 +896,15 @@ function WorkspaceShell({
             "bg-[#0b0d0f]",
           )}
         >
-          <div className="relative overflow-hidden border border-[#1f2937] bg-[#05070a] p-4">
-            <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-[#9cff93]/0 via-[#9cff93]/80 to-[#9cff93]/0" />
-            <div className="absolute right-3 top-3 h-2 w-2 rounded-none border border-[#69daff]/60 bg-[#69daff]/35" />
-            <div className={cn("font-display text-2xl font-bold uppercase tracking-[0.08em]", palette.accent)}>
+          <div className="flex items-center gap-2">
+            <img src="/favicon.png" alt="Learnbro" className="h-10 w-10" />
+            <div
+              className={cn(
+                "font-display text-2xl font-bold uppercase tracking-[0.08em]",
+                palette.accent,
+              )}
+            >
               Learnbro
-            </div>
-            <div className={cn("mt-2 font-pixel text-[9px] uppercase leading-4", palette.muted)}>
-              LEARNING_TERMINAL
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/45">
-              <span className="inline-block h-2 w-2 border border-[#9cff93] bg-[#9cff93]/70" />
-              <span>Navigation Matrix</span>
             </div>
           </div>
           <nav className="mt-6 border border-[#1f2937] bg-[#05070a] p-3">
@@ -859,7 +928,9 @@ function WorkspaceShell({
                     onClick={(event) => {
                       if (item.action === "open_notes") {
                         event.preventDefault();
-                        window.dispatchEvent(new CustomEvent("versera:notes:open"));
+                        window.dispatchEvent(
+                          new CustomEvent("versera:notes:open"),
+                        );
                         return;
                       }
 
@@ -899,7 +970,9 @@ function WorkspaceShell({
                       <div
                         className={cn(
                           "h-full transition-all duration-300",
-                          current ? "w-full bg-[#9cff93]" : "w-1/3 bg-white/20 group-hover:w-2/3 group-hover:bg-[#69daff]/70",
+                          current
+                            ? "w-full bg-[#9cff93]"
+                            : "w-1/3 bg-white/20 group-hover:w-2/3 group-hover:bg-[#69daff]/70",
                         )}
                       />
                     </div>
@@ -911,7 +984,9 @@ function WorkspaceShell({
           <div className="mt-6 border-t border-[#262626] pt-6">
             <div className="border border-[#1f2937] bg-[#05070a] p-4">
               <div className="flex items-center justify-between gap-2">
-                <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-[#6b7280]">Profile</div>
+                <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-[#6b7280]">
+                  Profile
+                </div>
                 <div className="h-2 w-8 border border-[#9cff93]/50 bg-[#9cff93]/20" />
               </div>
               <div className="mt-3 font-display text-base font-semibold uppercase text-white">
@@ -964,7 +1039,9 @@ function WorkspaceShell({
                   {title}
                 </h1>
               </div>
-              {headerActions ? <div className="shrink-0">{headerActions}</div> : null}
+              {headerActions ? (
+                <div className="shrink-0">{headerActions}</div>
+              ) : null}
             </div>
           </div>
           <div className="p-6 lg:p-8">{children}</div>
@@ -1003,13 +1080,25 @@ function UnsavedDraftPrompt({
           Save before leaving?
         </div>
         <div className="mt-4 text-sm leading-7 text-white/65">
-          You have a generated lesson that is not saved yet. Save it before you {destinationLabel} so the draft is not lost.
+          You have a generated lesson that is not saved yet. Save it before you{" "}
+          {destinationLabel} so the draft is not lost.
         </div>
         <div className="mt-6 flex flex-wrap gap-3">
-          <PixelButton disabled={isSaving} onClick={onSave} theme="dark" tone="cyan">
+          <PixelButton
+            disabled={isSaving}
+            onClick={onSave}
+            theme="dark"
+            tone="cyan"
+          >
             {isSaving ? "Saving..." : "Save and continue"}
           </PixelButton>
-          <PixelButton disabled={isSaving} hollow onClick={onDiscard} theme="dark" tone="purple">
+          <PixelButton
+            disabled={isSaving}
+            hollow
+            onClick={onDiscard}
+            theme="dark"
+            tone="purple"
+          >
             Leave without saving
           </PixelButton>
           <PixelButton disabled={isSaving} hollow onClick={onStay} theme="dark">
@@ -1093,7 +1182,8 @@ function LessonList({
   if (!lessons.length) {
     return (
       <div className="rounded-[28px] border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm text-white/55">
-        No saved lessons yet. Generate one from the Home builder to seed this module.
+        No saved lessons yet. Generate one from the Home builder to seed this
+        module.
       </div>
     );
   }
@@ -1116,21 +1206,24 @@ function LessonList({
             type="button"
           >
             <div>
-              <div className="font-display text-lg font-semibold uppercase">{lesson.title}</div>
+              <div className="font-display text-lg font-semibold uppercase">
+                {lesson.title}
+              </div>
               <div className="mt-1 text-xs uppercase tracking-[0.18em] text-white/45">
                 Updated {formatDate(lesson.updated_at)}
               </div>
             </div>
             <div className="text-right">
-                      <div className="font-display text-base font-semibold uppercase">
-                        {Math.round(lesson.progress.progress_percent)}%
-                      </div>
-                      <div className="text-xs uppercase tracking-[0.18em] text-white/45">
-                        {lesson.progress.completed_page_ids?.length ?? 0}/{lesson.progress.total_pages} complete
-                      </div>
-                    </div>
-                  </button>
-                );
+              <div className="font-display text-base font-semibold uppercase">
+                {Math.round(lesson.progress.progress_percent)}%
+              </div>
+              <div className="text-xs uppercase tracking-[0.18em] text-white/45">
+                {lesson.progress.completed_page_ids?.length ?? 0}/
+                {lesson.progress.total_pages} complete
+              </div>
+            </div>
+          </button>
+        );
       })}
     </div>
   );
@@ -1189,7 +1282,9 @@ function OverviewPage({ page }: { page: LessonPage }) {
   return (
     <div className="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
       <section className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
-        <div className="text-[11px] uppercase tracking-[0.3em] text-white/45">Prompt</div>
+        <div className="text-[11px] uppercase tracking-[0.3em] text-white/45">
+          Prompt
+        </div>
         <div className="mt-4 whitespace-pre-wrap text-base leading-8 text-white/85">
           {getString(data.prompt, "No prompt stored for this lesson.")}
         </div>
@@ -1201,12 +1296,16 @@ function OverviewPage({ page }: { page: LessonPage }) {
         <div className="mt-4 space-y-3">
           {sourceDocuments.length ? (
             sourceDocuments.map((document) => (
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-4" key={getString(document.file_name)}>
+              <div
+                className="rounded-3xl border border-white/10 bg-black/20 p-4"
+                key={getString(document.file_name)}
+              >
                 <div className="font-display text-base font-semibold uppercase">
                   {getString(document.file_name, "Document")}
                 </div>
                 <div className="mt-2 text-xs uppercase tracking-[0.18em] text-white/45">
-                  {getString(document.file_type)} · {getString(document.extracted_characters)} chars
+                  {getString(document.file_type)} ·{" "}
+                  {getString(document.extracted_characters)} chars
                 </div>
                 {getString(document.excerpt) ? (
                   <div className="mt-3 text-sm leading-6 text-white/65">
@@ -1235,7 +1334,9 @@ function TheoryPage({ page }: { page: LessonPage }) {
     <div className="space-y-6">
       <section className="grid gap-4 xl:grid-cols-3">
         <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5">
-          <div className="text-[11px] uppercase tracking-[0.26em] text-white/45">Objectives</div>
+          <div className="text-[11px] uppercase tracking-[0.26em] text-white/45">
+            Objectives
+          </div>
           <div className="mt-3 space-y-2 text-sm leading-6 text-white/75">
             {getStringArray(lesson.learning_objectives).map((item) => (
               <div key={item}>• {item}</div>
@@ -1279,7 +1380,12 @@ function TheoryPage({ page }: { page: LessonPage }) {
               {getString(section.title, `Section ${index + 1}`)}
             </h3>
             <div className="mt-4">
-              <MarkdownPanel content={getString(section.content, "No content available for this section.")} />
+              <MarkdownPanel
+                content={getString(
+                  section.content,
+                  "No content available for this section.",
+                )}
+              />
             </div>
             {getString(section.importance) ? (
               <div className="mt-5 rounded-3xl border border-[#69daff]/20 bg-[#69daff]/8 p-4 text-sm leading-6 text-[#d8f8ff]">
@@ -1293,7 +1399,10 @@ function TheoryPage({ page }: { page: LessonPage }) {
                 </div>
                 <div className="mt-3 grid gap-3 md:grid-cols-2">
                   {getStringArray(section.key_points).map((point) => (
-                    <div className="rounded-3xl border border-white/10 bg-black/15 p-4 text-sm text-white/70" key={point}>
+                    <div
+                      className="rounded-3xl border border-white/10 bg-black/15 p-4 text-sm text-white/70"
+                      key={point}
+                    >
                       {point}
                     </div>
                   ))}
@@ -1310,7 +1419,10 @@ function TheoryPage({ page }: { page: LessonPage }) {
                       key={`${getString(example.title)}-${exampleIndex}`}
                     >
                       <div className="font-display text-base font-semibold uppercase">
-                        {getString(example.title, `Example ${exampleIndex + 1}`)}
+                        {getString(
+                          example.title,
+                          `Example ${exampleIndex + 1}`,
+                        )}
                       </div>
                       <div className="mt-2 text-sm leading-6 text-white/70">
                         {getString(example.description)}
@@ -1335,87 +1447,189 @@ function FlashcardsPage({
 }) {
   const data = getRecord(page.data) ?? {};
   const cards = getArray(data.cards).filter(isRecord);
-  const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  const total = cards.length;
+  const currentCard = cards[currentIndex];
+
+  function goPrev() {
+    setIsFlipped(false);
+    setTimeout(() => setCurrentIndex((i) => (i - 1 + total) % total), 120);
+  }
+
+  function goNext() {
+    setIsFlipped(false);
+    setTimeout(() => setCurrentIndex((i) => (i + 1) % total), 120);
+  }
+
+  if (!total) {
+    return (
+      <div className="rounded-[30px] border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm text-white/55">
+        This lesson does not contain flashcards yet.
+      </div>
+    );
+  }
+
+  const cardKey = `${getString(currentCard.question)}-${currentIndex}`;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      {cards.length ? (
-        cards.map((card, index) => {
-          const cardKey = `${getString(card.question)}-${index}`;
-          const isFlipped = Boolean(flippedCards[cardKey]);
-
-          return (
-            <article className="rounded-[30px] border border-white/10 bg-white/[0.04] p-6" key={cardKey}>
-              <div className="flex items-center justify-between gap-4">
-                <div className="text-[11px] uppercase tracking-[0.26em] text-white/45">
-                  {getString(card.type, "flashcard")} · {getString(card.subtopic, "general")}
-                </div>
-                <button
-                  className="text-[11px] uppercase tracking-[0.24em] text-[#69daff]"
-                  onClick={() =>
-                    onCreateFlashcard(getString(card.question), getString(card.answer))
-                  }
-                  type="button"
-                >
-                  Save to deck
-                </button>
-              </div>
-
-              <button
-                aria-label={isFlipped ? "Flip to question side" : "Flip to answer side"}
-                className="mt-5 block w-full text-left [perspective:1200px]"
-                onClick={() =>
-                  setFlippedCards((current) => ({
-                    ...current,
-                    [cardKey]: !current[cardKey],
-                  }))
-                }
-                type="button"
-              >
-                <div
-                  className={cn(
-                    "relative min-h-[320px] w-full rounded-[24px] [transform-style:preserve-3d] transition-transform duration-500",
-                    isFlipped ? "[transform:rotateY(180deg)]" : "",
-                  )}
-                >
-                  <div className="absolute inset-0 rounded-[24px] border border-white/10 bg-black/20 p-5 [backface-visibility:hidden]">
-                    <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
-                      Question
-                    </div>
-                    <div className="mt-4 font-display text-2xl font-semibold uppercase">
-                      {getString(card.question, `Flashcard ${index + 1}`)}
-                    </div>
-                    <div className="mt-5 text-[11px] uppercase tracking-[0.24em] text-[#69daff]">
-                      Click to flip answer
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-0 rounded-[24px] border border-[#9cff93]/20 bg-[#9cff93]/8 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                    <div className="text-[11px] uppercase tracking-[0.24em] text-[#c5ffc0]">Answer key</div>
-                    <div className="mt-3 text-sm leading-7 text-white/82">
-                      {getString(card.answer, "No answer provided")}
-                    </div>
-                    {getStringArray(card.hints).length ? (
-                      <div className="mt-4 space-y-2 text-sm text-white/70">
-                        {getStringArray(card.hints).map((hint) => (
-                          <div key={hint}>• {hint}</div>
-                        ))}
-                      </div>
-                    ) : null}
-                    <div className="mt-5 text-[11px] uppercase tracking-[0.24em] text-[#9cff93]">
-                      Click to flip back
-                    </div>
-                  </div>
-                </div>
-              </button>
-            </article>
-          );
-        })
-      ) : (
-        <div className="rounded-[30px] border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm text-white/55">
-          This lesson does not contain flashcards yet.
+    <div className="space-y-4">
+      {/* Header: type/subtopic + Save to deck */}
+      <div className="flex items-center justify-between gap-4 px-1">
+        <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
+          {getString(currentCard.type, "flashcard")} ·{" "}
+          {getString(currentCard.subtopic, "general")}
         </div>
-      )}
+        <button
+          className="font-pixel text-[9px] uppercase tracking-[0.2em] text-[#69daff] transition hover:text-[#9cff93]"
+          onClick={() =>
+            onCreateFlashcard(
+              getString(currentCard.question),
+              getString(currentCard.answer),
+            )
+          }
+          type="button"
+        >
+          ▸ Save to deck
+        </button>
+      </div>
+
+      {/* Flashcard (flip on click) */}
+      <button
+        aria-label={isFlipped ? "Flip to question side" : "Flip to answer side"}
+        className="block w-full text-left [perspective:1200px]"
+        onClick={() => setIsFlipped((f) => !f)}
+        type="button"
+      >
+        <div
+          className={cn(
+            "relative min-h-[320px] w-full [transform-style:preserve-3d] transition-transform duration-500",
+            isFlipped ? "[transform:rotateY(180deg)]" : "",
+          )}
+        >
+          {/* Front — Question */}
+          <div className="absolute inset-0 border border-white/10 bg-black/20 p-6 [backface-visibility:hidden]">
+            <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+              Question
+            </div>
+            <div className="mt-4 font-display text-2xl font-semibold uppercase">
+              {getString(currentCard.question, `Flashcard ${currentIndex + 1}`)}
+            </div>
+            <div className="mt-6 text-[11px] uppercase tracking-[0.24em] text-[#69daff]">
+              ▸ Click to flip answer
+            </div>
+          </div>
+
+          {/* Back — Answer */}
+          <div className="absolute inset-0 border border-[#9cff93]/20 bg-[#9cff93]/8 p-6 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+            <div className="text-[11px] uppercase tracking-[0.24em] text-[#c5ffc0]">
+              Answer key
+            </div>
+            <div className="mt-3 text-sm leading-7 text-white/82">
+              {getString(currentCard.answer, "No answer provided")}
+            </div>
+            {getStringArray(currentCard.hints).length ? (
+              <div className="mt-4 space-y-2 text-sm text-white/70">
+                {getStringArray(currentCard.hints).map((hint) => (
+                  <div key={hint}>• {hint}</div>
+                ))}
+              </div>
+            ) : null}
+            <div className="mt-5 text-[11px] uppercase tracking-[0.24em] text-[#9cff93]">
+              ▸ Click to flip back
+            </div>
+          </div>
+        </div>
+      </button>
+
+      {/* Navigation: ← PREV · dots · NEXT → */}
+      <div className="flex items-center justify-between gap-4 pt-2">
+        {/* Prev arrow */}
+        <button
+          id="lesson-flashcard-prev"
+          type="button"
+          onClick={goPrev}
+          disabled={total <= 1}
+          className="group flex items-center gap-2 disabled:opacity-30"
+          aria-label="Previous flashcard"
+        >
+          <span className="inline-flex h-9 w-9 items-center justify-center border border-[#9cff93]/40 text-[#9cff93] transition group-hover:border-[#9cff93] group-hover:bg-[#9cff93]/10">
+            {/* Left arrow SVG */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="square"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </span>
+          <span className="font-pixel text-[9px] uppercase tracking-[0.14em] text-white/45 transition group-hover:text-white/80">
+            Prev
+          </span>
+        </button>
+
+        {/* Dot indicators */}
+        <div className="flex flex-col items-center gap-1.5">
+          <div className="flex gap-1.5">
+            {cards.map((_, idx) => (
+              <button
+                key={idx}
+                id={`lesson-fc-dot-${idx}`}
+                type="button"
+                onClick={() => {
+                  setIsFlipped(false);
+                  setTimeout(() => setCurrentIndex(idx), 120);
+                }}
+                className={cn(
+                  "h-1.5 transition-all",
+                  idx === currentIndex
+                    ? "w-5 bg-[#9cff93]"
+                    : "w-1.5 bg-white/20 hover:bg-white/40",
+                )}
+                aria-label={`Go to card ${idx + 1}`}
+              />
+            ))}
+          </div>
+          <span className="font-pixel text-[8px] uppercase tracking-[0.14em] text-white/35">
+            {currentIndex + 1} / {total}
+          </span>
+        </div>
+
+        {/* Next arrow */}
+        <button
+          id="lesson-flashcard-next"
+          type="button"
+          onClick={goNext}
+          disabled={total <= 1}
+          className="group flex items-center gap-2 disabled:opacity-30"
+          aria-label="Next flashcard"
+        >
+          <span className="font-pixel text-[9px] uppercase tracking-[0.14em] text-white/45 transition group-hover:text-white/80">
+            Next
+          </span>
+          <span className="inline-flex h-9 w-9 items-center justify-center bg-[#9cff93]/10 border border-[#9cff93]/40 text-[#9cff93] transition group-hover:border-[#9cff93] group-hover:bg-[#9cff93]/20">
+            {/* Right arrow SVG */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="square"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -1431,48 +1645,175 @@ function QuizPage({
 }) {
   const data = getRecord(page.data) ?? {};
   const questions = getArray(data.questions).filter(isRecord);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const total = questions.length;
+  const currentQuestion = questions[currentIndex];
+
+  function goPrev() {
+    setCurrentIndex((i) => (i - 1 + total) % total);
+  }
+
+  function goNext() {
+    setCurrentIndex((i) => (i + 1) % total);
+  }
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-[30px] border border-white/10 bg-white/[0.04] p-6 lg:flex-row lg:items-center lg:justify-between">
+      {/* Header with title and Start Review button */}
+      <div className="flex flex-col gap-4 border border-white/10 bg-white/[0.04] p-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">Quiz page</div>
-          <h3 className="mt-2 font-display text-2xl font-semibold uppercase">{page.title}</h3>
+          <div className="font-pixel text-[9px] uppercase tracking-[0.28em] text-white/45">
+            Quiz page
+          </div>
+          <h3 className="mt-2 font-display text-2xl font-semibold uppercase">
+            {page.title}
+          </h3>
           <div className="mt-2 text-sm leading-6 text-white/65">
-            Quiz attempts will be tracked under <span className="text-white">{lesson.topic}</span>.
+            Quiz attempts will be tracked under{" "}
+            <span className="text-white">{lesson.topic}</span>.
           </div>
         </div>
         <PixelButton onClick={onLaunchReview} theme="dark" tone="cyan">
           Start Review Mode
         </PixelButton>
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        {questions.map((question, index) => (
-          <article className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5" key={`${getString(question.question)}-${index}`}>
-            <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.24em] text-white/45">
-              <span>{getString(question.type, "question")}</span>
-              <span>·</span>
-              <span>{getString(question.subtopic, lesson.topic)}</span>
+
+      {/* Single question card */}
+      {total === 0 ? (
+        <div className="border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm text-white/55">
+          This quiz page does not contain questions yet.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {/* Question counter label */}
+          <div className="flex items-center justify-between px-1">
+            <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
+              {getString(currentQuestion.type, "question").replaceAll("_", " ")}{" "}
+              · {getString(currentQuestion.subtopic, lesson.topic)}
             </div>
-            <div className="mt-4 font-display text-xl font-semibold uppercase leading-tight">
-              {getString(question.question, `Question ${index + 1}`)}
+            <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/35">
+              {currentIndex + 1} / {total}
             </div>
-            {getStringArray(question.options).length ? (
-              <div className="mt-4 grid gap-2">
-                {getStringArray(question.options).map((option) => (
-                  <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/72" key={option}>
-                    {option}
-                  </div>
-                ))}
+          </div>
+
+          {/* Question card — fixed min-height prevents layout jump between short/long questions */}
+          <article className="flex min-h-[340px] flex-col border border-white/10 bg-white/[0.04] p-6">
+            <div className="font-display text-xl font-semibold uppercase leading-tight">
+              {getString(
+                currentQuestion.question,
+                `Question ${currentIndex + 1}`,
+              )}
+            </div>
+
+            {getStringArray(currentQuestion.options).length ? (
+              <div className="mt-5 grid gap-2">
+                {getStringArray(currentQuestion.options).map(
+                  (option, optIdx) => (
+                    <div
+                      className="flex items-start gap-3 border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/72"
+                      key={option}
+                    >
+                      <span className="font-pixel text-[9px] uppercase text-white/35 shrink-0 mt-0.5">
+                        {String.fromCharCode(65 + optIdx)}
+                      </span>
+                      <span>{option}</span>
+                    </div>
+                  ),
+                )}
               </div>
             ) : (
-              <div className="mt-4 text-sm text-white/60">
-                Response type: {getString(question.type).replaceAll("_", " ")}
+              <div className="mt-4 border border-dashed border-white/10 px-4 py-3 font-pixel text-[9px] uppercase tracking-[0.14em] text-white/40">
+                Response type:{" "}
+                {getString(currentQuestion.type).replaceAll("_", " ")}
               </div>
             )}
           </article>
-        ))}
-      </div>
+
+          {/* Navigation: ← Prev · dots · Next → */}
+          <div className="flex items-center justify-between gap-4 pt-1">
+            {/* Prev */}
+            <button
+              id="lesson-quiz-prev"
+              type="button"
+              onClick={goPrev}
+              disabled={total <= 1}
+              className="group flex items-center gap-2 disabled:opacity-30"
+              aria-label="Previous question"
+            >
+              <span className="inline-flex h-9 w-9 items-center justify-center border border-[#69daff]/40 text-[#69daff] transition group-hover:border-[#69daff] group-hover:bg-[#69daff]/10">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="square"
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </span>
+              <span className="font-pixel text-[9px] uppercase tracking-[0.14em] text-white/45 transition group-hover:text-white/80">
+                Prev
+              </span>
+            </button>
+
+            {/* Dot indicators */}
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="flex gap-1.5">
+                {questions.map((_, idx) => (
+                  <button
+                    key={idx}
+                    id={`lesson-quiz-dot-${idx}`}
+                    type="button"
+                    onClick={() => setCurrentIndex(idx)}
+                    className={cn(
+                      "h-1.5 transition-all",
+                      idx === currentIndex
+                        ? "w-5 bg-[#69daff]"
+                        : "w-1.5 bg-white/20 hover:bg-white/40",
+                    )}
+                    aria-label={`Go to question ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              <span className="font-pixel text-[8px] uppercase tracking-[0.14em] text-white/35">
+                {currentIndex + 1} / {total}
+              </span>
+            </div>
+
+            {/* Next */}
+            <button
+              id="lesson-quiz-next"
+              type="button"
+              onClick={goNext}
+              disabled={total <= 1}
+              className="group flex items-center gap-2 disabled:opacity-30"
+              aria-label="Next question"
+            >
+              <span className="font-pixel text-[9px] uppercase tracking-[0.14em] text-white/45 transition group-hover:text-white/80">
+                Next
+              </span>
+              <span className="inline-flex h-9 w-9 items-center justify-center border border-[#69daff]/40 bg-[#69daff]/10 text-[#69daff] transition group-hover:border-[#69daff] group-hover:bg-[#69daff]/20">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="square"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1484,7 +1825,10 @@ function ResourcesPage({ page }: { page: LessonPage }) {
     <div className="grid gap-4 md:grid-cols-2">
       {items.length ? (
         items.map((item) => (
-          <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 text-sm leading-7 text-white/75" key={item}>
+          <div
+            className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 text-sm leading-7 text-white/75"
+            key={item}
+          >
             {item}
           </div>
         ))
@@ -1497,25 +1841,39 @@ function ResourcesPage({ page }: { page: LessonPage }) {
   );
 }
 
-function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }) {
+function CodingPage({
+  lesson,
+  page,
+}: {
+  lesson: ActiveLesson;
+  page: LessonPage;
+}) {
   const data = getRecord(page.data) ?? {};
   const tasks = getArray(data.tasks).filter(isRecord);
   const savedLessonId = isSavedLesson(lesson) ? lesson.id : null;
   const lessonLanguage = getString(data.language, "python");
   const lessonLanguageId = getNumber(data.language_id) ?? 71;
 
-  const codingProblemsQuery = useBackendLessonCodingProblemsQuery(savedLessonId, {
-    enabled: Boolean(savedLessonId),
-  });
-  const generateCodingProblemsMutation = useBackendGenerateLessonCodingProblemsMutation();
+  const codingProblemsQuery = useBackendLessonCodingProblemsQuery(
+    savedLessonId,
+    {
+      enabled: Boolean(savedLessonId),
+    },
+  );
+  const generateCodingProblemsMutation =
+    useBackendGenerateLessonCodingProblemsMutation();
   const runCodingProblemMutation = useBackendRunCodingProblemMutation();
   const submitCodingProblemMutation = useBackendSubmitCodingProblemMutation();
-  const submitCodingProblemStreamMutation = useBackendStreamSubmitCodingProblemMutation();
-  const upsertCodingSessionMutation = useBackendUpsertCodingProblemSessionMutation();
+  const submitCodingProblemStreamMutation =
+    useBackendStreamSubmitCodingProblemMutation();
+  const upsertCodingSessionMutation =
+    useBackendUpsertCodingProblemSessionMutation();
   const recommendationMutation = useBackendCodeRecommendationMutation();
 
   const codingProblems = codingProblemsQuery.data ?? [];
-  const [selectedProblemId, setSelectedProblemId] = useState<string | null>(null);
+  const [selectedProblemId, setSelectedProblemId] = useState<string | null>(
+    null,
+  );
   const codingProblemQuery = useBackendCodingProblemQuery(selectedProblemId, {
     enabled: Boolean(selectedProblemId),
   });
@@ -1535,18 +1893,26 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
   const [sourceCode, setSourceCode] = useState("");
   const [stdin, setStdin] = useState("");
   const [recommendationText, setRecommendationText] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState<CodingLanguageOption>(defaultLanguageOption);
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<CodingLanguageOption>(defaultLanguageOption);
   const [localMessage, setLocalMessage] = useState<string | null>(null);
-  const [submitStreamStatus, setSubmitStreamStatus] = useState<string | null>(null);
+  const [submitStreamStatus, setSubmitStreamStatus] = useState<string | null>(
+    null,
+  );
   const [submitStreamPassedTests, setSubmitStreamPassedTests] = useState(0);
   const [submitStreamTotalTests, setSubmitStreamTotalTests] = useState(0);
-  const [submitStreamCaseResults, setSubmitStreamCaseResults] = useState<SubmitStreamCaseEvent["case_result"][]>([]);
-  const [submitStreamCompleted, setSubmitStreamCompleted] = useState<SubmitStreamCompletedEvent | null>(null);
+  const [submitStreamCaseResults, setSubmitStreamCaseResults] = useState<
+    SubmitStreamCaseEvent["case_result"][]
+  >([]);
+  const [submitStreamCompleted, setSubmitStreamCompleted] =
+    useState<SubmitStreamCompletedEvent | null>(null);
 
   const autoGenerateTriggeredRef = useRef(false);
   const hydratedProblemIdRef = useRef<string | null>(null);
   const hydratedLanguageProblemIdRef = useRef<string | null>(null);
-  const editorRef = useRef<MonacoEditorNamespace.IStandaloneCodeEditor | null>(null);
+  const editorRef = useRef<MonacoEditorNamespace.IStandaloneCodeEditor | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!codingProblems.length) {
@@ -1554,7 +1920,10 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
       return;
     }
 
-    if (selectedProblemId && codingProblems.some((problem) => problem.id === selectedProblemId)) {
+    if (
+      selectedProblemId &&
+      codingProblems.some((problem) => problem.id === selectedProblemId)
+    ) {
       return;
     }
 
@@ -1599,7 +1968,10 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
   }, [selectedProblemId]);
 
   useEffect(() => {
-    if (!selectedProblemId || hydratedProblemIdRef.current === selectedProblemId) {
+    if (
+      !selectedProblemId ||
+      hydratedProblemIdRef.current === selectedProblemId
+    ) {
       return;
     }
 
@@ -1632,7 +2004,10 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
   ]);
 
   useEffect(() => {
-    if (!selectedProblemId || hydratedLanguageProblemIdRef.current === selectedProblemId) {
+    if (
+      !selectedProblemId ||
+      hydratedLanguageProblemIdRef.current === selectedProblemId
+    ) {
       return;
     }
 
@@ -1670,7 +2045,8 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
       }
     : submitResult;
   const isSubmittingCode =
-    submitCodingProblemStreamMutation.isPending || submitCodingProblemMutation.isPending;
+    submitCodingProblemStreamMutation.isPending ||
+    submitCodingProblemMutation.isPending;
   const submitResultByCaseIndex = new Map(
     submitStreamCaseResults.map((caseResult) => [caseResult.index, caseResult]),
   );
@@ -1737,8 +2113,12 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
             setSubmitStreamPassedTests(event.passed_tests);
             setSubmitStreamTotalTests(event.total_tests);
             setSubmitStreamCaseResults((current) => {
-              const withoutCurrent = current.filter((item) => item.index !== event.case_result.index);
-              return [...withoutCurrent, event.case_result].sort((a, b) => a.index - b.index);
+              const withoutCurrent = current.filter(
+                (item) => item.index !== event.case_result.index,
+              );
+              return [...withoutCurrent, event.case_result].sort(
+                (a, b) => a.index - b.index,
+              );
             });
             return;
           }
@@ -1814,7 +2194,9 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
       user_context: `${lesson.topic} · ${activeProblem?.title ?? "coding practice"}`,
     });
 
-    setRecommendationText(recommendation.text || "No recommendation returned yet.");
+    setRecommendationText(
+      recommendation.text || "No recommendation returned yet.",
+    );
   };
 
   return (
@@ -1823,43 +2205,59 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
         <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-white/45">
           <span>coding workspace</span>
           <span>{selectedLanguage.label}</span>
-          {savedLessonId ? <span>linked to saved lesson</span> : <span>draft mode</span>}
+          {savedLessonId ? (
+            <span>linked to saved lesson</span>
+          ) : (
+            <span>draft mode</span>
+          )}
         </div>
-        <div className="mt-3 font-display text-2xl font-semibold uppercase">Interactive coding</div>
+        <div className="mt-3 font-display text-2xl font-semibold uppercase">
+          Interactive coding
+        </div>
         <div className="mt-3 text-sm leading-7 text-white/70">
-          Pick a coding problem in the left strip, edit starter code, run or submit against test cases, then ask AI for improvement suggestions.
+          Pick a coding problem in the left strip, edit starter code, run or
+          submit against test cases, then ask AI for improvement suggestions.
         </div>
       </div>
 
       {!savedLessonId ? (
         <div className="space-y-4">
           <div className="rounded-[28px] border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm text-white/55">
-            This lesson is still a draft. Save lesson first to activate run/submit APIs and persistent code sessions.
+            This lesson is still a draft. Save lesson first to activate
+            run/submit APIs and persistent code sessions.
           </div>
-          {tasks.length ? (
-            tasks.map((task, index) => (
-              <article
-                className="rounded-[30px] border border-white/10 bg-white/[0.04] p-6"
-                key={`${getString(task.title)}-${index}`}
-              >
-                <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.26em] text-white/45">
-                  <span>coding exercise</span>
-                  {getString(task.difficulty) ? <span>{getString(task.difficulty)}</span> : null}
-                </div>
-                <div className="mt-3 font-display text-2xl font-semibold uppercase">
-                  {getString(task.title, `Task ${index + 1}`)}
-                </div>
-                <div className="mt-4 text-sm leading-7 text-white/75">
-                  {getString(task.instructions, getString(task.description, "No task description provided."))}
-                </div>
-                {getString(task.starting_code) ? (
-                  <pre className="mt-4 overflow-x-auto rounded-[22px] border border-white/10 bg-black/25 p-4 text-xs leading-6 text-white/75">
-                    {getString(task.starting_code)}
-                  </pre>
-                ) : null}
-              </article>
-            ))
-          ) : null}
+          {tasks.length
+            ? tasks.map((task, index) => (
+                <article
+                  className="rounded-[30px] border border-white/10 bg-white/[0.04] p-6"
+                  key={`${getString(task.title)}-${index}`}
+                >
+                  <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.26em] text-white/45">
+                    <span>coding exercise</span>
+                    {getString(task.difficulty) ? (
+                      <span>{getString(task.difficulty)}</span>
+                    ) : null}
+                  </div>
+                  <div className="mt-3 font-display text-2xl font-semibold uppercase">
+                    {getString(task.title, `Task ${index + 1}`)}
+                  </div>
+                  <div className="mt-4 text-sm leading-7 text-white/75">
+                    {getString(
+                      task.instructions,
+                      getString(
+                        task.description,
+                        "No task description provided.",
+                      ),
+                    )}
+                  </div>
+                  {getString(task.starting_code) ? (
+                    <pre className="mt-4 overflow-x-auto rounded-[22px] border border-white/10 bg-black/25 p-4 text-xs leading-6 text-white/75">
+                      {getString(task.starting_code)}
+                    </pre>
+                  ) : null}
+                </article>
+              ))
+            : null}
         </div>
       ) : (
         <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
@@ -1886,7 +2284,8 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
                         {problem.title}
                       </div>
                       <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                        {problem.language} · {problem.difficulty ?? "intermediate"}
+                        {problem.language} ·{" "}
+                        {problem.difficulty ?? "intermediate"}
                       </div>
                     </button>
                   ))
@@ -1904,14 +2303,19 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
                       lessonId: savedLessonId,
                       payload: {
                         decision_mode: "force",
-                        max_problems: Math.max(1, Math.min(5, tasks.length || 2)),
+                        max_problems: Math.max(
+                          1,
+                          Math.min(5, tasks.length || 2),
+                        ),
                       },
                     })
                   }
                   theme="dark"
                   tone="cyan"
                 >
-                  {generateCodingProblemsMutation.isPending ? "Generating..." : "Refresh Coding Tasks"}
+                  {generateCodingProblemsMutation.isPending
+                    ? "Generating..."
+                    : "Refresh Coding Tasks"}
                 </PixelButton>
               </div>
             </div>
@@ -1923,12 +2327,16 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
               <div className="mt-3 space-y-2">
                 {attempts.length ? (
                   attempts.map((attempt) => (
-                    <div className="rounded-2xl border border-white/10 bg-black/25 p-3" key={attempt.id}>
+                    <div
+                      className="rounded-2xl border border-white/10 bg-black/25 p-3"
+                      key={attempt.id}
+                    >
                       <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
                         {attempt.mode} · {attempt.overall_status ?? "unknown"}
                       </div>
                       <div className="mt-1 text-sm text-white/75">
-                        {attempt.passed_tests}/{attempt.total_tests} tests passed
+                        {attempt.passed_tests}/{attempt.total_tests} tests
+                        passed
                       </div>
                     </div>
                   ))
@@ -1945,7 +2353,9 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
             <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">Code editor</div>
+                  <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+                    Code editor
+                  </div>
                   <div className="mt-2 font-display text-xl font-semibold uppercase">
                     {activeProblem?.title ?? "Select a coding task"}
                   </div>
@@ -2001,7 +2411,9 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
                 </div>
               </div>
               {activeProblem?.instructions ? (
-                <div className="mt-3 text-sm leading-7 text-white/75">{activeProblem.instructions}</div>
+                <div className="mt-3 text-sm leading-7 text-white/75">
+                  {activeProblem.instructions}
+                </div>
               ) : null}
               <div className="mt-4">
                 <div className="overflow-hidden rounded-[20px] border border-[#2a2a2a] bg-[#05070a]">
@@ -2039,7 +2451,8 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
                   />
                 </div>
                 <div className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/45">
-                  VSCode-style shortcuts: Tab/Shift+Tab indent, Ctrl+Space suggest, Shift+Alt+F format.
+                  VSCode-style shortcuts: Tab/Shift+Tab indent, Ctrl+Space
+                  suggest, Shift+Alt+F format.
                 </div>
               </div>
               <div className="mt-4">
@@ -2055,12 +2468,16 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <PixelButton
-                  disabled={runCodingProblemMutation.isPending || !selectedProblemId}
+                  disabled={
+                    runCodingProblemMutation.isPending || !selectedProblemId
+                  }
                   onClick={() => void runCode()}
                   theme="dark"
                   tone="cyan"
                 >
-                  {runCodingProblemMutation.isPending ? "Running..." : "Run Code"}
+                  {runCodingProblemMutation.isPending
+                    ? "Running..."
+                    : "Run Code"}
                 </PixelButton>
                 <PixelButton
                   disabled={!selectedProblemId}
@@ -2083,7 +2500,10 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
                   hollow
                   onClick={() =>
                     setSourceCode(
-                      resolveStarterCodeForLanguage(selectedLanguage.value, activeProblem ?? null),
+                      resolveStarterCodeForLanguage(
+                        selectedLanguage.value,
+                        activeProblem ?? null,
+                      ),
                     )
                   }
                   theme="dark"
@@ -2092,59 +2512,93 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
                   Load Starter
                 </PixelButton>
                 <PixelButton
-                  disabled={upsertCodingSessionMutation.isPending || !selectedProblemId}
+                  disabled={
+                    upsertCodingSessionMutation.isPending || !selectedProblemId
+                  }
                   hollow
                   onClick={() => void saveSession()}
                   theme="dark"
                   tone="purple"
                 >
-                  {upsertCodingSessionMutation.isPending ? "Saving..." : "Save Code"}
+                  {upsertCodingSessionMutation.isPending
+                    ? "Saving..."
+                    : "Save Code"}
                 </PixelButton>
                 <PixelButton
-                  disabled={recommendationMutation.isPending || !sourceCode.trim()}
+                  disabled={
+                    recommendationMutation.isPending || !sourceCode.trim()
+                  }
                   hollow
                   onClick={() => void getRecommendation()}
                   theme="dark"
                   tone="cyan"
                 >
-                  {recommendationMutation.isPending ? "Analyzing..." : "AI Recommend"}
+                  {recommendationMutation.isPending
+                    ? "Analyzing..."
+                    : "AI Recommend"}
                 </PixelButton>
               </div>
-              {localMessage ? <div className="mt-3 text-xs text-[#9cff93]">{localMessage}</div> : null}
+              {localMessage ? (
+                <div className="mt-3 text-xs text-[#9cff93]">
+                  {localMessage}
+                </div>
+              ) : null}
               {runCodingProblemMutation.isError ? (
-                <div className="mt-3 text-sm text-rose-300">{runCodingProblemMutation.error.message}</div>
+                <div className="mt-3 text-sm text-rose-300">
+                  {runCodingProblemMutation.error.message}
+                </div>
               ) : null}
               {submitCodingProblemMutation.isError ? (
-                <div className="mt-3 text-sm text-rose-300">{submitCodingProblemMutation.error.message}</div>
+                <div className="mt-3 text-sm text-rose-300">
+                  {submitCodingProblemMutation.error.message}
+                </div>
               ) : null}
               {submitCodingProblemStreamMutation.isError ? (
-                <div className="mt-3 text-sm text-rose-300">{submitCodingProblemStreamMutation.error.message}</div>
+                <div className="mt-3 text-sm text-rose-300">
+                  {submitCodingProblemStreamMutation.error.message}
+                </div>
               ) : null}
               {recommendationMutation.isError ? (
-                <div className="mt-3 text-sm text-rose-300">{recommendationMutation.error.message}</div>
+                <div className="mt-3 text-sm text-rose-300">
+                  {recommendationMutation.error.message}
+                </div>
               ) : null}
             </div>
 
             <div className="grid gap-4 xl:grid-cols-2">
               <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5">
-                <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">Test cases</div>
+                <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+                  Test cases
+                </div>
                 <div className="mt-3 space-y-3">
                   {testCases.length ? (
                     testCases.map((testCase, index) => {
                       const caseResult = submitResultByCaseIndex.get(index + 1);
 
                       return (
-                        <div className="rounded-2xl border border-white/10 bg-black/25 p-3 text-xs" key={`${testCase.expected_output}-${index}`}>
-                          <div className="uppercase tracking-[0.2em] text-white/45">Case {index + 1}</div>
+                        <div
+                          className="rounded-2xl border border-white/10 bg-black/25 p-3 text-xs"
+                          key={`${testCase.expected_output}-${index}`}
+                        >
+                          <div className="uppercase tracking-[0.2em] text-white/45">
+                            Case {index + 1}
+                          </div>
                           <div className="mt-2 text-white/80">
-                            input: {testCase.is_hidden ? "<hidden>" : testCase.input || "<empty>"}
+                            input:{" "}
+                            {testCase.is_hidden
+                              ? "<hidden>"
+                              : testCase.input || "<empty>"}
                           </div>
                           <div className="mt-1 text-white/80">
-                            expected: {testCase.is_hidden ? "<hidden>" : testCase.expected_output}
+                            expected:{" "}
+                            {testCase.is_hidden
+                              ? "<hidden>"
+                              : testCase.expected_output}
                           </div>
                           {caseResult ? (
                             <div className="mt-1 text-white/80">
-                              status: {caseResult.status ?? "running"} · {caseResult.passed ? "passed" : "failed"}
+                              status: {caseResult.status ?? "running"} ·{" "}
+                              {caseResult.passed ? "passed" : "failed"}
                             </div>
                           ) : null}
                         </div>
@@ -2159,10 +2613,14 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
               </div>
 
               <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5">
-                <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">Execution output</div>
+                <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+                  Execution output
+                </div>
                 <div className="mt-3 space-y-3 text-xs">
                   <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <div className="uppercase tracking-[0.2em] text-white/45">Run result</div>
+                    <div className="uppercase tracking-[0.2em] text-white/45">
+                      Run result
+                    </div>
                     <pre className="mt-2 whitespace-pre-wrap text-white/80">
                       {runResult
                         ? `status: ${runResult.status ?? "unknown"}\nstdout: ${runResult.stdout ?? ""}\nstderr: ${runResult.stderr ?? ""}`
@@ -2170,20 +2628,26 @@ function CodingPage({ lesson, page }: { lesson: ActiveLesson; page: LessonPage }
                     </pre>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <div className="uppercase tracking-[0.2em] text-white/45">Submit result</div>
+                    <div className="uppercase tracking-[0.2em] text-white/45">
+                      Submit result
+                    </div>
                     <pre className="mt-2 whitespace-pre-wrap text-white/80">
                       {effectiveSubmitResult
                         ? `status: ${effectiveSubmitResult.status ?? "unknown"}\npassed: ${effectiveSubmitResult.passed_tests}/${effectiveSubmitResult.total_tests}`
                         : "Submit tests to see verdict."}
                     </pre>
                     <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-white/45">
-                      realtime: {submitStreamStatus ?? "idle"} · {submitStreamPassedTests}/{submitStreamTotalTests || 0}
+                      realtime: {submitStreamStatus ?? "idle"} ·{" "}
+                      {submitStreamPassedTests}/{submitStreamTotalTests || 0}
                     </div>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <div className="uppercase tracking-[0.2em] text-white/45">AI recommendations</div>
+                    <div className="uppercase tracking-[0.2em] text-white/45">
+                      AI recommendations
+                    </div>
                     <div className="mt-2 whitespace-pre-wrap text-sm leading-6 text-white/75">
-                      {recommendationText || "Use AI Recommend to get improvement suggestions while coding."}
+                      {recommendationText ||
+                        "Use AI Recommend to get improvement suggestions while coding."}
                     </div>
                   </div>
                 </div>
@@ -2203,14 +2667,19 @@ type MindmapDisplayNode = {
   name: string;
 };
 
-function parseMindmapDisplayNode(value: unknown, fallbackId: string): MindmapDisplayNode | null {
+function parseMindmapDisplayNode(
+  value: unknown,
+  fallbackId: string,
+): MindmapDisplayNode | null {
   const record = getRecord(value);
   if (!record) {
     return null;
   }
 
   const parsedChildren = getArray(record.children)
-    .map((child, index) => parseMindmapDisplayNode(child, `${fallbackId}_${index}`))
+    .map((child, index) =>
+      parseMindmapDisplayNode(child, `${fallbackId}_${index}`),
+    )
     .filter((child): child is MindmapDisplayNode => Boolean(child));
 
   const name =
@@ -2294,12 +2763,16 @@ function MindmapTreeNode({
   node: MindmapDisplayNode;
 }) {
   return (
-    <div className={cn("pl-4", depth > 0 ? "ml-2 border-l border-white/10" : "")}>
+    <div
+      className={cn("pl-4", depth > 0 ? "ml-2 border-l border-white/10" : "")}
+    >
       <div
         className="rounded-[18px] border bg-black/20 px-4 py-3"
         style={node.color ? { borderColor: node.color } : undefined}
       >
-        <div className="font-display text-sm font-semibold uppercase">{node.name}</div>
+        <div className="font-display text-sm font-semibold uppercase">
+          {node.name}
+        </div>
         <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/40">
           {node.children.length} child{node.children.length === 1 ? "" : "ren"}
         </div>
@@ -2307,7 +2780,11 @@ function MindmapTreeNode({
       {node.children.length ? (
         <div className="mt-3 space-y-3">
           {node.children.map((childNode) => (
-            <MindmapTreeNode depth={depth + 1} key={childNode.id} node={childNode} />
+            <MindmapTreeNode
+              depth={depth + 1}
+              key={childNode.id}
+              node={childNode}
+            />
           ))}
         </div>
       ) : null}
@@ -2323,7 +2800,9 @@ function MindmapPage({ page }: { page: LessonPage }) {
   if (!root) {
     return (
       <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
-        <div className="text-[11px] uppercase tracking-[0.3em] text-white/45">Mind map</div>
+        <div className="text-[11px] uppercase tracking-[0.3em] text-white/45">
+          Mind map
+        </div>
         <div className="mt-4 rounded-[24px] border border-dashed border-white/10 bg-black/25 p-5 text-sm text-white/60">
           Mind map data format is invalid, showing raw payload:
         </div>
@@ -2339,19 +2818,28 @@ function MindmapPage({ page }: { page: LessonPage }) {
   return (
     <div className="space-y-5">
       <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-5">
-        <div className="text-[11px] uppercase tracking-[0.3em] text-white/45">Mind map</div>
-        <div className="mt-2 font-display text-2xl font-semibold uppercase">{root.name}</div>
+        <div className="text-[11px] uppercase tracking-[0.3em] text-white/45">
+          Mind map
+        </div>
+        <div className="mt-2 font-display text-2xl font-semibold uppercase">
+          {root.name}
+        </div>
         <div className="mt-2 text-sm text-white/65">
           Pixel view of lesson hierarchy, rendered from backend mindmap data.
         </div>
       </div>
 
       <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-5">
-        <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">Level map</div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+          Level map
+        </div>
         <div className="mt-4 overflow-x-auto">
           <div className="flex min-w-max gap-4 pb-1">
             {columns.map((column, columnIndex) => (
-              <div className="w-[260px] shrink-0 rounded-[22px] border border-white/10 bg-black/20 p-4" key={`level_${columnIndex}`}>
+              <div
+                className="w-[260px] shrink-0 rounded-[22px] border border-white/10 bg-black/20 p-4"
+                key={`level_${columnIndex}`}
+              >
                 <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
                   Level {columnIndex + 1}
                 </div>
@@ -2360,13 +2848,16 @@ function MindmapPage({ page }: { page: LessonPage }) {
                     <div
                       className="rounded-[16px] border bg-white/[0.03] px-3 py-3"
                       key={node.id}
-                      style={node.color ? { borderColor: node.color } : undefined}
+                      style={
+                        node.color ? { borderColor: node.color } : undefined
+                      }
                     >
                       <div className="font-display text-sm font-semibold uppercase leading-5">
                         {node.name}
                       </div>
                       <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                        {node.children.length} branch{node.children.length === 1 ? "" : "es"}
+                        {node.children.length} branch
+                        {node.children.length === 1 ? "" : "es"}
                       </div>
                     </div>
                   ))}
@@ -2378,7 +2869,9 @@ function MindmapPage({ page }: { page: LessonPage }) {
       </div>
 
       <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-5">
-        <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">Tree view</div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+          Tree view
+        </div>
         <div className="mt-4">
           <MindmapTreeNode node={root} />
         </div>
@@ -2393,6 +2886,7 @@ function LessonViewer({
   createFlashcardMutationPending,
   isSavingProgress,
   lesson,
+  onBackToModules,
   onCreateFlashcard,
   onLaunchReview,
   onMarkComplete,
@@ -2405,6 +2899,7 @@ function LessonViewer({
   createFlashcardMutationPending: boolean;
   isSavingProgress: boolean;
   lesson: ActiveLesson;
+  onBackToModules?: () => void;
   onCreateFlashcard: (question: string, answer: string) => void;
   onLaunchReview: () => void;
   onMarkComplete: () => void;
@@ -2413,7 +2908,8 @@ function LessonViewer({
   onSelectPage: (pageId: string) => void;
 }) {
   const activePage =
-    lesson.pages.find((page) => page.page_id === activePageId) ?? lesson.pages[0];
+    lesson.pages.find((page) => page.page_id === activePageId) ??
+    lesson.pages[0];
   const completedCount = uniqueStrings(completedPageIds).length;
   const progressPercent = isSavedLesson(lesson)
     ? Math.round(lesson.progress.progress_percent)
@@ -2431,12 +2927,20 @@ function LessonViewer({
               {lesson.title}
             </h2>
             <div className="mt-3 max-w-3xl text-sm leading-7 text-white/70">
-              {activePage.description || "Navigate each page to move from theory into quiz and flashcard practice."}
+              {activePage.description ||
+                "Navigate each page to move from theory into quiz and flashcard practice."}
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <StatBadge label="Pages" value={`${completedCount}/${lesson.navigation.total_pages}`} />
-            <StatBadge label="Progress" tone="cyan" value={`${progressPercent}%`} />
+            <StatBadge
+              label="Pages"
+              value={`${completedCount}/${lesson.navigation.total_pages}`}
+            />
+            <StatBadge
+              label="Progress"
+              tone="cyan"
+              value={`${progressPercent}%`}
+            />
             <StatBadge
               label="Mode"
               tone="purple"
@@ -2444,6 +2948,19 @@ function LessonViewer({
             />
           </div>
         </div>
+        {onBackToModules ? (
+          <div className="mt-6 flex justify-end border-t border-white/10 pt-4">
+            <button
+              onClick={onBackToModules}
+              className="group flex items-center gap-2 font-pixel text-[10px] uppercase tracking-[0.2em] text-white/50 transition-colors hover:text-white/80"
+            >
+              <span className="transition-transform group-hover:-translate-x-1">
+                ←
+              </span>
+              <span>Back to subjects</span>
+            </button>
+          </div>
+        ) : null}
       </div>
       <LessonPageTabs
         activePageId={activePage.page_id}
@@ -2471,7 +2988,10 @@ function LessonViewer({
               Previous
             </PixelButton>
             <PixelButton
-              disabled={completedPageIds.includes(activePage.page_id) || isSavingProgress}
+              disabled={
+                completedPageIds.includes(activePage.page_id) ||
+                isSavingProgress
+              }
               onClick={onMarkComplete}
               theme="dark"
               tone="cyan"
@@ -2483,8 +3003,12 @@ function LessonViewer({
             </PixelButton>
           </div>
         </div>
-        {activePage.page_type === "overview" ? <OverviewPage page={activePage} /> : null}
-        {activePage.page_type === "theory" ? <TheoryPage page={activePage} /> : null}
+        {activePage.page_type === "overview" ? (
+          <OverviewPage page={activePage} />
+        ) : null}
+        {activePage.page_type === "theory" ? (
+          <TheoryPage page={activePage} />
+        ) : null}
         {activePage.page_type === "flashcards" ? (
           <FlashcardsPage
             onCreateFlashcard={onCreateFlashcard}
@@ -2492,11 +3016,21 @@ function LessonViewer({
           />
         ) : null}
         {activePage.page_type === "quiz" ? (
-          <QuizPage lesson={lesson} onLaunchReview={onLaunchReview} page={activePage} />
+          <QuizPage
+            lesson={lesson}
+            onLaunchReview={onLaunchReview}
+            page={activePage}
+          />
         ) : null}
-        {activePage.page_type === "resources" ? <ResourcesPage page={activePage} /> : null}
-        {activePage.page_type === "coding" ? <CodingPage lesson={lesson} page={activePage} /> : null}
-        {activePage.page_type === "mindmap" ? <MindmapPage page={activePage} /> : null}
+        {activePage.page_type === "resources" ? (
+          <ResourcesPage page={activePage} />
+        ) : null}
+        {activePage.page_type === "coding" ? (
+          <CodingPage lesson={lesson} page={activePage} />
+        ) : null}
+        {activePage.page_type === "mindmap" ? (
+          <MindmapPage page={activePage} />
+        ) : null}
         {createFlashcardMutationPending ? (
           <div className="mt-5 text-sm text-white/55">
             Saving lesson flashcard into your personal deck...
@@ -2523,37 +3057,52 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
   const [showUnsavedDraftPrompt, setShowUnsavedDraftPrompt] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const pendingDraftActionRef = useRef<PendingDraftAction | null>(null);
-  const [draftLesson, setDraftLesson] = useState<LessonGenerationResponse | null>(null);
-  const [selectedSavedLessonId, setSelectedSavedLessonId] = useState<string | null>(() =>
-    readSelectedLessonId(),
-  );
+  const [draftLesson, setDraftLesson] =
+    useState<LessonGenerationResponse | null>(null);
+  const [selectedSavedLessonId, setSelectedSavedLessonId] = useState<
+    string | null
+  >(() => readSelectedLessonId());
+  const [showModules, setShowModules] = useState(true);
   const resolvedSavedLessonId =
     !draftLesson && savedLessonsQuery.data?.length
-      ? savedLessonsQuery.data.some((lesson) => lesson.id === selectedSavedLessonId)
+      ? savedLessonsQuery.data.some(
+          (lesson) => lesson.id === selectedSavedLessonId,
+        )
         ? selectedSavedLessonId
         : savedLessonsQuery.data[0].id
       : selectedSavedLessonId;
-  const savedLessonDetailQuery = useBackendSavedLessonQuery(resolvedSavedLessonId, {
-    enabled: Boolean(resolvedSavedLessonId),
-  });
+  const savedLessonDetailQuery = useBackendSavedLessonQuery(
+    resolvedSavedLessonId,
+    {
+      enabled: Boolean(resolvedSavedLessonId),
+    },
+  );
   const [activePageId, setActivePageId] = useState("");
-  const [draftCompletedPageIds, setDraftCompletedPageIds] = useState<string[]>([]);
+  const [draftCompletedPageIds, setDraftCompletedPageIds] = useState<string[]>(
+    [],
+  );
   const modules = groupLessonsByTopic(savedLessonsQuery.data);
   const activeLesson = resolvedSavedLessonId
-    ? savedLessonDetailQuery.data ?? null
+    ? (savedLessonDetailQuery.data ?? null)
     : draftLesson;
   const stats = getRecord(statsQuery.data) ?? {};
 
-  const completedPageIds = getLessonCompletedPageIds(activeLesson, draftCompletedPageIds);
-  const displayedPageId =
-    activeLesson?.pages.some((page) => page.page_id === activePageId)
-      ? activePageId
-      : getLessonCurrentPageId(activeLesson, "");
+  const completedPageIds = getLessonCompletedPageIds(
+    activeLesson,
+    draftCompletedPageIds,
+  );
+  const displayedPageId = activeLesson?.pages.some(
+    (page) => page.page_id === activePageId,
+  )
+    ? activePageId
+    : getLessonCurrentPageId(activeLesson, "");
   const activeTopic = resolvedSavedLessonId
-    ? savedLessonDetailQuery.data?.topic ??
-      savedLessonsQuery.data?.find((lesson) => lesson.id === resolvedSavedLessonId)?.topic ??
-      null
-    : draftLesson?.topic ?? null;
+    ? (savedLessonDetailQuery.data?.topic ??
+      savedLessonsQuery.data?.find(
+        (lesson) => lesson.id === resolvedSavedLessonId,
+      )?.topic ??
+      null)
+    : (draftLesson?.topic ?? null);
 
   useEffect(() => {
     if (!draftLesson) {
@@ -2578,7 +3127,9 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     setShowUnsavedDraftPrompt(false);
   };
 
-  const runPendingDraftAction = async (savedLesson: SavedLessonDetail | null) => {
+  const runPendingDraftAction = async (
+    savedLesson: SavedLessonDetail | null,
+  ) => {
     const action = pendingDraftActionRef.current;
     clearPendingDraftAction();
 
@@ -2587,7 +3138,10 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     }
   };
 
-  const requestDraftAction = (destinationLabel: string, action: PendingDraftAction) => {
+  const requestDraftAction = (
+    destinationLabel: string,
+    action: PendingDraftAction,
+  ) => {
     if (!draftLesson) {
       void action(null);
       return;
@@ -2615,6 +3169,13 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
       include_answer_key: builder.include_answer_key,
       include_coding_exercises: builder.include_coding_exercises,
       include_mindmap: builder.include_mindmap,
+      include_external_sources: builder.include_external_sources,
+      external_search_query: builder.include_external_sources
+        ? builder.external_search_query.trim() || undefined
+        : undefined,
+      max_external_sources: builder.include_external_sources
+        ? builder.max_external_sources
+        : undefined,
       learning_objectives: builder.learningObjectives.trim() || undefined,
       learning_pace: builder.learning_pace,
       learning_style: builder.learning_style,
@@ -2655,7 +3216,10 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
 
     setDraftLesson(null);
     setSelectedSavedLessonId(savedLesson.id);
-    setActivePageId(savedLesson.progress.current_page_id ?? savedLesson.navigation.default_page_id);
+    setActivePageId(
+      savedLesson.progress.current_page_id ??
+        savedLesson.navigation.default_page_id,
+    );
     persistSelectedLessonId(savedLesson.id);
     return savedLesson;
   };
@@ -2683,14 +3247,18 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
 
   const navigateWithDraftGuard = (href: string) => {
     const destinationLabel =
-      navigationItems.find((item) => item.href === href)?.label.toLowerCase() ?? "continue";
+      navigationItems.find((item) => item.href === href)?.label.toLowerCase() ??
+      "continue";
 
     requestDraftAction(`open ${destinationLabel}`, () => {
       router.push(href);
     });
   };
 
-  const updateSavedProgress = async (nextCurrentPageId: string, nextCompletedPageIds: string[]) => {
+  const updateSavedProgress = async (
+    nextCurrentPageId: string,
+    nextCompletedPageIds: string[],
+  ) => {
     if (!activeLesson || !isSavedLesson(activeLesson)) {
       return;
     }
@@ -2732,7 +3300,9 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
       return;
     }
 
-    const currentIndex = activeLesson.pages.findIndex((page) => page.page_id === activePageId);
+    const currentIndex = activeLesson.pages.findIndex(
+      (page) => page.page_id === activePageId,
+    );
     const nextPage = activeLesson.pages[currentIndex + direction];
 
     if (!nextPage) {
@@ -2748,13 +3318,18 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     }
 
     const currentPage =
-      activeLesson.pages.find((page) => page.page_id === displayedPageId) ?? activeLesson.pages[0];
+      activeLesson.pages.find((page) => page.page_id === displayedPageId) ??
+      activeLesson.pages[0];
 
     if (currentPage.page_type !== "quiz") {
       return;
     }
 
-    const reviewSession = buildReviewSessionFromLesson(activeLesson, currentPage, completedPageIds);
+    const reviewSession = buildReviewSessionFromLesson(
+      activeLesson,
+      currentPage,
+      completedPageIds,
+    );
     if (!reviewSession) {
       return;
     }
@@ -2786,7 +3361,10 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
           {draftLesson ? (
             <StatBadge label="Status" tone="amber" value="Unsaved draft" />
           ) : null}
-          <PixelButton onClick={() => setBuilderOpen((current) => !current)} theme="dark">
+          <PixelButton
+            onClick={() => setBuilderOpen((current) => !current)}
+            theme="dark"
+          >
             {builderOpen ? "Hide Create Lesson" : "Create Lesson"}
           </PixelButton>
           {draftLesson ? (
@@ -2801,9 +3379,16 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
           ) : null}
           <StatBadge
             label="Learner"
-            value={getString(session.data?.full_name, session.data?.email ?? "Guest")}
+            value={getString(
+              session.data?.full_name,
+              session.data?.email ?? "Guest",
+            )}
           />
-          <StatBadge label="XP" tone="cyan" value={String(getNumber(stats.total_xp) ?? 0)} />
+          <StatBadge
+            label="XP"
+            tone="cyan"
+            value={String(getNumber(stats.total_xp) ?? 0)}
+          />
           <StatBadge
             label="Streak"
             tone="purple"
@@ -2825,7 +3410,8 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                   CREATE_LESSON
                 </div>
                 <div className="mt-2 text-sm text-white/65">
-                  Prompt, optionally upload documents, then generate a multi-page lesson.
+                  Prompt, optionally upload documents, then generate a
+                  multi-page lesson.
                 </div>
               </div>
               <PixelButton
@@ -2836,14 +3422,21 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 onClick={() => void generateLesson()}
                 theme="dark"
               >
-                {generateLessonMutation.isPending ? "Generating..." : "Run Generator"}
+                {generateLessonMutation.isPending
+                  ? "Generating..."
+                  : "Run Generator"}
               </PixelButton>
             </div>
             <div className="mt-5 grid gap-4 xl:grid-cols-[1.45fr_1fr]">
               <div className="space-y-4">
                 <WorkspaceField label="Prompt">
                   <WorkspaceTextarea
-                    onChange={(event) => setBuilder((current) => ({ ...current, prompt: event.target.value }))}
+                    onChange={(event) =>
+                      setBuilder((current) => ({
+                        ...current,
+                        prompt: event.target.value,
+                      }))
+                    }
                     placeholder="Describe the lesson you want, what the learner should know, and what documents should influence the answer."
                     rows={8}
                     value={builder.prompt}
@@ -2852,14 +3445,24 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 <div className="grid gap-4 md:grid-cols-2">
                   <WorkspaceField label="Topic">
                     <WorkspaceInput
-                      onChange={(event) => setBuilder((current) => ({ ...current, topic: event.target.value }))}
+                      onChange={(event) =>
+                        setBuilder((current) => ({
+                          ...current,
+                          topic: event.target.value,
+                        }))
+                      }
                       placeholder="Optional topic override"
                       value={builder.topic}
                     />
                   </WorkspaceField>
                   <WorkspaceField label="Subject">
                     <WorkspaceInput
-                      onChange={(event) => setBuilder((current) => ({ ...current, subject: event.target.value }))}
+                      onChange={(event) =>
+                        setBuilder((current) => ({
+                          ...current,
+                          subject: event.target.value,
+                        }))
+                      }
                       placeholder="Optional subject"
                       value={builder.subject}
                     />
@@ -2867,7 +3470,12 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 </div>
                 <WorkspaceField label="Subtopics">
                   <WorkspaceTextarea
-                    onChange={(event) => setBuilder((current) => ({ ...current, subtopics: event.target.value }))}
+                    onChange={(event) =>
+                      setBuilder((current) => ({
+                        ...current,
+                        subtopics: event.target.value,
+                      }))
+                    }
                     placeholder="Comma-separated or line-separated subtopics"
                     rows={3}
                     value={builder.subtopics}
@@ -2876,7 +3484,10 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 <WorkspaceField label="Learning objectives">
                   <WorkspaceTextarea
                     onChange={(event) =>
-                      setBuilder((current) => ({ ...current, learningObjectives: event.target.value }))
+                      setBuilder((current) => ({
+                        ...current,
+                        learningObjectives: event.target.value,
+                      }))
                     }
                     placeholder="What should the student achieve after finishing the lesson?"
                     rows={3}
@@ -2891,7 +3502,8 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                       onChange={(event) =>
                         setBuilder((current) => ({
                           ...current,
-                          current_level: event.target.value as BuilderState["current_level"],
+                          current_level: event.target
+                            .value as BuilderState["current_level"],
                         }))
                       }
                       value={builder.current_level}
@@ -2906,7 +3518,8 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                       onChange={(event) =>
                         setBuilder((current) => ({
                           ...current,
-                          learning_style: event.target.value as BuilderState["learning_style"],
+                          learning_style: event.target
+                            .value as BuilderState["learning_style"],
                         }))
                       }
                       value={builder.learning_style}
@@ -2922,7 +3535,8 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                       onChange={(event) =>
                         setBuilder((current) => ({
                           ...current,
-                          learning_pace: event.target.value as BuilderState["learning_pace"],
+                          learning_pace: event.target
+                            .value as BuilderState["learning_pace"],
                         }))
                       }
                       value={builder.learning_pace}
@@ -2954,7 +3568,9 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 </div>
                 <WorkspaceField label="Question types">
                   <div className="flex flex-wrap gap-2">
-                    {(["multiple_choice", "fill_blank", "true_false"] as const).map((type) => (
+                    {(
+                      ["multiple_choice", "fill_blank", "true_false"] as const
+                    ).map((type) => (
                       <WorkspaceCheckbox
                         checked={builder.questionTypes.includes(type)}
                         key={type}
@@ -2963,8 +3579,13 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                           setBuilder((current) => ({
                             ...current,
                             questionTypes: checked
-                              ? uniqueStrings([...current.questionTypes, type]) as BuilderState["questionTypes"]
-                              : (current.questionTypes.filter((item) => item !== type) as BuilderState["questionTypes"]),
+                              ? (uniqueStrings([
+                                  ...current.questionTypes,
+                                  type,
+                                ]) as BuilderState["questionTypes"])
+                              : (current.questionTypes.filter(
+                                  (item) => item !== type,
+                                ) as BuilderState["questionTypes"]),
                           }))
                         }
                       />
@@ -2974,7 +3595,9 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 <WorkspaceField label="Files">
                   <WorkspaceInput
                     multiple
-                    onChange={(event) => setSelectedFiles(Array.from(event.target.files ?? []))}
+                    onChange={(event) =>
+                      setSelectedFiles(Array.from(event.target.files ?? []))
+                    }
                     type="file"
                   />
                 </WorkspaceField>
@@ -2983,24 +3606,78 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                     checked={builder.include_mindmap}
                     label="Mindmap"
                     onChange={(checked) =>
-                      setBuilder((current) => ({ ...current, include_mindmap: checked }))
+                      setBuilder((current) => ({
+                        ...current,
+                        include_mindmap: checked,
+                      }))
                     }
                   />
                   <WorkspaceCheckbox
                     checked={builder.include_coding_exercises}
                     label="Coding"
                     onChange={(checked) =>
-                      setBuilder((current) => ({ ...current, include_coding_exercises: checked }))
+                      setBuilder((current) => ({
+                        ...current,
+                        include_coding_exercises: checked,
+                      }))
                     }
                   />
                   <WorkspaceCheckbox
                     checked={builder.include_answer_key}
                     label="Answer key"
                     onChange={(checked) =>
-                      setBuilder((current) => ({ ...current, include_answer_key: checked }))
+                      setBuilder((current) => ({
+                        ...current,
+                        include_answer_key: checked,
+                      }))
+                    }
+                  />
+                  <WorkspaceCheckbox
+                    checked={builder.include_external_sources}
+                    label="External sources"
+                    onChange={(checked) =>
+                      setBuilder((current) => ({
+                        ...current,
+                        include_external_sources: checked,
+                      }))
                     }
                   />
                 </div>
+                {builder.include_external_sources && (
+                  <div className="mt-2 grid gap-4 md:grid-cols-2">
+                    <WorkspaceField label="External search query">
+                      <WorkspaceInput
+                        onChange={(event) =>
+                          setBuilder((current) => ({
+                            ...current,
+                            external_search_query: event.target.value,
+                          }))
+                        }
+                        placeholder="e.g. AI in education, quantum computing..."
+                        value={builder.external_search_query}
+                      />
+                    </WorkspaceField>
+                    <WorkspaceField label="Max external sources">
+                      <WorkspaceInput
+                        type="number"
+                        min={1}
+                        max={20}
+                        onChange={(event) =>
+                          setBuilder((current) => ({
+                            ...current,
+                            max_external_sources: clampNumber(
+                              Number(event.target.value || 6),
+                              1,
+                              20,
+                              6,
+                            ),
+                          }))
+                        }
+                        value={builder.max_external_sources}
+                      />
+                    </WorkspaceField>
+                  </div>
+                )}
               </div>
             </div>
             {builderError ? (
@@ -3020,96 +3697,81 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
             ) : null}
           </section>
         ) : null}
-        <section>
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <div>
-              <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
-                Subject modules
+        {showModules ? (
+          <>
+            <section>
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
+                    Subject modules
+                  </div>
+                  <div className="mt-2 text-sm text-white/60">
+                    Saved lessons are grouped into modules so practice and
+                    review can reuse the same topic clusters.
+                  </div>
+                </div>
               </div>
-              <div className="mt-2 text-sm text-white/60">
-                Saved lessons are grouped into modules so practice and review can reuse the same topic clusters.
-              </div>
-            </div>
-          </div>
-          <ModuleStrip
-            activeTopic={activeTopic}
-            modules={modules}
-            onSelect={(topic) => {
-              const lesson = modules.find((module) => module.topic === topic)?.lessons[0];
-              if (!lesson) {
-                return;
-              }
+              <ModuleStrip
+                activeTopic={activeTopic}
+                modules={modules}
+                onSelect={(topic) => {
+                  const lesson = modules.find(
+                    (module) => module.topic === topic,
+                  )?.lessons[0];
+                  if (!lesson) {
+                    return;
+                  }
 
-              requestDraftAction(`open lesson ${lesson.title}`, () => {
-                setSelectedSavedLessonId(lesson.id);
-                setActivePageId("");
-                persistSelectedLessonId(lesson.id);
-              });
-            }}
-          />
-        </section>
-        <section className="grid gap-8 xl:grid-cols-[320px_minmax(0,1fr)]">
-          <div className="space-y-4">
-            <div className="border border-[#262626] bg-[#0b0d0f] p-5">
-              <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
-                Saved lesson list
-              </div>
-              <div className="mt-2 text-sm leading-6 text-white/60">
-                Select a saved lesson or keep working with the newly generated draft.
-              </div>
-            </div>
-            <LessonList
-              activeLessonId={resolvedSavedLessonId}
-              lessons={
-                activeTopic
-                  ? modules.find((module) => module.topic === activeTopic)?.lessons ?? []
-                  : savedLessonsQuery.data ?? []
-              }
-              onSelect={(lessonId) => {
-                const lessonTitle =
-                  savedLessonsQuery.data?.find((lesson) => lesson.id === lessonId)?.title ??
-                  "saved lesson";
-
-                requestDraftAction(`open lesson ${lessonTitle}`, () => {
-                  setSelectedSavedLessonId(lessonId);
-                  setActivePageId("");
-                  persistSelectedLessonId(lessonId);
-                });
-              }}
-            />
-          </div>
-          <div>
-            {activeLesson ? (
-              <LessonViewer
-                activePageId={displayedPageId ?? activePageId}
-                completedPageIds={completedPageIds}
-                createFlashcardMutationPending={createFlashcardMutation.isPending}
-                isSavingProgress={updateLessonProgressMutation.isPending}
-                lesson={activeLesson}
-                onCreateFlashcard={(question, answer) =>
-                  createFlashcardMutation.mutate({
-                    back_content: answer,
-                    front_content: question,
-                  })
-                }
-                onLaunchReview={launchLessonQuiz}
-                onMarkComplete={markCurrentPageComplete}
-                onNextPage={() => movePage(1)}
-                onPreviousPage={() => movePage(-1)}
-                onSelectPage={selectPage}
+                  requestDraftAction(`open lesson ${lesson.title}`, () => {
+                    setSelectedSavedLessonId(lesson.id);
+                    setActivePageId("");
+                    persistSelectedLessonId(lesson.id);
+                    setShowModules(false);
+                  });
+                }}
               />
-            ) : (
-              <div className="border border-dashed border-[#262626] bg-[#0b0d0f] p-10">
-                <div className="font-display text-3xl font-semibold uppercase">
-                  No lesson selected yet
+            </section>
+          </>
+        ) : (
+          <>
+            {savedLessonDetailQuery.isPending ? (
+              <section className="flex h-screen items-center justify-center">
+                <div className="space-y-4 text-center">
+                  <div className="inline-block">
+                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-[#69daff]" />
+                  </div>
+                  <div className="font-pixel text-[11px] uppercase tracking-[0.2em] text-white/60">
+                    Loading lesson...
+                  </div>
                 </div>
-                <div className="mt-3 max-w-2xl text-sm leading-7 text-white/60">
-                  Use the Create Lesson button to open the form, or choose one of your saved lessons from the module list.
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
+              </section>
+            ) : activeLesson ? (
+              <section>
+                <LessonViewer
+                  activePageId={displayedPageId ?? activePageId}
+                  completedPageIds={completedPageIds}
+                  createFlashcardMutationPending={
+                    createFlashcardMutation.isPending
+                  }
+                  isSavingProgress={updateLessonProgressMutation.isPending}
+                  lesson={activeLesson}
+                  onBackToModules={() => setShowModules(true)}
+                  onCreateFlashcard={(question, answer) =>
+                    createFlashcardMutation.mutate({
+                      back_content: answer,
+                      front_content: question,
+                    })
+                  }
+                  onLaunchReview={launchLessonQuiz}
+                  onMarkComplete={markCurrentPageComplete}
+                  onNextPage={() => movePage(1)}
+                  onPreviousPage={() => movePage(-1)}
+                  onSelectPage={selectPage}
+                />
+              </section>
+            ) : null}
+          </>
+        )}
       </div>
       <UnsavedDraftPrompt
         destinationLabel={pendingDraftDestination}
@@ -3139,7 +3801,9 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     module.topic.toLowerCase().includes(deferredSearch.trim().toLowerCase()),
   );
   const activeModule =
-    modules.find((module) => module.topic === selectedTopic) ?? modules[0] ?? null;
+    modules.find((module) => module.topic === selectedTopic) ??
+    modules[0] ??
+    null;
 
   const launchPracticeQuiz = async (topic: string) => {
     const quiz = await generateQuizMutation.mutateAsync({
@@ -3158,7 +3822,9 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
       strengths: [],
       student_name: session.data?.full_name ?? session.data?.email ?? undefined,
       subject: topic,
-      subtopics: activeModule?.lessons.map((lesson) => lesson.title).slice(0, 6) ?? [topic],
+      subtopics: activeModule?.lessons
+        .map((lesson) => lesson.title)
+        .slice(0, 6) ?? [topic],
       topic,
     });
 
@@ -3183,7 +3849,9 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
               onClick={() => void launchPracticeQuiz(activeModule.topic)}
               theme="dark"
             >
-              {generateQuizMutation.isPending ? "Preparing..." : "Start Interview"}
+              {generateQuizMutation.isPending
+                ? "Preparing..."
+                : "Start Interview"}
             </PixelButton>
           ) : null}
           <StatBadge
@@ -3217,7 +3885,8 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 <WorkspaceInput readOnly value={activeModule?.topic ?? ""} />
               </WorkspaceField>
               <div className="text-sm leading-6 text-white/60">
-                Practice uses the same modules created from your saved lessons. Start an interview set from the currently selected topic.
+                Practice uses the same modules created from your saved lessons.
+                Start an interview set from the currently selected topic.
               </div>
             </div>
             <div className="space-y-4">
@@ -3227,7 +3896,8 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                     onChange={(event) =>
                       setQuizForm((current) => ({
                         ...current,
-                        current_level: event.target.value as PracticeQuizFormState["current_level"],
+                        current_level: event.target
+                          .value as PracticeQuizFormState["current_level"],
                       }))
                     }
                     value={quizForm.current_level}
@@ -3242,7 +3912,8 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                     onChange={(event) =>
                       setQuizForm((current) => ({
                         ...current,
-                        learning_style: event.target.value as PracticeQuizFormState["learning_style"],
+                        learning_style: event.target
+                          .value as PracticeQuizFormState["learning_style"],
                       }))
                     }
                     value={quizForm.learning_style}
@@ -3258,7 +3929,8 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                     onChange={(event) =>
                       setQuizForm((current) => ({
                         ...current,
-                        learning_pace: event.target.value as PracticeQuizFormState["learning_pace"],
+                        learning_pace: event.target
+                          .value as PracticeQuizFormState["learning_pace"],
                       }))
                     }
                     value={quizForm.learning_pace}
@@ -3290,7 +3962,9 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
               </div>
               <WorkspaceField label="Question types">
                 <div className="flex flex-wrap gap-2">
-                  {(["multiple_choice", "fill_blank", "true_false"] as const).map((type) => (
+                  {(
+                    ["multiple_choice", "fill_blank", "true_false"] as const
+                  ).map((type) => (
                     <WorkspaceCheckbox
                       checked={quizForm.preferred_question_types.includes(type)}
                       key={type}
@@ -3299,8 +3973,13 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                         setQuizForm((current) => ({
                           ...current,
                           preferred_question_types: checked
-                            ? uniqueStrings([...current.preferred_question_types, type]) as PracticeQuizFormState["preferred_question_types"]
-                            : (current.preferred_question_types.filter((item) => item !== type) as PracticeQuizFormState["preferred_question_types"]),
+                            ? (uniqueStrings([
+                                ...current.preferred_question_types,
+                                type,
+                              ]) as PracticeQuizFormState["preferred_question_types"])
+                            : (current.preferred_question_types.filter(
+                                (item) => item !== type,
+                              ) as PracticeQuizFormState["preferred_question_types"]),
                         }))
                       }
                     />
@@ -3323,7 +4002,7 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
           />
         </section>
         <section className="grid gap-8 xl:grid-cols-[1.25fr_0.9fr]">
-            <div className="space-y-6">
+          <div className="space-y-6">
             <div className="border border-[#262626] bg-[#0b0d0f] p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
@@ -3334,7 +4013,8 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                     {activeModule?.topic ?? "No module selected"}
                   </div>
                   <div className="mt-2 text-sm leading-6 text-white/60">
-                    Open a saved lesson in Home or generate a fresh practice quiz for this module.
+                    Open a saved lesson in Home or generate a fresh practice
+                    quiz for this module.
                   </div>
                 </div>
                 {activeModule ? (
@@ -3374,7 +4054,8 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                           {attempt.topic}
                         </div>
                         <div className="mt-1 text-xs uppercase tracking-[0.18em] text-white/45">
-                          attempt {attempt.attempt_number} · {formatDate(attempt.created_at)}
+                          attempt {attempt.attempt_number} ·{" "}
+                          {formatDate(attempt.created_at)}
                         </div>
                       </div>
                       <div className="text-right">
@@ -3382,14 +4063,16 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                           {Math.round(attempt.score_percent)}%
                         </div>
                         <div className="text-xs uppercase tracking-[0.18em] text-white/45">
-                          {attempt.correct_answers}/{attempt.total_questions} correct
+                          {attempt.correct_answers}/{attempt.total_questions}{" "}
+                          correct
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="rounded-[24px] border border-dashed border-white/10 p-5 text-sm text-white/55">
-                    No quiz attempts yet. Generate one from this Practice sidebar.
+                    No quiz attempts yet. Generate one from this Practice
+                    sidebar.
                   </div>
                 )}
               </div>
@@ -3417,7 +4100,8 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                   ))
                 ) : (
                   <div className="rounded-[24px] border border-dashed border-white/10 p-5 text-sm text-white/55">
-                    No cards are due right now. Save flashcards from lesson pages to populate this queue.
+                    No cards are due right now. Save flashcards from lesson
+                    pages to populate this queue.
                   </div>
                 )}
               </div>
@@ -3427,9 +4111,18 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                 Practice notes
               </div>
               <div className="mt-4 space-y-3 text-sm leading-7 text-white/68">
-                <div>• Practice uses the same subject modules as Home, so saved lessons become reusable drills.</div>
-                <div>• Quick quizzes use `/api/v1/quiz/generate` with the module topic and lesson titles as subtopics.</div>
-                <div>• Due flashcards come from `/api/v1/learning/due`, so lesson flashcards can flow into spaced repetition.</div>
+                <div>
+                  • Practice uses the same subject modules as Home, so saved
+                  lessons become reusable drills.
+                </div>
+                <div>
+                  • Quick quizzes use `/api/v1/quiz/generate` with the module
+                  topic and lesson titles as subtopics.
+                </div>
+                <div>
+                  • Due flashcards come from `/api/v1/learning/due`, so lesson
+                  flashcards can flow into spaced repetition.
+                </div>
               </div>
             </div>
           </div>
@@ -3458,7 +4151,9 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
   const lastActivityDate = formatDate(getString(stats?.last_activity_date, ""));
   const profileName = formatProfileName(profile);
   const profileAlias = formatProfileAlias(profile);
-  const profileId = profile?.id ? String(profile.id).slice(0, 8).toUpperCase() : "UNKNOWN";
+  const profileId = profile?.id
+    ? String(profile.id).slice(0, 8).toUpperCase()
+    : "UNKNOWN";
 
   const handleSelectTier = async (plan: SubscriptionPlan) => {
     await updateSubscriptionMutation.mutateAsync({ new_tier: plan.tier });
@@ -3470,7 +4165,11 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
       active="profile"
       headerActions={
         <div className="flex flex-wrap gap-3">
-          <StatBadge label="Tier" tone="cyan" value={currentTier.toUpperCase()} />
+          <StatBadge
+            label="Tier"
+            tone="cyan"
+            value={currentTier.toUpperCase()}
+          />
           <StatBadge label="Docs" value={String(uploadedDocuments.length)} />
           <StatBadge label="XP" tone="purple" value={String(totalXp)} />
         </div>
@@ -3482,47 +4181,85 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
       <div className="space-y-8">
         <section className="grid gap-6 xl:grid-cols-[1.2fr_1fr]">
           <div className="border border-[#262626] bg-[#0b0d0f] p-6">
-            <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">Account identity</div>
-            <div className="mt-3 font-display text-3xl font-semibold uppercase">{profileName}</div>
-            <div className="mt-2 text-sm uppercase tracking-[0.18em] text-white/55">{profileAlias}</div>
+            <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+              Account identity
+            </div>
+            <div className="mt-3 font-display text-3xl font-semibold uppercase">
+              {profileName}
+            </div>
+            <div className="mt-2 text-sm uppercase tracking-[0.18em] text-white/55">
+              {profileAlias}
+            </div>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <div className="rounded-[22px] border border-white/10 bg-black/20 p-4">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Email</div>
-                <div className="mt-2 break-all text-sm text-white/80">{profile?.email ?? "N/A"}</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
+                  Email
+                </div>
+                <div className="mt-2 break-all text-sm text-white/80">
+                  {profile?.email ?? "N/A"}
+                </div>
               </div>
               <div className="rounded-[22px] border border-white/10 bg-black/20 p-4">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">User ID</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
+                  User ID
+                </div>
                 <div className="mt-2 text-sm text-white/80">{profileId}</div>
               </div>
               <div className="rounded-[22px] border border-white/10 bg-black/20 p-4">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Account status</div>
-                <div className="mt-2 text-sm text-white/80">{profile?.is_active ? "Active" : "Inactive"}</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
+                  Account status
+                </div>
+                <div className="mt-2 text-sm text-white/80">
+                  {profile?.is_active ? "Active" : "Inactive"}
+                </div>
               </div>
               <div className="rounded-[22px] border border-white/10 bg-black/20 p-4">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Current plan</div>
-                <div className="mt-2 text-sm text-[#9cff93]">{currentTier.toUpperCase()}</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
+                  Current plan
+                </div>
+                <div className="mt-2 text-sm text-[#9cff93]">
+                  {currentTier.toUpperCase()}
+                </div>
               </div>
             </div>
-            {(profileQuery.isLoading || statsQuery.isLoading) ? (
+            {profileQuery.isLoading || statsQuery.isLoading ? (
               <div className="mt-4 text-xs uppercase tracking-[0.18em] text-white/45">
                 Syncing profile data...
               </div>
             ) : null}
             {profileQuery.isError ? (
-              <div className="mt-4 text-sm text-rose-300">{profileQuery.error.message}</div>
+              <div className="mt-4 text-sm text-rose-300">
+                {profileQuery.error.message}
+              </div>
             ) : null}
           </div>
 
           <div className="border border-[#262626] bg-[#0b0d0f] p-6">
-            <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">Progress snapshot</div>
+            <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+              Progress snapshot
+            </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <StatBadge label="Total XP" value={String(totalXp)} />
-              <StatBadge label="Level" tone="cyan" value={String(currentLevel)} />
-              <StatBadge label="Longest streak" tone="purple" value={String(longestStreak)} />
-              <StatBadge label="Last activity" tone="amber" value={lastActivityDate} />
+              <StatBadge
+                label="Level"
+                tone="cyan"
+                value={String(currentLevel)}
+              />
+              <StatBadge
+                label="Longest streak"
+                tone="purple"
+                value={String(longestStreak)}
+              />
+              <StatBadge
+                label="Last activity"
+                tone="amber"
+                value={lastActivityDate}
+              />
             </div>
             <div className="mt-5 rounded-[22px] border border-white/10 bg-black/20 p-4 text-sm leading-7 text-white/65">
-              Subscription actions below call `/api/v1/users/subscription` directly. Payment gateway can be wired later without changing this UI flow.
+              Subscription actions below call `/api/v1/users/subscription`
+              directly. Payment gateway can be wired later without changing this
+              UI flow.
             </div>
           </div>
         </section>
@@ -3530,11 +4267,17 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
         <section className="border border-[#262626] bg-[#0b0d0f] p-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">Buy / Upgrade subscription</div>
-              <div className="mt-2 font-display text-2xl font-semibold uppercase">Plans</div>
+              <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+                Buy / Upgrade subscription
+              </div>
+              <div className="mt-2 font-display text-2xl font-semibold uppercase">
+                Plans
+              </div>
             </div>
             {updateSubscriptionMutation.isPending ? (
-              <div className="text-xs uppercase tracking-[0.18em] text-[#69daff]">Updating subscription...</div>
+              <div className="text-xs uppercase tracking-[0.18em] text-[#69daff]">
+                Updating subscription...
+              </div>
             ) : null}
           </div>
           <div className="mt-5 grid gap-4 xl:grid-cols-4">
@@ -3557,9 +4300,15 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
                   )}
                   key={plan.tier}
                 >
-                  <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">{plan.name}</div>
-                  <div className="mt-2 font-display text-2xl font-semibold uppercase">{plan.price}</div>
-                  <div className="mt-3 text-sm leading-6 text-white/65">{plan.description}</div>
+                  <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+                    {plan.name}
+                  </div>
+                  <div className="mt-2 font-display text-2xl font-semibold uppercase">
+                    {plan.price}
+                  </div>
+                  <div className="mt-3 text-sm leading-6 text-white/65">
+                    {plan.description}
+                  </div>
                   <div className="mt-4 space-y-2 text-sm text-white/72">
                     {plan.features.map((feature) => (
                       <div key={feature}>• {feature}</div>
@@ -3567,7 +4316,9 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
                   </div>
                   <div className="mt-5">
                     <PixelButton
-                      disabled={isCurrent || updateSubscriptionMutation.isPending}
+                      disabled={
+                        isCurrent || updateSubscriptionMutation.isPending
+                      }
                       hollow={!isCurrent}
                       onClick={() => void handleSelectTier(plan)}
                       theme="dark"
@@ -3581,24 +4332,32 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
             })}
           </div>
           {updateSubscriptionMutation.isError ? (
-            <div className="mt-4 text-sm text-rose-300">{updateSubscriptionMutation.error.message}</div>
+            <div className="mt-4 text-sm text-rose-300">
+              {updateSubscriptionMutation.error.message}
+            </div>
           ) : null}
           {updateSubscriptionMutation.isSuccess ? (
-            <div className="mt-4 text-sm text-[#9cff93]">Subscription updated successfully.</div>
+            <div className="mt-4 text-sm text-[#9cff93]">
+              Subscription updated successfully.
+            </div>
           ) : null}
         </section>
 
         <section className="border border-[#262626] bg-[#0b0d0f] p-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">Uploaded documents</div>
+              <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+                Uploaded documents
+              </div>
               <div className="mt-2 font-display text-2xl font-semibold uppercase">
                 {uploadedDocuments.length} documents
               </div>
             </div>
             <PixelButton
               hollow
-              onClick={() => window.dispatchEvent(new CustomEvent("versera:notes:open"))}
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("versera:notes:open"))
+              }
               theme="dark"
               tone="cyan"
             >
@@ -3618,28 +4377,35 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
             ) : null}
             {!uploadedDocumentsQuery.isLoading && !uploadedDocuments.length ? (
               <div className="rounded-[22px] border border-dashed border-white/10 p-5 text-sm text-white/55">
-                No uploaded documents yet. Upload a file in Notes Workspace to populate this list.
+                No uploaded documents yet. Upload a file in Notes Workspace to
+                populate this list.
               </div>
             ) : null}
-            {uploadedDocuments.slice(0, 12).map((document: UploadedDocumentItem) => (
-              <article
-                className="rounded-[22px] border border-white/10 bg-black/20 p-4"
-                key={document.id}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="font-display text-lg font-semibold uppercase">{document.title}</div>
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-white/45">
-                    updated {formatDate(document.updated_at)}
+            {uploadedDocuments
+              .slice(0, 12)
+              .map((document: UploadedDocumentItem) => (
+                <article
+                  className="rounded-[22px] border border-white/10 bg-black/20 p-4"
+                  key={document.id}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="font-display text-lg font-semibold uppercase">
+                      {document.title}
+                    </div>
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-white/45">
+                      updated {formatDate(document.updated_at)}
+                    </div>
                   </div>
-                </div>
-                <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
-                  folder: {document.folder_name ?? "root"} · synced: {document.is_synced_with_graph ? "yes" : "no"} · chars: {document.content.length}
-                </div>
-                <div className="mt-3 text-sm leading-6 text-white/75">
-                  {getDocumentPreview(document.content)}
-                </div>
-              </article>
-            ))}
+                  <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                    folder: {document.folder_name ?? "root"} · synced:{" "}
+                    {document.is_synced_with_graph ? "yes" : "no"} · chars:{" "}
+                    {document.content.length}
+                  </div>
+                  <div className="mt-3 text-sm leading-6 text-white/75">
+                    {getDocumentPreview(document.content)}
+                  </div>
+                </article>
+              ))}
           </div>
         </section>
       </div>
@@ -3658,10 +4424,18 @@ function FlashcardReviewCard({
 }) {
   return (
     <div className="rounded-[28px] border border-white/10 bg-black/20 p-5">
-      <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">Front</div>
-      <div className="mt-2 font-display text-lg font-semibold uppercase">{card.front_content}</div>
-      <div className="mt-4 text-[11px] uppercase tracking-[0.28em] text-white/45">Back</div>
-      <div className="mt-2 text-sm leading-7 text-white/72">{card.back_content}</div>
+      <div className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+        Front
+      </div>
+      <div className="mt-2 font-display text-lg font-semibold uppercase">
+        {card.front_content}
+      </div>
+      <div className="mt-4 text-[11px] uppercase tracking-[0.28em] text-white/45">
+        Back
+      </div>
+      <div className="mt-2 text-sm leading-7 text-white/72">
+        {card.back_content}
+      </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {[
           { grade: 1 as const, label: "Again" },
@@ -3782,21 +4556,24 @@ function ReviewQuestionCard({
   );
 }
 
-function ReviewResults({
-  result,
-}: {
-  result: QuizEvaluationResponse;
-}) {
+function ReviewResults({ result }: { result: QuizEvaluationResponse }) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-4">
-        <StatBadge label="Score" value={`${Math.round(result.score_percent)}%`} />
+        <StatBadge
+          label="Score"
+          value={`${Math.round(result.score_percent)}%`}
+        />
         <StatBadge
           label="Correct"
           tone="cyan"
           value={`${result.correct_answers}/${result.total_questions}`}
         />
-        <StatBadge label="Retry" tone="purple" value={result.is_retry ? "yes" : "no"} />
+        <StatBadge
+          label="Retry"
+          tone="purple"
+          value={result.is_retry ? "yes" : "no"}
+        />
         <StatBadge label="Attempt" value={String(result.attempt_number)} />
       </div>
       <div className="rounded-[34px] border border-white/10 bg-white/[0.04] p-6">
@@ -3844,7 +4621,9 @@ export function ReviewLearningWorkspace({ theme }: { theme: CyberTheme }) {
   const router = useRouter();
   const evaluateQuizMutation = useBackendEvaluateQuizMutation();
   const updateLessonProgressMutation = useBackendUpdateLessonProgressMutation();
-  const [reviewSession] = useState<ReviewSession | null>(() => readReviewSession());
+  const [reviewSession] = useState<ReviewSession | null>(() =>
+    readReviewSession(),
+  );
   const [answers, setAnswers] = useState<Record<number, unknown>>({});
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [result, setResult] = useState<QuizEvaluationResponse | null>(null);
@@ -3857,7 +4636,10 @@ export function ReviewLearningWorkspace({ theme }: { theme: CyberTheme }) {
     }
 
     const answeredQuestions = reviewSession.questions
-      .filter((question) => answers[question.id] !== undefined && answers[question.id] !== "")
+      .filter(
+        (question) =>
+          answers[question.id] !== undefined && answers[question.id] !== "",
+      )
       .map((question) => ({
         answer: answers[question.id],
         question_id: question.id,
@@ -3896,8 +4678,16 @@ export function ReviewLearningWorkspace({ theme }: { theme: CyberTheme }) {
         reviewSession ? (
           <div className="flex flex-wrap gap-3">
             <StatBadge label="Topic" value={reviewSession.topic} />
-            <StatBadge label="Questions" tone="cyan" value={String(reviewSession.questions.length)} />
-            <StatBadge label="Passing score" tone="purple" value={`${reviewSession.passingScore}%`} />
+            <StatBadge
+              label="Questions"
+              tone="cyan"
+              value={String(reviewSession.questions.length)}
+            />
+            <StatBadge
+              label="Passing score"
+              tone="purple"
+              value={`${reviewSession.passingScore}%`}
+            />
           </div>
         ) : null
       }
@@ -3907,9 +4697,13 @@ export function ReviewLearningWorkspace({ theme }: { theme: CyberTheme }) {
     >
       {!reviewSession || !activeQuestion ? (
         <div className="border border-dashed border-[#262626] bg-[#0b0d0f] p-10">
-          <div className="font-display text-3xl font-semibold uppercase">No active quiz</div>
+          <div className="font-display text-3xl font-semibold uppercase">
+            No active quiz
+          </div>
           <div className="mt-3 max-w-2xl text-sm leading-7 text-white/60">
-            Launch a quiz from the Home lesson viewer or the Practice sidebar, then this page will render the full review flow with answer submission and scoring.
+            Launch a quiz from the Home lesson viewer or the Practice sidebar,
+            then this page will render the full review flow with answer
+            submission and scoring.
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <PixelButton onClick={() => router.push("/dashboard")} theme="dark">
@@ -3938,17 +4732,24 @@ export function ReviewLearningWorkspace({ theme }: { theme: CyberTheme }) {
                       : "border-[#262626] bg-[#05070a] text-white/60 hover:border-[#4b5563] hover:bg-[#111315]",
                   )}
                   key={question.id}
-                  onClick={() => startTransition(() => setActiveQuestionIndex(index))}
+                  onClick={() =>
+                    startTransition(() => setActiveQuestionIndex(index))
+                  }
                   type="button"
                 >
                   Q{index + 1}
-                  {answers[question.id] !== undefined && answers[question.id] !== "" ? "_DONE" : ""}
+                  {answers[question.id] !== undefined &&
+                  answers[question.id] !== ""
+                    ? "_DONE"
+                    : ""}
                 </button>
               ))}
             </div>
             <div className="mt-4 text-sm text-white/60">
               {reviewSession.title}
-              {reviewSession.lessonTitle ? ` · from ${reviewSession.lessonTitle}` : ""}
+              {reviewSession.lessonTitle
+                ? ` · from ${reviewSession.lessonTitle}`
+                : ""}
             </div>
           </section>
           <ReviewQuestionCard
@@ -3968,14 +4769,18 @@ export function ReviewLearningWorkspace({ theme }: { theme: CyberTheme }) {
               disabled={activeQuestionIndex === 0}
               hollow
               onClick={() =>
-                startTransition(() => setActiveQuestionIndex((current) => Math.max(0, current - 1)))
+                startTransition(() =>
+                  setActiveQuestionIndex((current) => Math.max(0, current - 1)),
+                )
               }
               theme="dark"
             >
               Previous
             </PixelButton>
             <PixelButton
-              disabled={activeQuestionIndex >= reviewSession.questions.length - 1}
+              disabled={
+                activeQuestionIndex >= reviewSession.questions.length - 1
+              }
               onClick={() =>
                 startTransition(() =>
                   setActiveQuestionIndex((current) =>
