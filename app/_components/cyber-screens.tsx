@@ -2854,63 +2854,193 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
 export function FlashcardScreen() {
   const theme: CyberTheme = "dark";
 
+  const flashcards = [
+    {
+      id: 1,
+      question: "What is the base case in a recursive function?",
+      answer:
+        "The base case is the condition that stops the recursion. Without it, the function would call itself infinitely, causing a stack overflow error.",
+    },
+    {
+      id: 2,
+      question: "What does Big O notation O(n log n) represent?",
+      answer:
+        "O(n log n) represents algorithms that divide the problem (log n) and process each element (n), like Merge Sort and Quick Sort on average.",
+    },
+    {
+      id: 3,
+      question: "What is a closure in JavaScript?",
+      answer:
+        "A closure is a function that retains access to its outer scope's variables even after the outer function has finished executing.",
+    },
+    {
+      id: 4,
+      question: "Difference between stack and queue data structures?",
+      answer:
+        "Stack follows LIFO (Last In, First Out) — like a stack of plates. Queue follows FIFO (First In, First Out) — like a line of people.",
+    },
+    {
+      id: 5,
+      question: "What is memoization and when should you use it?",
+      answer:
+        "Memoization caches the results of expensive function calls. Use it when a function is called repeatedly with the same inputs to avoid redundant computation.",
+    },
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+
+  const currentCard = flashcards[currentIndex];
+  const total = flashcards.length;
+
+  function goPrev() {
+    setFlipped(false);
+    setTimeout(() => setCurrentIndex((i) => (i - 1 + total) % total), 150);
+  }
+
+  function goNext() {
+    setFlipped(false);
+    setTimeout(() => setCurrentIndex((i) => (i + 1) % total), 150);
+  }
+
   return (
     <Frame
       header={
         <HeaderBar theme={theme}>
           <HeaderTitle theme={theme} title="LEARNING_TERMINAL" />
-          <div />
+          <div className="font-pixel text-[10px] uppercase text-[#6b7280]">
+            CARD {currentIndex + 1} / {total}
+          </div>
         </HeaderBar>
       }
       main={
         <main className="cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#0e0e0e]">
           <div className="mx-auto flex w-full max-w-[1152px] flex-col gap-12 p-12">
+            {/* Title */}
             <div className="ml-28 max-w-[520px]">
               <div className="font-display text-5xl font-bold uppercase text-[#9cff93]">
-                CURRENT SESSION
+                FLASHCARD_DECK
               </div>
               <div className="mt-1 font-display text-lg uppercase text-[#767575]">
                 MODULE_04: RECURSIVE_LOGIC
               </div>
             </div>
+
+            {/* Flashcard with flip */}
             <div className="mx-auto w-full max-w-[820px]">
-              <div className="bg-[#262626] p-12 shadow-[12px_8px_0px_0px_black]">
-                <div className="mb-8 flex justify-center text-[#9cff93]">
-                  <TerminalIcon />
-                </div>
-                <h1 className="text-center font-display text-6xl font-bold leading-tight text-white">
-                  What is the base case in a recursive function?
-                </h1>
-                <div className="mt-8 flex justify-center">
-                  <div className="border border-[#262626] bg-[#0e0e0e] px-6 py-2 font-display text-sm uppercase text-[#6b7280]">
-                    CLICK TO REVEAL ANSWER
+              <div
+                className="relative cursor-pointer"
+                style={{ perspective: "1200px" }}
+                onClick={() => setFlipped((f) => !f)}
+              >
+                <div
+                  style={{
+                    transition: "transform 0.45s cubic-bezier(0.4,0,0.2,1)",
+                    transformStyle: "preserve-3d",
+                    transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                    position: "relative",
+                    minHeight: "280px",
+                  }}
+                >
+                  {/* Front — Question */}
+                  <div
+                    className="bg-[#262626] p-12 shadow-[12px_8px_0px_0px_black] absolute inset-0"
+                    style={{ backfaceVisibility: "hidden" }}
+                  >
+                    <div className="mb-8 flex justify-center text-[#9cff93]">
+                      <TerminalIcon />
+                    </div>
+                    <h1 className="text-center font-display text-4xl font-bold leading-tight text-white">
+                      {currentCard.question}
+                    </h1>
+                    <div className="mt-8 flex justify-center">
+                      <div className="border border-[#3a3a3a] bg-[#0e0e0e] px-6 py-2 font-pixel text-[10px] uppercase text-[#6b7280]">
+                        ▶ CLICK TO REVEAL ANSWER
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Back — Answer */}
+                  <div
+                    className="bg-[#1a2e1a] border-2 border-[#9cff93] p-12 shadow-[12px_8px_0px_0px_black] absolute inset-0 flex flex-col items-center justify-center"
+                    style={{
+                      backfaceVisibility: "hidden",
+                      transform: "rotateY(180deg)",
+                    }}
+                  >
+                    <div className="mb-6 font-pixel text-[10px] uppercase text-[#9cff93]">
+                      ✓ ANSWER_REVEAL
+                    </div>
+                    <p className="text-center font-sans text-lg leading-relaxed text-white">
+                      {currentCard.answer}
+                    </p>
+                    <div className="mt-8 flex justify-center">
+                      <div className="border border-[#9cff93]/30 bg-[#0e0e0e] px-6 py-2 font-pixel text-[10px] uppercase text-[#9cff93]/60">
+                        ▶ CLICK TO FLIP BACK
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Navigation */}
             <div className="mx-auto flex w-full max-w-[480px] items-center justify-between">
-              <div className="flex items-center gap-6 text-[#6b7280]">
-                <div className="border-2 border-[#9cff93] p-4 text-[#9cff93]">
+              {/* PREV */}
+              <button
+                id="flashcard-prev-btn"
+                type="button"
+                onClick={goPrev}
+                className="group flex items-center gap-4 transition-opacity hover:opacity-80"
+              >
+                <div className="border-2 border-[#9cff93] p-4 text-[#9cff93] transition-colors group-hover:bg-[#9cff93] group-hover:text-[#0e0e0e]">
                   <ArrowLeftIcon />
                 </div>
-                <span className="font-display text-xl uppercase">PREV</span>
+                <span className="font-display text-xl uppercase text-[#6b7280] group-hover:text-white transition-colors">
+                  PREV
+                </span>
+              </button>
+
+              {/* Progress dots */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex gap-1.5">
+                  {flashcards.map((_, idx) => (
+                    <button
+                      key={idx}
+                      id={`flashcard-dot-${idx}`}
+                      type="button"
+                      onClick={() => { setFlipped(false); setTimeout(() => setCurrentIndex(idx), 150); }}
+                      className={cn(
+                        "h-2 w-2 transition-all",
+                        idx === currentIndex
+                          ? "bg-[#9cff93] w-4"
+                          : "bg-[#262626] hover:bg-[#4a4a4a]",
+                      )}
+                    />
+                  ))}
+                </div>
+                <span className="font-pixel text-[9px] uppercase text-[#6b7280]">
+                  {currentIndex + 1} / {total}
+                </span>
               </div>
-              <div className="w-24">
-                <ProgressSegments
-                  activeTone="brand"
-                  size="sm"
-                  theme={theme}
-                  total={5}
-                  value={3}
-                />
-              </div>
-              <div className="flex items-center gap-6 text-white">
-                <span className="font-display text-xl uppercase">NEXT</span>
-                <div className="bg-[#9cff93] p-4 text-[#0e0e0e]">
+
+              {/* NEXT */}
+              <button
+                id="flashcard-next-btn"
+                type="button"
+                onClick={goNext}
+                className="group flex items-center gap-4 transition-opacity hover:opacity-80"
+              >
+                <span className="font-display text-xl uppercase text-white group-hover:text-[#9cff93] transition-colors">
+                  NEXT
+                </span>
+                <div className="bg-[#9cff93] p-4 text-[#0e0e0e] transition-colors group-hover:bg-[#7de874]">
                   <ArrowRightIcon />
                 </div>
-              </div>
+              </button>
             </div>
+
+            {/* Stats */}
             <div className="grid gap-6 xl:grid-cols-3">
               {[
                 {
@@ -2927,7 +3057,7 @@ export function FlashcardScreen() {
                 },
                 {
                   label: "SESSION",
-                  value: "03/07",
+                  value: `0${currentIndex + 1}/${String(total).padStart(2, "0")}`,
                   tone: "cyan" as const,
                   icon: <LayersIcon />,
                 },
@@ -3007,11 +3137,11 @@ export function FlashcardScreen() {
                   activeTone="brand"
                   size="sm"
                   theme="dark"
-                  total={1}
-                  value={1}
+                  total={total}
+                  value={currentIndex + 1}
                 />
                 <div className="mt-2 text-right font-display text-[10px] uppercase text-[#6b7280]">
-                  75% SYNCHED
+                  {Math.round(((currentIndex + 1) / total) * 100)}% SYNCHED
                 </div>
               </div>
             </div>

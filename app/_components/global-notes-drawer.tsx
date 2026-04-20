@@ -512,20 +512,6 @@ export function GlobalNotesDrawer() {
 
   return (
     <>
-      <button
-        aria-label="Open notes"
-        className={cn(
-          "fixed bottom-6 right-6 z-50 rounded-none border px-4 py-3 font-pixel text-[10px] uppercase tracking-[0.12em] transition-colors",
-          dark
-            ? "border-[#262626] bg-[#131313] text-[#9cff93] hover:bg-[#1f1f1f]"
-            : "border-[#9aa7b3] bg-[#e7edf1] text-[#006e17] hover:bg-[#d9e0e6]",
-        )}
-        onClick={() => setOpen(true)}
-        type="button"
-      >
-        Notes
-      </button>
-
       {open ? (
         <div className="fixed inset-0 z-[60]">
           <button

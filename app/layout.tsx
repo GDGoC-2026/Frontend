@@ -35,7 +35,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} ${pressStart.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-background font-sans text-foreground">
+      <body className="h-full bg-background font-sans text-foreground">
         <QueryProvider>
           <ThemeProvider>{children}</ThemeProvider>
         </QueryProvider>
