@@ -46,7 +46,7 @@ export function GlobalChatDrawer() {
         event.key.toLowerCase() === "k"
       ) {
         event.preventDefault();
-        setOpen((current) => !current);
+        setOpen(!open);
       }
     };
 
