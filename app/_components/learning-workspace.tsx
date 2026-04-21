@@ -3082,9 +3082,11 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     [],
   );
   const modules = groupLessonsByTopic(savedLessonsQuery.data);
-  const activeLesson = resolvedSavedLessonId
-    ? (savedLessonDetailQuery.data ?? null)
-    : draftLesson;
+ const activeLesson = draftLesson
+  ? draftLesson
+  : resolvedSavedLessonId
+  ? savedLessonDetailQuery.data ?? null
+  : null;
   const stats = getRecord(statsQuery.data) ?? {};
 
   const completedPageIds = getLessonCompletedPageIds(
@@ -3175,7 +3177,7 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
         : undefined,
       max_external_sources: builder.include_external_sources
         ? builder.max_external_sources
-        : undefined,
+        : 0,
       learning_objectives: builder.learningObjectives.trim() || undefined,
       learning_pace: builder.learning_pace,
       learning_style: builder.learning_style,
@@ -3193,6 +3195,7 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     setDraftCompletedPageIds([]);
     setActivePageId(lesson.navigation.default_page_id);
     persistSelectedLessonId(null);
+    setShowModules(false);
   };
 
   const saveLesson = async () => {
@@ -3734,7 +3737,7 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
           </>
         ) : (
           <>
-            {savedLessonDetailQuery.isPending ? (
+            {resolvedSavedLessonId && savedLessonDetailQuery.isPending ? (
               <section className="flex h-screen items-center justify-center">
                 <div className="space-y-4 text-center">
                   <div className="inline-block">
