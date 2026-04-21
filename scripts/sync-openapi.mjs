@@ -3,6 +3,11 @@ import { dirname, resolve } from "node:path";
 import openapiTS, { astToString } from "openapi-typescript";
 import ts from "typescript";
 
+if (process.env.SKIP_OPENAPI_SYNC === "1") {
+  console.log("OpenAPI sync skipped by SKIP_OPENAPI_SYNC=1");
+  process.exit(0);
+}
+
 const backendBaseUrl =
   process.env.BACKEND_API_URL ??
   process.env.NEXT_PUBLIC_API_BASE_URL ??
