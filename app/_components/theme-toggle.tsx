@@ -15,7 +15,7 @@ export function ThemeToggle() {
         interactiveMotionClass,
         isDark
           ? "border-[#262626] bg-[#131313] text-[#9cff93]"
-          : "border-[#b5c0ca] bg-[#d9e0e6] text-[#006e17]",
+          : "border-[#d1d5db] bg-[#f3f4f6] text-[#059669]",
       )}
       onClick={toggleTheme}
       type="button"
@@ -33,7 +33,7 @@ export function ThemeToggle() {
       <span
         className={cn(
           "font-pixel text-[10px] leading-none",
-          isDark ? "text-[#9cff93]" : "text-[#006e17]",
+          isDark ? "text-[#9cff93]" : "text-[#059669]",
         )}
       >
         THEME

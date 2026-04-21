@@ -21,7 +21,7 @@ const pressStart = Press_Start_2P({
 });
 
 export const metadata: Metadata = {
-  title: "Neural Link",
+  title: "Learnbro",
   description: "Cyber learning terminal implemented from Figma designs.",
 };
 

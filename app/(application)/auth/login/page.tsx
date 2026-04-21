@@ -87,7 +87,7 @@ function LoginPageContent() {
               color: palette.title,
             }}
           >
-            {`> USER_LOGIN`}
+            {`> USER LOGIN`}
           </h2>
           <p
             className="text-sm"
@@ -105,13 +105,13 @@ function LoginPageContent() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="user@void.collective"
+            placeholder="user@learnbro.com"
             required
             isDarkTheme={isDarkTheme}
           />
 
           <AuthInput
-            label="Access Key"
+            label="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -187,7 +187,7 @@ function LoginPageContent() {
         </div>
 
         <div className="space-y-3 text-center">
-          <p className="text-xs">
+          <p className="text-xs" style={{ color: palette.muted }}>
             New entity?{" "}
             <a
               href="/auth/register"
@@ -196,7 +196,7 @@ function LoginPageContent() {
                 color: palette.secondary,
               }}
             >
-              [ CREATE_ACCOUNT ]
+              [ CREATE ACCOUNT ]
             </a>
           </p>
         </div>

@@ -70,6 +70,101 @@ img {
   background: linear-gradient(180deg, #05070a 0%, #0b1110 100%);
 }
 
+/* Light theme styles */
+[data-theme="light"] {
+  --background: #f5f5f5;
+  --foreground: #1a1a1a;
+}
+
+[data-theme="light"] html {
+  scrollbar-color: #4b5563 #f5f5f5;
+}
+
+[data-theme="light"] body {
+  background:
+    radial-gradient(circle at top, rgba(200, 210, 220, 0.08), transparent 28%),
+    linear-gradient(180deg, #f5f5f5 0%, #eeeeee 100%);
+  color: #1a1a1a;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  border: 3px solid #f5f5f5;
+  background: linear-gradient(
+    180deg,
+    rgba(75, 85, 99, 0.6),
+    rgba(107, 114, 128, 0.5)
+  );
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #f5f5f5 0%, #e5e5e5 100%);
+}
+
+/* Light theme workspace styles */
+[data-theme="light"] .pixel-workspace {
+  background: linear-gradient(180deg, #f5f5f5 0%, #eeeeee 100%) !important;
+  color: #1a1a1a !important;
+}
+
+[data-theme="light"] .pixel-workspace > div > aside {
+  background: #f9f9f9 !important;
+  border-color: #e5e5e5 !important;
+}
+
+[data-theme="light"] .pixel-workspace aside nav {
+  border-color: #d1d5db !important;
+  background: #ffffff !important;
+}
+
+[data-theme="light"] .pixel-workspace aside nav a {
+  border-color: #d1d5db !important;
+  background: #ffffff !important;
+  color: #374151 !important;
+}
+
+[data-theme="light"] .pixel-workspace aside nav a:hover {
+  border-color: #a3a8b3 !important;
+  background: #f3f4f6 !important;
+}
+
+[data-theme="light"] .pixel-workspace aside nav a[class*="border-\[#9cff93\]"] {
+  border-color: #0891b2 !important;
+  background: #f0f9fa !important;
+  color: #0891b2 !important;
+}
+
+[data-theme="light"] .pixel-workspace > div > main {
+  background: #f5f5f5 !important;
+}
+
+[data-theme="light"] .pixel-workspace > div > main > div {
+  border-color: #e5e5e5 !important;
+  background: #ffffff !important;
+}
+
+[data-theme="light"] .pixel-workspace h1 {
+  color: #1a1a1a !important;
+}
+
+[data-theme="light"] .pixel-workspace h2 {
+  color: #374151 !important;
+}
+
+[data-theme="light"] .pixel-workspace input,
+[data-theme="light"] .pixel-workspace textarea,
+[data-theme="light"] .pixel-workspace select {
+  border-color: #d1d5db !important;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+}
+
+[data-theme="light"] .pixel-workspace input:focus,
+[data-theme="light"] .pixel-workspace textarea:focus,
+[data-theme="light"] .pixel-workspace select:focus {
+  border-color: #0891b2 !important;
+  background: #f0f9fa !important;
+}
+
 .cyber-scrollbar::-webkit-scrollbar {
   width: 10px;
   height: 10px;

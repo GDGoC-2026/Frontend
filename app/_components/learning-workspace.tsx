@@ -16,6 +16,7 @@ import remarkGfm from "remark-gfm";
 import type { OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditorNamespace } from "monaco-editor";
 import { PixelButton } from "@/app/_components/ui-kit/pixel-button";
+import { ThemeToggle } from "@/app/_components/theme-toggle";
 import { cn, type CyberTheme } from "@/app/_components/ui-kit/shared";
 import {
   useBackendCodeRecommendationMutation,
@@ -527,7 +528,21 @@ function getDocumentPreview(content: string) {
   return `${normalized.slice(0, 160)}...`;
 }
 
-function getThemeSurface() {
+function getThemeSurface(theme: CyberTheme = "dark") {
+  if (theme === "light") {
+    return {
+      accent: "text-[#0891b2]",
+      accentBg: "bg-[#0891b2]",
+      bg: "bg-[#f5f5f5]",
+      border: "border-[#e5e5e5]",
+      card: "bg-[#ffffff]",
+      cardSoft: "bg-[#f9f9f9]",
+      muted: "text-[#6b7280]",
+      secondary: "text-[#0284c7]",
+      text: "text-[#1a1a1a]",
+    };
+  }
+  // dark theme (default)
   return {
     accent: "text-[#9cff93]",
     accentBg: "bg-[#9cff93]",
@@ -872,7 +887,7 @@ function WorkspaceShell({
   theme: CyberTheme;
   title: string;
 }) {
-  const palette = getThemeSurface();
+  const palette = getThemeSurface(theme);
   const router = useRouter();
   const session = useSessionQuery();
   const logoutMutation = useLogoutMutation({
@@ -3082,11 +3097,11 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     [],
   );
   const modules = groupLessonsByTopic(savedLessonsQuery.data);
- const activeLesson = draftLesson
-  ? draftLesson
-  : resolvedSavedLessonId
-  ? savedLessonDetailQuery.data ?? null
-  : null;
+  const activeLesson = draftLesson
+    ? draftLesson
+    : resolvedSavedLessonId
+      ? (savedLessonDetailQuery.data ?? null)
+      : null;
   const stats = getRecord(statsQuery.data) ?? {};
 
   const completedPageIds = getLessonCompletedPageIds(
@@ -3361,6 +3376,7 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
       active="home"
       headerActions={
         <div className="flex flex-wrap gap-3">
+          <ThemeToggle />
           {draftLesson ? (
             <StatBadge label="Status" tone="amber" value="Unsaved draft" />
           ) : null}
@@ -3846,6 +3862,7 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
       active="practice"
       headerActions={
         <div className="flex flex-wrap gap-3">
+          <ThemeToggle />
           {activeModule ? (
             <PixelButton
               disabled={generateQuizMutation.isPending}
@@ -4168,6 +4185,7 @@ export function ProfileLearningWorkspace({ theme }: { theme: CyberTheme }) {
       active="profile"
       headerActions={
         <div className="flex flex-wrap gap-3">
+          <ThemeToggle />
           <StatBadge
             label="Tier"
             tone="cyan"
@@ -4680,6 +4698,7 @@ export function ReviewLearningWorkspace({ theme }: { theme: CyberTheme }) {
       headerActions={
         reviewSession ? (
           <div className="flex flex-wrap gap-3">
+            <ThemeToggle />
             <StatBadge label="Topic" value={reviewSession.topic} />
             <StatBadge
               label="Questions"
