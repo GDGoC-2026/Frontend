@@ -4071,13 +4071,6 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
       include_answer_key: builder.include_answer_key,
       include_coding_exercises: builder.include_coding_exercises,
       include_mindmap: builder.include_mindmap,
-      include_external_sources: builder.include_external_sources,
-      external_search_query: builder.include_external_sources
-        ? builder.external_search_query.trim() || undefined
-        : undefined,
-      max_external_sources: builder.include_external_sources
-        ? builder.max_external_sources
-        : 0,
       learning_objectives: builder.learningObjectives.trim() || undefined,
       learning_pace: builder.learning_pace,
       learning_style: builder.learning_style,
