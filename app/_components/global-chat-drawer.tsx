@@ -28,7 +28,7 @@ function makeMessageId() {
 export function GlobalChatDrawer() {
   const { theme } = useTheme();
   const dark = theme === "dark";
-  const { open, setOpen, width, setWidth } = useChatDrawerState();
+  const { open, reserveSpace, setOpen, width, setWidth } = useChatDrawerState();
   const askMutation = useBackendAskChatbotMutation();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const resizeRef = useRef<HTMLDivElement | null>(null);
@@ -46,13 +46,13 @@ export function GlobalChatDrawer() {
         event.key.toLowerCase() === "k"
       ) {
         event.preventDefault();
-        setOpen(!open);
+        setOpen((current) => !current);
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [setOpen]);
 
   // Resize logic
   useEffect(() => {
@@ -75,7 +75,7 @@ export function GlobalChatDrawer() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isResizing]);
+  }, [isResizing, setWidth]);
 
   useEffect(() => {
     if (!scrollContainerRef.current) {
@@ -141,12 +141,14 @@ export function GlobalChatDrawer() {
       {open ? (
         <section
           className={cn(
-            "fixed right-0 top-0 z-[55] flex h-screen flex-col border-l shadow-2xl transition-all",
+            "fixed right-0 top-0 z-[55] flex h-screen max-w-[100vw] flex-col border-l shadow-2xl transition-all",
             dark
               ? "border-[#262626] bg-[#0e0e0e]"
               : "border-[#c6d2c4] bg-[#eef4ec]",
           )}
-          style={{ width: `${width}px` }}
+          style={{
+            width: reserveSpace ? `${width}px` : `min(${width}px, calc(100vw - 8px))`,
+          }}
         >
           {/* Resize handle - left edge */}
           <div

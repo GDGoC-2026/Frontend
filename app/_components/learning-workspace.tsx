@@ -46,7 +46,6 @@ import {
   useBackendUpsertCodingProblemSessionMutation,
 } from "@/hooks/use-backend-api";
 import { useLogoutMutation, useSessionQuery } from "@/hooks/use-auth";
-import { the } from '../../.next/dev/types/validator';
 import type {
   FlashcardResponse,
   LessonGenerationResponse,
@@ -2364,10 +2363,13 @@ function ResourcesPage({
 function CodingPage({
   lesson,
   page,
+  theme,
 }: {
   lesson: ActiveLesson;
   page: LessonPage;
+  theme: CyberTheme;
 }) {
+  const dark = theme === "dark";
   const data = getRecord(page.data) ?? {};
   const tasks = getArray(data.tasks).filter(isRecord);
   const savedLessonId = isSavedLesson(lesson) ? lesson.id : null;
@@ -2721,8 +2723,20 @@ function CodingPage({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-6">
-        <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-white/45">
+      <div
+        className={cn(
+          "rounded-[30px] border p-6",
+          dark
+            ? "border-white/10 bg-white/[0.04]"
+            : "border-[#c6d2c4] bg-[#f4f8f1]",
+        )}
+      >
+        <div
+          className={cn(
+            "flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.28em]",
+            dark ? "text-white/45" : "text-[#6f7c74]",
+          )}
+        >
           <span>coding workspace</span>
           <span>{selectedLanguage.label}</span>
           {savedLessonId ? (
@@ -2734,7 +2748,12 @@ function CodingPage({
         <div className="mt-3 font-display text-2xl font-semibold uppercase">
           Interactive coding
         </div>
-        <div className="mt-3 text-sm leading-7 text-white/70">
+        <div
+          className={cn(
+            "mt-3 text-sm leading-7",
+            dark ? "text-white/70" : "text-[#55645a]",
+          )}
+        >
           Pick a coding problem in the left strip, edit starter code, run or
           submit against test cases, then ask AI for improvement suggestions.
         </div>
@@ -2742,17 +2761,34 @@ function CodingPage({
 
       {!savedLessonId ? (
         <div className="space-y-4">
-          <div className="rounded-[28px] border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm text-white/55">
+          <div
+            className={cn(
+              "rounded-[28px] border border-dashed p-6 text-sm",
+              dark
+                ? "border-white/10 bg-white/[0.03] text-white/55"
+                : "border-[#c6d2c4] bg-[#f3f7f1] text-[#6b7b72]",
+            )}
+          >
             This lesson is still a draft. Save lesson first to activate
             run/submit APIs and persistent code sessions.
           </div>
           {tasks.length
             ? tasks.map((task, index) => (
                 <article
-                  className="rounded-[30px] border border-white/10 bg-white/[0.04] p-6"
+                  className={cn(
+                    "rounded-[30px] border p-6",
+                    dark
+                      ? "border-white/10 bg-white/[0.04]"
+                      : "border-[#c6d2c4] bg-[#f4f8f1]",
+                  )}
                   key={`${getString(task.title)}-${index}`}
                 >
-                  <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.26em] text-white/45">
+                  <div
+                    className={cn(
+                      "flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.26em]",
+                      dark ? "text-white/45" : "text-[#6f7c74]",
+                    )}
+                  >
                     <span>coding exercise</span>
                     {getString(task.difficulty) ? (
                       <span>{getString(task.difficulty)}</span>
@@ -2761,7 +2797,12 @@ function CodingPage({
                   <div className="mt-3 font-display text-2xl font-semibold uppercase">
                     {getString(task.title, `Task ${index + 1}`)}
                   </div>
-                  <div className="mt-4 text-sm leading-7 text-white/75">
+                  <div
+                    className={cn(
+                      "mt-4 text-sm leading-7",
+                      dark ? "text-white/75" : "text-[#49584f]",
+                    )}
+                  >
                     {getString(
                       task.instructions,
                       getString(
@@ -2771,7 +2812,14 @@ function CodingPage({
                     )}
                   </div>
                   {getString(task.starting_code) ? (
-                    <pre className="mt-4 overflow-x-auto rounded-[22px] border border-white/10 bg-black/25 p-4 text-xs leading-6 text-white/75">
+                    <pre
+                      className={cn(
+                        "mt-4 overflow-x-auto rounded-[22px] border p-4 text-xs leading-6",
+                        dark
+                          ? "border-white/10 bg-black/25 text-white/75"
+                          : "border-[#d1dbcf] bg-[#eef4ec] text-[#49584f]",
+                      )}
+                    >
                       {getString(task.starting_code)}
                     </pre>
                   ) : null}
@@ -2782,8 +2830,20 @@ function CodingPage({
       ) : (
         <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
           <aside className="space-y-4">
-            <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4">
-              <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
+            <div
+              className={cn(
+                "rounded-[28px] border p-4",
+                dark
+                  ? "border-white/10 bg-white/[0.04]"
+                  : "border-[#c6d2c4] bg-[#f4f8f1]",
+              )}
+            >
+              <div
+                className={cn(
+                  "font-pixel text-[9px] uppercase tracking-[0.2em]",
+                  dark ? "text-white/45" : "text-[#6f7c74]",
+                )}
+              >
                 Coding bar
               </div>
               <div className="mt-3 space-y-2">
@@ -2793,8 +2853,12 @@ function CodingPage({
                       className={cn(
                         "w-full border px-3 py-3 text-left transition",
                         selectedProblemId === problem.id
-                          ? "border-[#69daff] bg-[#09151a] text-[#b9f2ff]"
-                          : "border-[#262626] bg-[#05070a] text-white/70 hover:border-[#4b5563] hover:bg-[#111315]",
+                          ? dark
+                            ? "border-[#69daff] bg-[#09151a] text-[#b9f2ff]"
+                            : "border-[#8cb6c6] bg-[#edf5f7] text-[#2f5966]"
+                          : dark
+                            ? "border-[#262626] bg-[#05070a] text-white/70 hover:border-[#4b5563] hover:bg-[#111315]"
+                            : "border-[#c6d2c4] bg-[#f8fbf5] text-[#49584f] hover:border-[#9db09f] hover:bg-[#edf3ea]",
                       )}
                       key={problem.id}
                       onClick={() => setSelectedProblemId(problem.id)}
@@ -2803,14 +2867,26 @@ function CodingPage({
                       <div className="font-display text-sm font-semibold uppercase leading-5">
                         {problem.title}
                       </div>
-                      <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+                      <div
+                        className={cn(
+                          "mt-1 text-[10px] uppercase tracking-[0.18em]",
+                          dark ? "text-white/40" : "text-[#6f7c74]",
+                        )}
+                      >
                         {problem.language} ·{" "}
                         {problem.difficulty ?? "intermediate"}
                       </div>
                     </button>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-white/10 p-3 text-xs text-white/55">
+                  <div
+                    className={cn(
+                      "rounded-2xl border border-dashed p-3 text-xs",
+                      dark
+                        ? "border-white/10 text-white/55"
+                        : "border-[#c6d2c4] text-[#6b7b72]",
+                    )}
+                  >
                     No coding problem has been linked yet.
                   </div>
                 )}
@@ -2830,7 +2906,7 @@ function CodingPage({
                       },
                     })
                   }
-                  theme="dark"
+                  theme={theme}
                   tone="cyan"
                 >
                   {generateCodingProblemsMutation.isPending
@@ -2840,28 +2916,62 @@ function CodingPage({
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4">
-              <div className="font-pixel text-[9px] uppercase tracking-[0.2em] text-white/45">
+            <div
+              className={cn(
+                "rounded-[28px] border p-4",
+                dark
+                  ? "border-white/10 bg-white/[0.04]"
+                  : "border-[#c6d2c4] bg-[#f4f8f1]",
+              )}
+            >
+              <div
+                className={cn(
+                  "font-pixel text-[9px] uppercase tracking-[0.2em]",
+                  dark ? "text-white/45" : "text-[#6f7c74]",
+                )}
+              >
                 Attempts
               </div>
               <div className="mt-3 space-y-2">
                 {attempts.length ? (
                   attempts.map((attempt) => (
                     <div
-                      className="rounded-2xl border border-white/10 bg-black/25 p-3"
+                      className={cn(
+                        "rounded-2xl border p-3",
+                        dark
+                          ? "border-white/10 bg-black/25"
+                          : "border-[#d1dbcf] bg-[#eef4ec]",
+                      )}
                       key={attempt.id}
                     >
-                      <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
+                      <div
+                        className={cn(
+                          "text-[10px] uppercase tracking-[0.2em]",
+                          dark ? "text-white/45" : "text-[#6f7c74]",
+                        )}
+                      >
                         {attempt.mode} · {attempt.overall_status ?? "unknown"}
                       </div>
-                      <div className="mt-1 text-sm text-white/75">
+                      <div
+                        className={cn(
+                          "mt-1 text-sm",
+                          dark ? "text-white/75" : "text-[#49584f]",
+                        )}
+                      >
                         {attempt.passed_tests}/{attempt.total_tests} tests
                         passed
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-dashed border-white/10 p-3 text-xs text-white/55">
+                  <div
+                    className={cn(
+                      "rounded-2xl border border-dashed p-3 text-xs",
+                      dark
+                        ? "border-white/10 text-white/55"
+                        : "border-[#c6d2c4] text-[#6b7b72]",
+                    )}
+                  >
                     No attempts yet for this problem.
                   </div>
                 )}
@@ -2870,10 +2980,22 @@ function CodingPage({
           </aside>
 
           <section className="space-y-4">
-            <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-5">
+            <div
+              className={cn(
+                "rounded-[30px] border p-5",
+                dark
+                  ? "border-white/10 bg-white/[0.04]"
+                  : "border-[#c6d2c4] bg-[#f4f8f1]",
+              )}
+            >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+                  <div
+                    className={cn(
+                      "text-[11px] uppercase tracking-[0.24em]",
+                      dark ? "text-white/45" : "text-[#6f7c74]",
+                    )}
+                  >
                     Code editor
                   </div>
                   <div className="mt-2 font-display text-xl font-semibold uppercase">
@@ -2881,7 +3003,7 @@ function CodingPage({
                   </div>
                 </div>
                 <div className="w-full max-w-[280px]">
-                  <WorkspaceField label="Language / Highlight">
+                  <WorkspaceField label="Language / Highlight" theme={theme}>
                     <WorkspaceSelect
                       onChange={(event) => {
                         const previousLanguage = selectedLanguage;
@@ -2919,6 +3041,7 @@ function CodingPage({
                           return current;
                         });
                       }}
+                      theme={theme}
                       value={selectedLanguage.value}
                     >
                       {CODING_LANGUAGE_OPTIONS.map((option) => (
@@ -2931,12 +3054,24 @@ function CodingPage({
                 </div>
               </div>
               {activeProblem?.instructions ? (
-                <div className="mt-3 text-sm leading-7 text-white/75">
+                <div
+                  className={cn(
+                    "mt-3 text-sm leading-7",
+                    dark ? "text-white/75" : "text-[#49584f]",
+                  )}
+                >
                   {activeProblem.instructions}
                 </div>
               ) : null}
               <div className="mt-4">
-                <div className="overflow-hidden rounded-[20px] border border-[#2a2a2a] bg-[#05070a]">
+                <div
+                  className={cn(
+                    "overflow-hidden rounded-[20px] border",
+                    dark
+                      ? "border-[#2a2a2a] bg-[#05070a]"
+                      : "border-[#c6d2c4] bg-[#fbfdf8]",
+                  )}
+                >
                   <MonacoEditor
                     height="440px"
                     language={selectedLanguage.monacoLanguage}
@@ -2966,22 +3101,28 @@ function CodingPage({
                       tabSize: 2,
                       wordWrap: "on",
                     }}
-                    theme="vs-dark"
+                    theme={dark ? "vs-dark" : "vs"}
                     value={sourceCode}
                   />
                 </div>
-                <div className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/45">
+                <div
+                  className={cn(
+                    "mt-2 text-[11px] uppercase tracking-[0.18em]",
+                    dark ? "text-white/45" : "text-[#6f7c74]",
+                  )}
+                >
                   VSCode-style shortcuts: Tab/Shift+Tab indent, Ctrl+Space
                   suggest, Shift+Alt+F format.
                 </div>
               </div>
               <div className="mt-4">
-                <WorkspaceField label="Custom Input (stdin)">
+                <WorkspaceField label="Custom Input (stdin)" theme={theme}>
                   <WorkspaceTextarea
                     className="min-h-[96px] font-mono text-xs leading-6"
                     onChange={(event) => setStdin(event.target.value)}
                     placeholder="Optional stdin for Run action"
                     spellCheck={false}
+                    theme={theme}
                     value={stdin}
                   />
                 </WorkspaceField>
@@ -2992,7 +3133,7 @@ function CodingPage({
                     runCodingProblemMutation.isPending || !selectedProblemId
                   }
                   onClick={() => void runCode()}
-                  theme="dark"
+                  theme={theme}
                   tone="cyan"
                 >
                   {runCodingProblemMutation.isPending
@@ -3003,7 +3144,7 @@ function CodingPage({
                   disabled={!selectedProblemId}
                   hollow
                   onClick={() => void formatCode()}
-                  theme="dark"
+                  theme={theme}
                   tone="cyan"
                 >
                   Format Code
@@ -3011,7 +3152,7 @@ function CodingPage({
                 <PixelButton
                   disabled={isSubmittingCode || !selectedProblemId}
                   onClick={() => void submitCode()}
-                  theme="dark"
+                  theme={theme}
                 >
                   {isSubmittingCode ? "Submitting..." : "Submit Tests"}
                 </PixelButton>
@@ -3026,7 +3167,7 @@ function CodingPage({
                       ),
                     )
                   }
-                  theme="dark"
+                  theme={theme}
                   tone="cyan"
                 >
                   Load Starter
@@ -3037,7 +3178,7 @@ function CodingPage({
                   }
                   hollow
                   onClick={() => void saveSession()}
-                  theme="dark"
+                  theme={theme}
                   tone="purple"
                 >
                   {upsertCodingSessionMutation.isPending
@@ -3050,7 +3191,7 @@ function CodingPage({
                   }
                   hollow
                   onClick={() => void getRecommendation()}
-                  theme="dark"
+                  theme={theme}
                   tone="cyan"
                 >
                   {recommendationMutation.isPending
@@ -3059,7 +3200,12 @@ function CodingPage({
                 </PixelButton>
               </div>
               {localMessage ? (
-                <div className="mt-3 text-xs text-[#9cff93]">
+                <div
+                  className={cn(
+                    "mt-3 text-xs",
+                    dark ? "text-[#9cff93]" : "text-[#5f8c61]",
+                  )}
+                >
                   {localMessage}
                 </div>
               ) : null}
@@ -3086,8 +3232,20 @@ function CodingPage({
             </div>
 
             <div className="grid gap-4 xl:grid-cols-2">
-              <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5">
-                <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+              <div
+                className={cn(
+                  "rounded-[28px] border p-5",
+                  dark
+                    ? "border-white/10 bg-white/[0.04]"
+                    : "border-[#c6d2c4] bg-[#f4f8f1]",
+                )}
+              >
+                <div
+                  className={cn(
+                    "text-[11px] uppercase tracking-[0.24em]",
+                    dark ? "text-white/45" : "text-[#6f7c74]",
+                  )}
+                >
                   Test cases
                 </div>
                 <div className="mt-3 space-y-3">
@@ -3097,26 +3255,51 @@ function CodingPage({
 
                       return (
                         <div
-                          className="rounded-2xl border border-white/10 bg-black/25 p-3 text-xs"
+                          className={cn(
+                            "rounded-2xl border p-3 text-xs",
+                            dark
+                              ? "border-white/10 bg-black/25"
+                              : "border-[#d1dbcf] bg-[#eef4ec]",
+                          )}
                           key={`${testCase.expected_output}-${index}`}
                         >
-                          <div className="uppercase tracking-[0.2em] text-white/45">
+                          <div
+                            className={cn(
+                              "uppercase tracking-[0.2em]",
+                              dark ? "text-white/45" : "text-[#6f7c74]",
+                            )}
+                          >
                             Case {index + 1}
                           </div>
-                          <div className="mt-2 text-white/80">
+                          <div
+                            className={cn(
+                              "mt-2",
+                              dark ? "text-white/80" : "text-[#49584f]",
+                            )}
+                          >
                             input:{" "}
                             {testCase.is_hidden
                               ? "<hidden>"
                               : testCase.input || "<empty>"}
                           </div>
-                          <div className="mt-1 text-white/80">
+                          <div
+                            className={cn(
+                              "mt-1",
+                              dark ? "text-white/80" : "text-[#49584f]",
+                            )}
+                          >
                             expected:{" "}
                             {testCase.is_hidden
                               ? "<hidden>"
                               : testCase.expected_output}
                           </div>
                           {caseResult ? (
-                            <div className="mt-1 text-white/80">
+                            <div
+                              className={cn(
+                                "mt-1",
+                                dark ? "text-white/80" : "text-[#49584f]",
+                              )}
+                            >
                               status: {caseResult.status ?? "running"} ·{" "}
                               {caseResult.passed ? "passed" : "failed"}
                             </div>
@@ -3125,47 +3308,122 @@ function CodingPage({
                       );
                     })
                   ) : (
-                    <div className="rounded-2xl border border-dashed border-white/10 p-3 text-xs text-white/55">
+                    <div
+                      className={cn(
+                        "rounded-2xl border border-dashed p-3 text-xs",
+                        dark
+                          ? "border-white/10 text-white/55"
+                          : "border-[#c6d2c4] text-[#6b7b72]",
+                      )}
+                    >
                       Test cases are not available yet.
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5">
-                <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
+              <div
+                className={cn(
+                  "rounded-[28px] border p-5",
+                  dark
+                    ? "border-white/10 bg-white/[0.04]"
+                    : "border-[#c6d2c4] bg-[#f4f8f1]",
+                )}
+              >
+                <div
+                  className={cn(
+                    "text-[11px] uppercase tracking-[0.24em]",
+                    dark ? "text-white/45" : "text-[#6f7c74]",
+                  )}
+                >
                   Execution output
                 </div>
                 <div className="mt-3 space-y-3 text-xs">
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <div className="uppercase tracking-[0.2em] text-white/45">
+                  <div
+                    className={cn(
+                      "rounded-2xl border p-3",
+                      dark
+                        ? "border-white/10 bg-black/25"
+                        : "border-[#d1dbcf] bg-[#eef4ec]",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "uppercase tracking-[0.2em]",
+                        dark ? "text-white/45" : "text-[#6f7c74]",
+                      )}
+                    >
                       Run result
                     </div>
-                    <pre className="mt-2 whitespace-pre-wrap text-white/80">
+                    <pre
+                      className={cn(
+                        "mt-2 whitespace-pre-wrap",
+                        dark ? "text-white/80" : "text-[#49584f]",
+                      )}
+                    >
                       {runResult
                         ? `status: ${runResult.status ?? "unknown"}\nstdout: ${runResult.stdout ?? ""}\nstderr: ${runResult.stderr ?? ""}`
                         : "Run code to see output."}
                     </pre>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <div className="uppercase tracking-[0.2em] text-white/45">
+                  <div
+                    className={cn(
+                      "rounded-2xl border p-3",
+                      dark
+                        ? "border-white/10 bg-black/25"
+                        : "border-[#d1dbcf] bg-[#eef4ec]",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "uppercase tracking-[0.2em]",
+                        dark ? "text-white/45" : "text-[#6f7c74]",
+                      )}
+                    >
                       Submit result
                     </div>
-                    <pre className="mt-2 whitespace-pre-wrap text-white/80">
+                    <pre
+                      className={cn(
+                        "mt-2 whitespace-pre-wrap",
+                        dark ? "text-white/80" : "text-[#49584f]",
+                      )}
+                    >
                       {effectiveSubmitResult
                         ? `status: ${effectiveSubmitResult.status ?? "unknown"}\npassed: ${effectiveSubmitResult.passed_tests}/${effectiveSubmitResult.total_tests}`
                         : "Submit tests to see verdict."}
                     </pre>
-                    <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-white/45">
+                    <div
+                      className={cn(
+                        "mt-3 text-[11px] uppercase tracking-[0.18em]",
+                        dark ? "text-white/45" : "text-[#6f7c74]",
+                      )}
+                    >
                       realtime: {submitStreamStatus ?? "idle"} ·{" "}
                       {submitStreamPassedTests}/{submitStreamTotalTests || 0}
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/25 p-3">
-                    <div className="uppercase tracking-[0.2em] text-white/45">
+                  <div
+                    className={cn(
+                      "rounded-2xl border p-3",
+                      dark
+                        ? "border-white/10 bg-black/25"
+                        : "border-[#d1dbcf] bg-[#eef4ec]",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "uppercase tracking-[0.2em]",
+                        dark ? "text-white/45" : "text-[#6f7c74]",
+                      )}
+                    >
                       AI recommendations
                     </div>
-                    <div className="mt-2 whitespace-pre-wrap text-sm leading-6 text-white/75">
+                    <div
+                      className={cn(
+                        "mt-2 whitespace-pre-wrap text-sm leading-6",
+                        dark ? "text-white/75" : "text-[#49584f]",
+                      )}
+                    >
                       {recommendationText ||
                         "Use AI Recommend to get improvement suggestions while coding."}
                     </div>
@@ -3519,8 +3777,6 @@ function LessonViewer({
   onCreateFlashcard,
   onLaunchReview,
   onMarkComplete,
-  onNextPage,
-  onPreviousPage,
   onSelectPage,
   theme,
 }: {
@@ -3533,8 +3789,6 @@ function LessonViewer({
   onCreateFlashcard: (question: string, answer: string) => void;
   onLaunchReview: () => void;
   onMarkComplete: () => void;
-  onNextPage: () => void;
-  onPreviousPage: () => void;
   onSelectPage: (pageId: string) => void;
   theme: CyberTheme;
 }) {
@@ -3640,7 +3894,7 @@ function LessonViewer({
                 isSavingProgress
               }
               onClick={onMarkComplete}
-              theme="dark"
+              theme={theme}
               tone="cyan"
             >
               {isSavingProgress ? "Saving..." : "Mark Complete"}
@@ -3672,7 +3926,7 @@ function LessonViewer({
           <ResourcesPage page={activePage} theme={theme} />
         ) : null}
         {activePage.page_type === "coding" ? (
-          <CodingPage lesson={lesson} page={activePage} />
+          <CodingPage lesson={lesson} page={activePage} theme={theme} />
         ) : null}
         {activePage.page_type === "mindmap" ? (
           <MindmapPage page={activePage} theme={theme} />
@@ -3944,23 +4198,6 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
     setDraftCompletedPageIds(nextCompleted);
   };
 
-  const movePage = (direction: -1 | 1) => {
-    if (!activeLesson) {
-      return;
-    }
-
-    const currentIndex = activeLesson.pages.findIndex(
-      (page) => page.page_id === activePageId,
-    );
-    const nextPage = activeLesson.pages[currentIndex + direction];
-
-    if (!nextPage) {
-      return;
-    }
-
-    selectPage(nextPage.page_id);
-  };
-
   const launchLessonQuiz = () => {
     if (!activeLesson) {
       return;
@@ -4013,7 +4250,7 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
           ) : null}
           <PixelButton
             onClick={() => setBuilderOpen((current) => !current)}
-            theme="dark"
+            theme={theme}
           >
             {builderOpen ? "Hide Create Lesson" : "Create Lesson"}
           </PixelButton>
@@ -4021,7 +4258,7 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
             <PixelButton
               disabled={saveLessonMutation.isPending}
               onClick={() => void saveLesson()}
-              theme="dark"
+              theme={theme}
               tone="cyan"
             >
               {saveLessonMutation.isPending ? "Saving..." : "Save Lesson"}
@@ -4073,7 +4310,7 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                   builder.prompt.trim().length < MIN_LESSON_PROMPT_LENGTH
                 }
                 onClick={() => void generateLesson()}
-                theme="dark"
+                theme={theme}
               >
                 {generateLessonMutation.isPending
                   ? "Generating..."
@@ -4438,8 +4675,6 @@ export function HomeLearningWorkspace({ theme }: { theme: CyberTheme }) {
                   }
                   onLaunchReview={launchLessonQuiz}
                   onMarkComplete={markCurrentPageComplete}
-                  onNextPage={() => movePage(1)}
-                  onPreviousPage={() => movePage(-1)}
                   onSelectPage={selectPage}
                   theme={theme}
                 />
@@ -4524,7 +4759,7 @@ export function PracticeLearningWorkspace({ theme }: { theme: CyberTheme }) {
             <PixelButton
               disabled={generateQuizMutation.isPending}
               onClick={() => void launchPracticeQuiz(activeModule.topic)}
-              theme="dark"
+              theme={theme}
             >
               {generateQuizMutation.isPending
                 ? "Preparing..."
