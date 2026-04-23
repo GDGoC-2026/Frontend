@@ -6,7 +6,17 @@ import remarkGfm from "remark-gfm";
 import { cn } from "@/app/_components/ui-kit/shared";
 
 type EditorMode = "edit" | "lock";
-type BlockType = "paragraph" | "h1" | "h2" | "h3" | "todo" | "bullet" | "numbered" | "quote" | "code" | "divider";
+type BlockType =
+  | "paragraph"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "todo"
+  | "bullet"
+  | "numbered"
+  | "quote"
+  | "code"
+  | "divider";
 
 type EditorBlock = {
   checked?: boolean;
@@ -23,10 +33,30 @@ type SlashCommand = {
   type: BlockType;
 };
 
+type ToolbarInlineAction = {
+  id: string;
+  label: string;
+  placeholder: string;
+  prefix: string;
+  suffix?: string;
+};
+
+type ToolbarBlockAction = {
+  id: string;
+  label: string;
+  type: BlockType;
+};
+
 type NotesMarkdownEditorProps = {
   dark: boolean;
   onChange: (value: string) => void;
   value: string;
+};
+
+type PendingSelection = {
+  blockId: string;
+  end: number;
+  start: number;
 };
 
 const slashCommands: SlashCommand[] = [
@@ -39,6 +69,26 @@ const slashCommands: SlashCommand[] = [
   { id: "quote", keyword: "quote", label: "Quote", description: "Quote block", type: "quote" },
   { id: "code", keyword: "code", label: "Code", description: "Code block", type: "code" },
   { id: "divider", keyword: "divider", label: "Divider", description: "Horizontal rule", type: "divider" },
+];
+
+const inlineToolbarActions: ToolbarInlineAction[] = [
+  { id: "bold", label: "Bold", placeholder: "strong text", prefix: "**" },
+  { id: "italic", label: "Italic", placeholder: "emphasis", prefix: "*" },
+  { id: "strike", label: "Strike", placeholder: "removed", prefix: "~~" },
+  { id: "code", label: "Code", placeholder: "snippet", prefix: "`" },
+  { id: "link", label: "Link", placeholder: "label", prefix: "[", suffix: "](https://)" },
+];
+
+const blockToolbarActions: ToolbarBlockAction[] = [
+  { id: "h1", label: "H1", type: "h1" },
+  { id: "h2", label: "H2", type: "h2" },
+  { id: "h3", label: "H3", type: "h3" },
+  { id: "bullet", label: "Bullet", type: "bullet" },
+  { id: "numbered", label: "1.", type: "numbered" },
+  { id: "todo", label: "Todo", type: "todo" },
+  { id: "quote", label: "Quote", type: "quote" },
+  { id: "code", label: "Block", type: "code" },
+  { id: "divider", label: "Rule", type: "divider" },
 ];
 
 function createBlock(type: BlockType = "paragraph", text = "", checked = false): EditorBlock {
@@ -229,6 +279,72 @@ function isCaretAtBoundary(target: HTMLDivElement, boundary: "start" | "end") {
   return probe.toString().length === 0;
 }
 
+function getSelectionOffsets(target: HTMLDivElement) {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    return null;
+  }
+
+  const range = selection.getRangeAt(0);
+  if (!target.contains(range.startContainer) || !target.contains(range.endContainer)) {
+    return null;
+  }
+
+  const startRange = range.cloneRange();
+  startRange.selectNodeContents(target);
+  startRange.setEnd(range.startContainer, range.startOffset);
+
+  const endRange = range.cloneRange();
+  endRange.selectNodeContents(target);
+  endRange.setEnd(range.endContainer, range.endOffset);
+
+  return {
+    end: endRange.toString().length,
+    start: startRange.toString().length,
+  };
+}
+
+function resolveTextPosition(target: HTMLDivElement, offset: number) {
+  const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
+  let remaining = offset;
+  let node = walker.nextNode() as Text | null;
+
+  while (node) {
+    const length = node.textContent?.length ?? 0;
+    if (remaining <= length) {
+      return { node, offset: remaining };
+    }
+    remaining -= length;
+    node = walker.nextNode() as Text | null;
+  }
+
+  return null;
+}
+
+function restoreSelection(target: HTMLDivElement, selectionState: PendingSelection) {
+  const selection = window.getSelection();
+  if (!selection) {
+    return;
+  }
+
+  target.focus();
+
+  const range = document.createRange();
+  const startPosition = resolveTextPosition(target, selectionState.start);
+  const endPosition = resolveTextPosition(target, selectionState.end);
+
+  if (startPosition && endPosition) {
+    range.setStart(startPosition.node, startPosition.offset);
+    range.setEnd(endPosition.node, endPosition.offset);
+  } else {
+    range.selectNodeContents(target);
+    range.collapse(false);
+  }
+
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
 export function NotesMarkdownEditor({
   dark,
   onChange,
@@ -241,6 +357,7 @@ export function NotesMarkdownEditor({
   const blockRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const lastSyncedMarkdownRef = useRef<string>(serializeBlocksToMarkdown(parseMarkdownToBlocks(value)));
   const pendingFocusRef = useRef<string | null>(null);
+  const pendingSelectionRef = useRef<PendingSelection | null>(null);
   const typingBlockRef = useRef<string | null>(null);
 
   const activeBlock = blocks.find((block) => block.id === activeBlockId) ?? null;
@@ -253,8 +370,9 @@ export function NotesMarkdownEditor({
     if (!query) {
       return slashCommands;
     }
-    return slashCommands.filter((command) =>
-      command.keyword.includes(query) || command.label.toLowerCase().includes(query),
+    return slashCommands.filter(
+      (command) =>
+        command.keyword.includes(query) || command.label.toLowerCase().includes(query),
     );
   }, [activeBlock]);
 
@@ -284,10 +402,33 @@ export function NotesMarkdownEditor({
       return;
     }
     const parsed = parseMarkdownToBlocks(externalValue);
-    setBlocks(parsed);
-    lastSyncedMarkdownRef.current = serializeBlocksToMarkdown(parsed);
-    setActiveBlockId(parsed[0]?.id ?? null);
+    const frame = window.requestAnimationFrame(() => {
+      setBlocks(parsed);
+      lastSyncedMarkdownRef.current = serializeBlocksToMarkdown(parsed);
+      setActiveBlockId(parsed[0]?.id ?? null);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [mode, value]);
+
+  useLayoutEffect(() => {
+    if (!pendingSelectionRef.current) {
+      return;
+    }
+
+    const selectionState = pendingSelectionRef.current;
+    const target = blockRefs.current.get(selectionState.blockId);
+    if (!target) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      restoreSelection(target, selectionState);
+      pendingSelectionRef.current = null;
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [blocks]);
 
   useLayoutEffect(() => {
     if (!pendingFocusRef.current) {
@@ -343,6 +484,28 @@ export function NotesMarkdownEditor({
     setBlocks((current) => current.map((block) => (block.id === blockId ? updater(block) : block)));
   }
 
+  function setBlockType(type: BlockType) {
+    if (!activeBlockId) {
+      return;
+    }
+
+    setBlocks((current) =>
+      current.map((block) => {
+        if (block.id !== activeBlockId) {
+          return block;
+        }
+        return {
+          ...block,
+          checked: type === "todo" ? Boolean(block.checked) : undefined,
+          text: type === "divider" ? "" : block.text,
+          type,
+        };
+      }),
+    );
+    setSlashIndex(0);
+    pendingFocusRef.current = activeBlockId;
+  }
+
   function applySlashCommand(command: SlashCommand) {
     if (!activeBlockId) {
       return;
@@ -355,14 +518,58 @@ export function NotesMarkdownEditor({
         }
         return {
           ...block,
-          checked: command.type === "todo" ? false : block.checked,
-          text: "",
+          checked: command.type === "todo" ? false : undefined,
+          text: command.type === "divider" ? "" : "",
           type: command.type,
         };
       }),
     );
     setSlashIndex(0);
     pendingFocusRef.current = activeBlockId;
+  }
+
+  function applyInlineStyle(action: ToolbarInlineAction) {
+    if (!activeBlockId) {
+      return;
+    }
+
+    const target = blockRefs.current.get(activeBlockId);
+    const block = blocks.find((item) => item.id === activeBlockId);
+    if (!target || !block || block.type === "divider") {
+      return;
+    }
+
+    const selectionOffsets = getSelectionOffsets(target) ?? {
+      end: block.text.length,
+      start: block.text.length,
+    };
+    const start = Math.min(selectionOffsets.start, selectionOffsets.end);
+    const end = Math.max(selectionOffsets.start, selectionOffsets.end);
+    const selectedText = block.text.slice(start, end);
+    const prefix = action.prefix;
+    const suffix = action.suffix ?? action.prefix;
+    const insertion = selectedText || action.placeholder;
+    const nextText = `${block.text.slice(0, start)}${prefix}${insertion}${suffix}${block.text.slice(end)}`;
+    const nextSelectionStart = start + prefix.length;
+    const nextSelectionEnd = nextSelectionStart + insertion.length;
+
+    setBlocks((current) =>
+      current.map((item) =>
+        item.id === activeBlockId
+          ? {
+              ...item,
+              text: nextText,
+            }
+          : item,
+      ),
+    );
+
+    pendingSelectionRef.current = {
+      blockId: activeBlockId,
+      end: nextSelectionEnd,
+      start: nextSelectionStart,
+    };
+    setSlashIndex(0);
   }
 
   function insertBlockAtIndex(index: number, nextType: BlockType = "paragraph") {
@@ -465,6 +672,18 @@ export function NotesMarkdownEditor({
       return;
     }
 
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "b") {
+      event.preventDefault();
+      applyInlineStyle(inlineToolbarActions[0]);
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "i") {
+      event.preventDefault();
+      applyInlineStyle(inlineToolbarActions[1]);
+      return;
+    }
+
     if (slashCommandsFiltered.length > 0) {
       if (event.key === "ArrowDown") {
         event.preventDefault();
@@ -528,33 +747,87 @@ export function NotesMarkdownEditor({
     <div className="space-y-3">
       <div
         className={cn(
-          "flex items-center gap-2 border p-2",
-          dark ? "border-[#262626] bg-[#101010]" : "border-[#b5c0ca] bg-[#eef2f6]",
+          "border",
+          dark ? "border-[#262626] bg-[#101010]" : "border-[#9eb2aa] bg-[#f4f8f5]",
         )}
       >
-        <div className={cn("font-pixel text-[9px] uppercase tracking-[0.16em]", dark ? "text-[#69daff]" : "text-[#00677d]")}>
-          Visual Note Editor
+        <div
+          className={cn(
+            "flex flex-wrap items-center gap-2 border-b p-2",
+            dark ? "border-[#262626]" : "border-[#c7d6ce]",
+          )}
+        >
+          <div className={cn("font-pixel text-[9px] uppercase tracking-[0.16em]", dark ? "text-[#69daff]" : "text-[#0b7285]")}>
+            Visual Note Editor
+          </div>
+          <div className="ml-auto flex items-center gap-1">
+            {(["edit", "lock"] as const).map((nextMode) => (
+              <button
+                className={cn(
+                  "border px-2 py-1 font-pixel text-[9px] uppercase",
+                  mode === nextMode
+                    ? dark
+                      ? "border-[#69daff] bg-[#11232b] text-[#69daff]"
+                      : "border-[#0b7285] bg-[#e3f8fb] text-[#0b7285]"
+                    : dark
+                      ? "border-[#262626] text-[#adaaaa] hover:bg-[#1f1f1f]"
+                      : "border-[#9eb2aa] text-[#475569] hover:bg-[#e7f0eb]",
+                )}
+                key={nextMode}
+                onClick={() => setMode(nextMode)}
+                type="button"
+              >
+                {nextMode}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="ml-auto flex items-center gap-1">
-          {(["edit", "lock"] as const).map((nextMode) => (
-            <button
-              className={cn(
-                "border px-2 py-1 font-pixel text-[9px] uppercase",
-                mode === nextMode
-                  ? dark
-                    ? "border-[#69daff] bg-[#11232b] text-[#69daff]"
-                    : "border-[#00677d] bg-[#dff4fa] text-[#00677d]"
-                  : dark
-                    ? "border-[#262626] text-[#adaaaa] hover:bg-[#1f1f1f]"
-                    : "border-[#9aa7b3] text-[#475569] hover:bg-[#d9e0e6]",
-              )}
-              key={nextMode}
-              onClick={() => setMode(nextMode)}
-              type="button"
-            >
-              {nextMode}
-            </button>
-          ))}
+
+        <div className={cn("grid gap-2 p-2 lg:grid-cols-[1fr_auto]", dark ? "bg-[#101010]" : "bg-[#f4f8f5]")}>
+          <div className="flex flex-wrap gap-2">
+            {inlineToolbarActions.map((action) => (
+              <button
+                className={cn(
+                  "border px-2 py-1 font-pixel text-[9px] uppercase",
+                  dark
+                    ? "border-[#27303d] bg-[#11181e] text-[#9cff93] hover:bg-[#182317]"
+                    : "border-[#9eb2aa] bg-[#fcfffd] text-[#0f9f62] hover:bg-[#e4f8eb]",
+                )}
+                key={action.id}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  applyInlineStyle(action);
+                }}
+                type="button"
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 lg:justify-end">
+            {blockToolbarActions.map((action) => (
+              <button
+                className={cn(
+                  "border px-2 py-1 font-pixel text-[9px] uppercase",
+                  activeBlock?.type === action.type
+                    ? dark
+                      ? "border-[#69daff] bg-[#11232b] text-[#69daff]"
+                      : "border-[#0b7285] bg-[#e3f8fb] text-[#0b7285]"
+                    : dark
+                      ? "border-[#27303d] bg-[#11181e] text-[#adaaaa] hover:bg-[#1a2229]"
+                      : "border-[#9eb2aa] bg-[#fcfffd] text-[#475569] hover:bg-[#edf6f1]",
+                )}
+                key={action.id}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  setBlockType(action.type);
+                }}
+                type="button"
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -562,12 +835,15 @@ export function NotesMarkdownEditor({
         <div
           className={cn(
             "min-h-[560px] border p-3 lg:min-h-[680px]",
-            dark ? "border-[#262626] bg-[#101010]" : "border-[#9aa7b3] bg-white",
+            dark ? "border-[#262626] bg-[#101010]" : "border-[#9eb2aa] bg-[#fcfffd]",
           )}
         >
           <div className="space-y-0">
             {blocks.map((block, index) => {
-              const showSlash = activeBlockId === block.id && slashCommandsFiltered.length > 0 && block.text.startsWith("/");
+              const showSlash =
+                activeBlockId === block.id &&
+                slashCommandsFiltered.length > 0 &&
+                block.text.startsWith("/");
               return (
                 <div key={block.id}>
                   {index > 0 ? (
@@ -578,7 +854,7 @@ export function NotesMarkdownEditor({
                           "absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 border text-[12px] leading-none opacity-0 scale-90 transition-all duration-200 group-hover/insert:opacity-100 group-hover/insert:scale-100",
                           dark
                             ? "border-[#2b313a] bg-[#0c1014] text-[#69daff] hover:bg-[#13202b]"
-                            : "border-[#cbd5e1] bg-white text-[#00677d] hover:bg-[#e2ecf3]",
+                            : "border-[#c7d6ce] bg-[#fcfffd] text-[#0b7285] hover:bg-[#e7f0eb]",
                         )}
                         onMouseDown={(event) => {
                           event.preventDefault();
@@ -593,7 +869,7 @@ export function NotesMarkdownEditor({
                           "pointer-events-none absolute top-1/2 left-7 right-1 h-px -translate-y-1/2 origin-left scale-x-75 bg-gradient-to-r opacity-0 transition-all duration-300 group-hover/insert:scale-x-100 group-hover/insert:opacity-100",
                           dark
                             ? "from-[#69daff]/85 via-[#69daff]/45 to-transparent"
-                            : "from-[#00677d]/80 via-[#27a4bf]/40 to-transparent",
+                            : "from-[#0b7285]/80 via-[#0f9f62]/35 to-transparent",
                         )}
                       />
                     </div>
@@ -602,21 +878,27 @@ export function NotesMarkdownEditor({
                   <div
                     className={cn(
                       "group relative rounded px-1 py-0.5",
-                      dark ? "hover:bg-[#12161b]" : "hover:bg-[#f1f5f9]",
+                      dark ? "hover:bg-[#12161b]" : "hover:bg-[#f0f6f2]",
                     )}
                   >
                     <div className="flex items-start gap-2">
                       <div className={cn("pt-1 text-[10px] font-semibold uppercase", dark ? "text-[#6d7682]" : "text-[#64748b]")}>
-                        {block.type === "todo" ? "[]"
-                          : block.type === "bullet" ? "•"
-                            : block.type === "numbered" ? "1."
-                              : block.type === "quote" ? ">"
-                                : block.type === "code" ? "</>"
-                                  : block.type === "divider" ? "---"
+                        {block.type === "todo"
+                          ? "[]"
+                          : block.type === "bullet"
+                            ? "•"
+                            : block.type === "numbered"
+                              ? "1."
+                              : block.type === "quote"
+                                ? ">"
+                                : block.type === "code"
+                                  ? "</>"
+                                  : block.type === "divider"
+                                    ? "---"
                                     : " "}
                       </div>
                       {block.type === "divider" ? (
-                        <hr className={cn("my-3 w-full border-0 border-t", dark ? "border-[#2b313a]" : "border-[#d3dbe3]")} />
+                        <hr className={cn("my-3 w-full border-0 border-t", dark ? "border-[#2b313a]" : "border-[#d5e1db]")} />
                       ) : (
                         <div className="w-full">
                           {block.type === "todo" ? (
@@ -625,7 +907,10 @@ export function NotesMarkdownEditor({
                                 checked={Boolean(block.checked)}
                                 className="h-4 w-4"
                                 onChange={(event) =>
-                                  updateBlock(block.id, (current) => ({ ...current, checked: event.target.checked }))
+                                  updateBlock(block.id, (current) => ({
+                                    ...current,
+                                    checked: event.target.checked,
+                                  }))
                                 }
                                 type="checkbox"
                               />
@@ -647,11 +932,11 @@ export function NotesMarkdownEditor({
                                 }
                               });
                               updateBlock(block.id, (current) => ({ ...current, text: nextText }));
-                            if (activeBlockId !== block.id) {
-                              setActiveBlockId(block.id);
-                            }
-                            setSlashIndex(0);
-                          }}
+                              if (activeBlockId !== block.id) {
+                                setActiveBlockId(block.id);
+                              }
+                              setSlashIndex(0);
+                            }}
                             onKeyDown={(event) => handleBlockKeyDown(event, block, index)}
                             ref={(element) => {
                               if (element) {
@@ -673,20 +958,20 @@ export function NotesMarkdownEditor({
                       <div
                         className={cn(
                           "mt-1 ml-6 max-h-52 overflow-auto border p-1",
-                          dark ? "border-[#2b313a] bg-[#0d1218]" : "border-[#d3dbe3] bg-white",
+                          dark ? "border-[#2b313a] bg-[#0d1218]" : "border-[#d5e1db] bg-[#fcfffd]",
                         )}
                       >
                         {slashCommandsFiltered.map((command, commandIndex) => (
                           <button
                             className={cn(
                               "w-full border px-2 py-1.5 text-left",
-                              commandIndex === (slashIndex % slashCommandsFiltered.length)
+                              commandIndex === slashIndex % slashCommandsFiltered.length
                                 ? dark
                                   ? "border-[#69daff] bg-[#11232b] text-[#69daff]"
-                                  : "border-[#00677d] bg-[#dff4fa] text-[#00677d]"
+                                  : "border-[#0b7285] bg-[#e3f8fb] text-[#0b7285]"
                                 : dark
                                   ? "border-[#262626] text-[#d4d4d4] hover:bg-[#1f1f1f]"
-                                  : "border-[#d3dbe3] text-[#1f2937] hover:bg-[#eef2f6]",
+                                  : "border-[#d5e1db] text-[#1f2937] hover:bg-[#eef6f1]",
                             )}
                             key={command.id}
                             onMouseDown={(event) => {
@@ -712,7 +997,7 @@ export function NotesMarkdownEditor({
                   "absolute top-1/2 left-0 z-10 h-5 w-5 -translate-y-1/2 border text-[12px] leading-none opacity-0 scale-90 transition-all duration-200 group-hover/insert:opacity-100 group-hover/insert:scale-100",
                   dark
                     ? "border-[#2b313a] bg-[#0c1014] text-[#69daff] hover:bg-[#13202b]"
-                    : "border-[#cbd5e1] bg-white text-[#00677d] hover:bg-[#e2ecf3]",
+                    : "border-[#c7d6ce] bg-[#fcfffd] text-[#0b7285] hover:bg-[#e7f0eb]",
                 )}
                 onMouseDown={(event) => {
                   event.preventDefault();
@@ -727,14 +1012,14 @@ export function NotesMarkdownEditor({
                   "pointer-events-none absolute top-1/2 left-7 right-1 h-px -translate-y-1/2 origin-left scale-x-75 bg-gradient-to-r opacity-0 transition-all duration-300 group-hover/insert:scale-x-100 group-hover/insert:opacity-100",
                   dark
                     ? "from-[#69daff]/85 via-[#69daff]/45 to-transparent"
-                    : "from-[#00677d]/80 via-[#27a4bf]/40 to-transparent",
+                    : "from-[#0b7285]/80 via-[#0f9f62]/35 to-transparent",
                 )}
               />
             </div>
           </div>
 
-          <div className={cn("mt-4 border-t pt-3 text-[11px]", dark ? "border-[#2b313a] text-[#6d7682]" : "border-[#e2e8f0] text-[#64748b]")}>
-            Type <code>/</code> on a new line to insert heading, list, quote, code block, divider...
+          <div className={cn("mt-4 border-t pt-3 text-[11px]", dark ? "border-[#2b313a] text-[#6d7682]" : "border-[#d5e1db] text-[#64748b]")}>
+            Use <code>Ctrl/Cmd + B</code>, <code>Ctrl/Cmd + I</code> or type <code>/</code> on a new line for quick markdown building.
           </div>
         </div>
       ) : (
@@ -743,7 +1028,7 @@ export function NotesMarkdownEditor({
             "min-h-[560px] overflow-auto border px-5 py-4 text-sm leading-7 lg:min-h-[680px]",
             dark
               ? "border-[#262626] bg-[#101010] text-[#e7e7e7]"
-              : "border-[#9aa7b3] bg-white text-[#0f172a]",
+              : "border-[#9eb2aa] bg-[#fcfffd] text-[#0f172a]",
             "[&_blockquote]:border-l-4 [&_blockquote]:pl-3 [&_blockquote]:italic",
             "[&_code]:rounded [&_code]:px-1 [&_code]:py-0.5",
             "[&_h1]:mb-2 [&_h1]:mt-5 [&_h1]:text-2xl [&_h1]:font-bold",

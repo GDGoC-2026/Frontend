@@ -20,30 +20,30 @@ export function MessageCard({
     tone === "success"
       ? dark
         ? "bg-[#262626] text-[#9cff93]"
-        : "bg-[#cfd7de] text-[#006e17]"
+        : "bg-[#eaf3ea] text-[#5f8166]"
       : tone === "purple"
         ? dark
           ? "border-l-4 border-[#d575ff] bg-[#262626]"
-          : "border-l-4 border-[#9800d0] bg-[#d9e0e6]"
+          : "border-l-4 border-[#9a7ab6] bg-[#d8e2d8]"
         : tone === "brand"
           ? dark
             ? "border-l-2 border-[#9cff93] bg-[#1a1a1a]"
-            : "border-l-2 border-[#16a34a] bg-[#d9e0e6]"
+            : "border-l-2 border-[#769a7a] bg-[#d8e2d8]"
           : dark
             ? "bg-[#262626]"
-            : "bg-[#d9e0e6]";
+            : "bg-[#d8e2d8]";
   const labelClass =
     tone === "purple"
       ? dark
         ? "text-[#d575ff]"
-        : "text-[#9800d0]"
+        : "text-[#9a7ab6]"
       : tone === "success"
         ? dark
           ? "text-[#9cff93]"
-          : "text-[#006e17]"
+          : "text-[#5f8166]"
         : theme === "dark"
           ? "text-[#adaaaa]"
-          : "text-[#52606f]";
+          : "text-[#607068]";
 
   return (
     <div className={cn(wrapper, "p-4", className)}>
@@ -55,7 +55,7 @@ export function MessageCard({
       <div
         className={cn(
           "font-sans text-xs leading-4",
-          dark ? "text-white" : tone === "success" ? "text-[#006e17]" : "text-[#0f172a]",
+          dark ? "text-white" : tone === "success" ? "text-[#5f8166]" : "text-[#243127]",
         )}
       >
         {body}

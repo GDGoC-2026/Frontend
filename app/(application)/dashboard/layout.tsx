@@ -1,7 +1,6 @@
 import { SessionRouteGuard } from "@/app/_components/session-route-guard";
 import { ChatDrawerProvider } from "@/app/_components/chat-drawer-context";
 import { ResponsiveLayoutWrapper } from "@/app/_components/responsive-layout-wrapper";
-import { GlobalNotesDrawer } from "@/app/_components/global-notes-drawer";
 import { GlobalChatDrawer } from "@/app/_components/global-chat-drawer";
 
 export default function DashboardLayout({
@@ -14,7 +13,6 @@ export default function DashboardLayout({
       <ChatDrawerProvider>
         <ResponsiveLayoutWrapper>{children}</ResponsiveLayoutWrapper>
         <GlobalChatDrawer />
-        <GlobalNotesDrawer />
       </ChatDrawerProvider>
     </SessionRouteGuard>
   );

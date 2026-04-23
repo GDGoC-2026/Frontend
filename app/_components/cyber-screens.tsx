@@ -125,8 +125,10 @@ function Frame({
 }) {
   return (
     <div
+      data-theme={theme}
       className={cn(
-        theme === "dark" ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+        "light-dashboard-canvas",
+        theme === "dark" ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
         "h-screen overflow-x-auto overflow-y-hidden cyber-scrollbar",
       )}
     >
@@ -167,7 +169,7 @@ function Sidebar({
         className={cn(
           dark
             ? "bg-[#131313] shadow-[4px_0px_0px_0px_black]"
-            : "bg-[#d9e0e6] shadow-[4px_0px_0px_0px_#b5c0ca]",
+            : "bg-[#d8e2d8] shadow-[4px_0px_0px_0px_#a3b1a4]",
           "cyber-scrollbar fixed left-0 top-0 z-40 flex h-screen max-h-screen overflow-y-auto overscroll-contain flex-col transition-[width] duration-200",
           collapsed ? "w-20" : "w-64",
         )}
@@ -177,7 +179,7 @@ function Sidebar({
             className={cn(
               dark
                 ? "border border-[#262626] bg-[#0e0e0e] text-[#9cff93] hover:bg-[#1a1a1a]"
-                : "border border-[#b5c0ca] bg-[#e7edf1] text-[#006e17] hover:bg-[#cfd7de]",
+                : "border border-[#a3b1a4] bg-[#e8efe6] text-[#5f8166] hover:bg-[#c8d4c9]",
               "w-fit px-2 py-1 font-pixel text-[10px] uppercase transition-colors",
             )}
             aria-label={collapsed ? "Mo rong sidebar" : "Thu gon sidebar"}
@@ -191,7 +193,7 @@ function Sidebar({
               <div
                 className={cn(
                   "font-display text-2xl font-bold uppercase tracking-[-0.8px]",
-                  dark ? "text-[#9cff93]" : "text-[#006e17]",
+                  dark ? "text-[#9cff93]" : "text-[#5f8166]",
                 )}
               >
                 LEARNBRO
@@ -201,7 +203,7 @@ function Sidebar({
                   subtitleFont === "pixel"
                     ? "font-pixel text-[10px] leading-[15px]"
                     : "font-sans text-[12px] leading-4",
-                  subtitleClassName ?? (dark ? "text-[#6b7280]" : "text-[#6c7988]"),
+                  subtitleClassName ?? (dark ? "text-[#6b7280]" : "text-[#6f7e76]"),
                 )}
               >
                 {subtitle}
@@ -224,11 +226,11 @@ function Sidebar({
                 (collapsed
                   ? dark
                     ? "bg-[#262626] text-[#9cff93]"
-                    : "bg-[#cfd7de] text-[#006e17]"
+                    : "bg-[#c8d4c9] text-[#5f8166]"
                   : dark
                     ? "border-l-4 border-[#9cff93] bg-[#262626] pl-3 text-[#9cff93]"
-                    : "border-l-4 border-[#006e17] bg-[#cfd7de] pl-3 text-[#006e17]"),
-              !current && (dark ? "text-[#6b7280]" : "text-[#52606f]"),
+                    : "border-l-4 border-[#5f8166] bg-[#c8d4c9] pl-3 text-[#5f8166]"),
+              !current && (dark ? "text-[#6b7280]" : "text-[#607068]"),
             );
             const content = (
               <>
@@ -288,27 +290,27 @@ function SidebarFooterUser({
     subtitleTone === "green"
       ? dark
         ? "text-[#9cff93]"
-        : "text-[#16a34a]"
+        : "text-[#769a7a]"
       : subtitleTone === "cyan"
         ? dark
           ? "text-[#69daff]"
-          : "text-[#00677d]"
+          : "text-[#668895]"
         : dark
           ? "text-[#adaaaa]"
-          : "text-[#64748b]";
+          : "text-[#6a7a72]";
 
   return (
     <div
       className={cn(
         dark
           ? "border-t-4 border-[#262626] bg-[#0e0e0e]"
-          : "border-t-4 border-[#b5c0ca] bg-[#e7edf1]",
+          : "border-t-4 border-[#a3b1a4] bg-[#e8efe6]",
         "p-6",
       )}
     >
       <div
         className={cn(
-          dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+          dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
           compact ? "p-3" : "p-4",
           collapsed ? "flex justify-center" : "flex items-center gap-3",
         )}
@@ -328,7 +330,7 @@ function SidebarFooterUser({
             <div
               className={cn(
                 "truncate font-pixel text-[10px] uppercase leading-4",
-                dark ? "text-white" : "text-[#0f172a]",
+                dark ? "text-white" : "text-[#243028]",
               )}
             >
               {resolvedTitle}
@@ -360,7 +362,7 @@ function HeaderBar({
       className={cn(
         theme === "dark"
           ? "border-b-4 border-[#131313] bg-[#0e0e0e]"
-          : "border-b-4 border-[#b5c0ca] bg-[#e7edf1]",
+          : "border-b-4 border-[#a3b1a4] bg-[#e8efe6]",
         "sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between px-6 pb-1",
       )}
     >
@@ -388,7 +390,7 @@ function HeaderTitle({
       <div
         className={cn(
           "font-display text-xl font-bold tracking-[2px]",
-          theme === "dark" ? "text-[#9cff93]" : "text-[#006e17]",
+          theme === "dark" ? "text-[#9cff93]" : "text-[#5f8166]",
         )}
       >
         {title}
@@ -397,7 +399,7 @@ function HeaderTitle({
         <div
           className={cn(
             "font-display text-sm uppercase",
-            theme === "dark" ? "text-[#adaaaa]" : "text-[#475569]",
+            theme === "dark" ? "text-[#adaaaa]" : "text-[#5b6b62]",
           )}
         >
           {trail}
@@ -422,7 +424,7 @@ function MetricBadge({
         <span
           className={cn(
             "size-4",
-            theme === "dark" ? "text-[#9cff93]" : "text-[#16a34a]",
+            theme === "dark" ? "text-[#9cff93]" : "text-[#769a7a]",
           )}
         >
           {icon}
@@ -431,7 +433,7 @@ function MetricBadge({
       <span
         className={cn(
           "font-display text-sm font-bold",
-          theme === "dark" ? "text-white" : "text-[#0f172a]",
+          theme === "dark" ? "text-white" : "text-[#243028]",
         )}
       >
         {children}
@@ -457,19 +459,19 @@ function ProgressSegments({
     activeTone === "cyan"
       ? theme === "dark"
         ? "bg-[#69daff]"
-        : "bg-[#0891b2]"
+        : "bg-[#6f95a5]"
       : activeTone === "purple"
         ? theme === "dark"
           ? "bg-[#d575ff]"
-          : "bg-[#9800d0]"
+          : "bg-[#9a7ab6]"
         : activeTone === "orange"
           ? "bg-[#ff7351]"
-          : activeTone === "red"
-            ? "bg-[#dc2626]"
+        : activeTone === "red"
+            ? "bg-[#c97a86]"
             : theme === "dark"
               ? "bg-[#9cff93]"
-              : "bg-[#16a34a]";
-  const inactiveColor = theme === "dark" ? "bg-[#262626]" : "bg-[#e2e8f0]";
+              : "bg-[#769a7a]";
+  const inactiveColor = theme === "dark" ? "bg-[#262626]" : "bg-[#dde7dd]";
   const height = size === "lg" ? "h-6" : size === "sm" ? "h-2" : "h-3";
 
   return (
@@ -503,13 +505,13 @@ function SectionTitle({
         <div
           className={cn(
             "h-6 w-2",
-            theme === "dark" ? "bg-[#9cff93]" : "bg-[#16a34a]",
+            theme === "dark" ? "bg-[#9cff93]" : "bg-[#769a7a]",
           )}
         />
         <h2
           className={cn(
             "font-display text-xl font-bold tracking-[-1px]",
-            theme === "dark" ? "text-white" : "text-[#0f172a]",
+            theme === "dark" ? "text-white" : "text-[#243028]",
           )}
         >
           {title}
@@ -519,7 +521,7 @@ function SectionTitle({
         <div
           className={cn(
             "font-sans text-[10px] font-semibold uppercase",
-            theme === "dark" ? "text-[#69daff]" : "text-[#0891b2]",
+            theme === "dark" ? "text-[#69daff]" : "text-[#6f95a5]",
           )}
         >
           {linkLabel}
@@ -551,28 +553,28 @@ function LessonCard({
     tagTone === "purple"
       ? dark
         ? "text-[#d575ff]"
-        : "text-[#9800d0]"
+        : "text-[#9a7ab6]"
       : tagTone === "cyan"
         ? dark
           ? "text-[#69daff]"
-          : "text-[#0891b2]"
+          : "text-[#6f95a5]"
         : dark
           ? "text-[#69daff]"
-          : "text-[#0891b2]";
+          : "text-[#6f95a5]";
   const xpClass =
     tagTone === "purple"
       ? dark
         ? "text-[#d575ff]"
-        : "text-[#9800d0]"
+        : "text-[#9a7ab6]"
       : theme === "dark"
         ? "text-[#9cff93]"
-        : "text-[#16a34a]";
+        : "text-[#769a7a]";
 
   return (
-    <article className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#d9e0e6]", "p-5")}>
+    <article className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#d8e2d8]", "p-5")}>
       <div
         className={cn(
-          dark ? "bg-[#131313]" : "bg-[#cfd7de]",
+          dark ? "bg-[#131313]" : "bg-[#c8d4c9]",
           "relative mb-4 aspect-video overflow-hidden",
         )}
       >
@@ -585,7 +587,7 @@ function LessonCard({
         />
         <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className={cn("size-7", dark ? "text-[#9cff93]" : "text-[#16a34a]")}
+            className={cn("size-7", dark ? "text-[#9cff93]" : "text-[#769a7a]")}
           >
             <TerminalIcon />
           </span>
@@ -602,7 +604,7 @@ function LessonCard({
       <div
         className={cn(
           "mb-3 font-display text-sm font-bold uppercase",
-          dark ? "text-white" : "text-[#0f172a]",
+          dark ? "text-white" : "text-[#243028]",
         )}
       >
         {title}
@@ -611,7 +613,7 @@ function LessonCard({
         <div
           className={cn(
             "font-sans text-[10px] italic",
-            dark ? "text-[#adaaaa]" : "text-[#475569]",
+            dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
           )}
         >
           {duration}
@@ -646,15 +648,15 @@ function AssistantRail({
     accent === "green"
       ? dark
         ? "text-[#9cff93]"
-        : "text-[#16a34a]"
+        : "text-[#769a7a]"
       : dark
         ? "text-[#d575ff]"
-        : "text-[#9800d0]";
+        : "text-[#9a7ab6]";
   return (
     <FloatingRailShell>
       <div
         className={cn(
-          dark ? "border-b-4 border-[#262626]" : "border-b-4 border-[#b5c0ca]",
+          dark ? "border-b-4 border-[#262626]" : "border-b-4 border-[#a3b1a4]",
           "p-6",
         )}
       >
@@ -662,7 +664,7 @@ function AssistantRail({
           <div className="flex items-center gap-4">
             <div
               className={cn(
-                dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
                 "flex size-12 items-center justify-center",
               )}
             >
@@ -682,7 +684,7 @@ function AssistantRail({
               <div
                 className={cn(
                   "font-sans text-[10px]",
-                  dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                  dark ? "text-[#9cff93]" : "text-[#769a7a]",
                 )}
               >
                 {subtitle}
@@ -693,7 +695,7 @@ function AssistantRail({
             className={cn(
               "mt-1 inline-flex size-6 items-center justify-center",
               interactiveMotionClass,
-              dark ? "text-white" : "text-[#0f172a]",
+              dark ? "text-white" : "text-[#243028]",
             )}
             type="button"
           >
@@ -708,7 +710,7 @@ function AssistantRail({
           className={cn(
             dark
               ? "border-t-4 border-[#262626] bg-[#0e0e0e]"
-              : "border-t-4 border-[#b5c0ca] bg-[#e7edf1]",
+              : "border-t-4 border-[#a3b1a4] bg-[#e8efe6]",
             "p-6",
           )}
         >
@@ -726,14 +728,14 @@ function ProfileLogRail({ theme }: { theme: CyberTheme }) {
     <FloatingRailShell>
       <div
         className={cn(
-          dark ? "border-b-2 border-[#262626]" : "border-b-2 border-[#b5c0ca]",
+          dark ? "border-b-2 border-[#262626]" : "border-b-2 border-[#a3b1a4]",
           "p-8",
         )}
       >
         <div className="flex items-center gap-4">
           <div
             className={cn(
-              dark ? "bg-[#d575ff]" : "bg-[#9800d0]",
+              dark ? "bg-[#d575ff]" : "bg-[#9a7ab6]",
               "flex size-12 items-center justify-center",
             )}
           >
@@ -743,7 +745,7 @@ function ProfileLogRail({ theme }: { theme: CyberTheme }) {
             <div
               className={cn(
                 "font-display text-sm font-bold uppercase",
-                dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
               )}
             >
               AI_ASSISTANT
@@ -751,7 +753,7 @@ function ProfileLogRail({ theme }: { theme: CyberTheme }) {
             <div
               className={cn(
                 "font-pixel text-[10px] leading-5",
-                dark ? "text-[#9cff93]" : "text-[#006e17]",
+                dark ? "text-[#9cff93]" : "text-[#5f8166]",
               )}
             >
               ONLINE /
@@ -812,7 +814,7 @@ function ProfileLogRail({ theme }: { theme: CyberTheme }) {
       </div>
       <div
         className={cn(
-          dark ? "bg-black" : "border-t-2 border-[#b5c0ca] bg-[#cfd7de]",
+          dark ? "bg-black" : "border-t-2 border-[#a3b1a4] bg-[#c8d4c9]",
           "p-6",
         )}
       >
@@ -851,31 +853,31 @@ function MetricTile({
     tone === "purple"
       ? dark
         ? "border-[#d575ff]"
-        : "border-[#9800d0]"
+        : "border-[#9a7ab6]"
       : tone === "cyan"
         ? dark
           ? "border-[#69daff]"
-          : "border-[#00677d]"
+          : "border-[#668895]"
         : dark
           ? "border-[#9cff93]"
-          : "border-[#006e17]";
+          : "border-[#5f8166]";
   const labelColor =
     tone === "purple"
       ? dark
         ? "text-[#d575ff]"
-        : "text-[#9800d0]"
+        : "text-[#9a7ab6]"
       : tone === "cyan"
         ? dark
           ? "text-[#69daff]"
-          : "text-[#00677d]"
+          : "text-[#668895]"
         : dark
           ? "text-[#9cff93]"
-          : "text-[#006e17]";
+          : "text-[#5f8166]";
 
   return (
     <div
       className={cn(
-        dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]",
+        dark ? "bg-[#1a1a1a]" : "bg-[#dde7dd]",
         "border-l-4 p-4",
         borderColor,
       )}
@@ -892,7 +894,7 @@ function MetricTile({
         <div
           className={cn(
             "font-display text-4xl font-bold tracking-[2.4px]",
-            dark ? "text-white" : "text-[#0f172a]",
+            dark ? "text-white" : "text-[#243028]",
           )}
         >
           {value}
@@ -923,21 +925,21 @@ function AchievementCard({
     tone === "purple"
       ? dark
         ? "bg-[#d575ff]"
-        : "bg-[#9800d0]"
+        : "bg-[#9a7ab6]"
       : tone === "cyan"
         ? dark
           ? "bg-[#69daff]"
-          : "bg-[#00677d]"
+          : "bg-[#668895]"
         : dark
           ? "bg-[#9cff93]"
-          : "bg-[#006e17]";
+          : "bg-[#5f8166]";
 
   return (
-    <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]", "relative p-5")}>
+    <div className={cn(dark ? "bg-[#1a1a1a]" : "bg-[#dde7dd]", "relative p-5")}>
       <div
         className={cn(
           "mb-6 flex size-16 items-center justify-center",
-          dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+          dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
           locked ? "opacity-35" : "",
         )}
       >
@@ -946,18 +948,18 @@ function AchievementCard({
             locked
               ? dark
                 ? "text-[#6b7280]"
-                : "text-[#6c7988]"
+                : "text-[#6f7e76]"
               : tone === "purple"
                 ? dark
                   ? "text-[#d575ff]"
-                  : "text-[#9800d0]"
+                  : "text-[#9a7ab6]"
                 : tone === "cyan"
                   ? dark
                     ? "text-[#69daff]"
-                    : "text-[#00677d]"
+                    : "text-[#668895]"
                   : dark
                     ? "text-[#9cff93]"
-                    : "text-[#006e17]"
+                    : "text-[#5f8166]"
           }
         >
           {icon}
@@ -966,7 +968,7 @@ function AchievementCard({
       <div
         className={cn(
           "font-pixel text-[10px] uppercase leading-[15px]",
-          dark ? "text-white" : "text-[#0f172a]",
+          dark ? "text-white" : "text-[#243028]",
         )}
       >
         {title}
@@ -974,7 +976,7 @@ function AchievementCard({
       <div
         className={cn(
           "mt-1 font-sans text-[10px] uppercase",
-          dark ? "text-[#adaaaa]" : "text-[#6c7988]",
+          dark ? "text-[#adaaaa]" : "text-[#6f7e76]",
         )}
       >
         {subtitle}
@@ -1011,21 +1013,21 @@ function SubjectCard({
     tone === "purple"
       ? dark
         ? "text-[#d575ff]"
-        : "text-[#9800d0]"
+        : "text-[#9a7ab6]"
       : tone === "cyan"
         ? dark
           ? "text-[#69daff]"
-          : "text-[#0891b2]"
+          : "text-[#6f95a5]"
         : dark
           ? "text-[#9cff93]"
-          : "text-[#16a34a]";
+          : "text-[#769a7a]";
 
   return (
     <article
       className={cn(
         dark
           ? "bg-[#131313] shadow-[0px_-4px_0px_0px_#262626,0px_4px_0px_0px_#262626,-4px_0px_0px_0px_#262626,4px_0px_0px_0px_#262626]"
-          : "bg-[#d9e0e6] shadow-[0px_-4px_0px_0px_#b5c0ca,0px_4px_0px_0px_#b5c0ca,-4px_0px_0px_0px_#b5c0ca,4px_0px_0px_0px_#b5c0ca]",
+          : "bg-[#d8e2d8] shadow-[0px_-4px_0px_0px_#a3b1a4,0px_4px_0px_0px_#a3b1a4,-4px_0px_0px_0px_#a3b1a4,4px_0px_0px_0px_#a3b1a4]",
         "relative flex min-h-[335px] flex-col justify-between p-8",
       )}
     >
@@ -1034,7 +1036,7 @@ function SubjectCard({
       </div>
       <div
         className={cn(
-          dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+          dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
           "mb-6 flex size-16 items-center justify-center",
         )}
       >
@@ -1044,7 +1046,7 @@ function SubjectCard({
         <h3
           className={cn(
             "mb-3 font-display text-[24px] font-bold uppercase leading-8 tracking-[-0.6px]",
-            dark ? "text-white" : "text-[#0f172a]",
+            dark ? "text-white" : "text-[#243028]",
           )}
         >
           {title}
@@ -1052,7 +1054,7 @@ function SubjectCard({
         <div
           className={cn(
             "space-y-0.5 font-sans text-sm leading-5",
-            dark ? "text-[#adaaaa]" : "text-[#475569]",
+            dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
           )}
         >
           {description.map((line) => (
@@ -1065,7 +1067,7 @@ function SubjectCard({
           <div
             className={cn(
               "mb-2 font-display text-[10px] uppercase",
-              dark ? "text-[#adaaaa]" : "text-[#64748b]",
+              dark ? "text-[#adaaaa]" : "text-[#6a7a72]",
             )}
           >
             PROGRESS
@@ -1104,24 +1106,24 @@ function PromoCard({
     tone === "purple"
       ? dark
         ? "text-[#d575ff]"
-        : "text-[#9800d0]"
+        : "text-[#9a7ab6]"
       : dark
         ? "text-[#69daff]"
-        : "text-[#0891b2]";
+        : "text-[#6f95a5]";
 
   return (
     <article
       className={cn(
         dark
           ? "bg-[#1a1a1a] shadow-[0px_-4px_0px_0px_#262626,0px_4px_0px_0px_#262626,-4px_0px_0px_0px_#262626,4px_0px_0px_0px_#262626]"
-          : "bg-[#d9e0e6] shadow-[0px_-4px_0px_0px_#b5c0ca,0px_4px_0px_0px_#b5c0ca,-4px_0px_0px_0px_#b5c0ca,4px_0px_0px_0px_#b5c0ca]",
+          : "bg-[#d8e2d8] shadow-[0px_-4px_0px_0px_#a3b1a4,0px_4px_0px_0px_#a3b1a4,-4px_0px_0px_0px_#a3b1a4,4px_0px_0px_0px_#a3b1a4]",
         "flex items-center gap-6 p-8",
       )}
     >
       <div
         className={cn(
-          dark ? "bg-black" : "bg-[#cfd7de]",
-          "shrink-0 overflow-hidden shadow-[0px_0px_0px_4px_#b5c0ca]",
+          dark ? "bg-black" : "bg-[#c8d4c9]",
+          "shrink-0 overflow-hidden shadow-[0px_0px_0px_4px_#a3b1a4]",
         )}
       >
         <SafeImage
@@ -1144,7 +1146,7 @@ function PromoCard({
         <div
           className={cn(
             "mt-1 space-y-0.5 font-sans text-sm leading-5",
-            dark ? "text-[#adaaaa]" : "text-[#475569]",
+            dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
           )}
         >
           {description.map((line) => (
@@ -1164,14 +1166,14 @@ function EditorTabs({ theme }: { theme: CyberTheme }) {
       className={cn(
         dark
           ? "border-b-4 border-[#131313] bg-[#0e0e0e]"
-          : "border-b-4 border-[#b5c0ca] bg-[#e7edf1]",
+          : "border-b-4 border-[#a3b1a4] bg-[#e8efe6]",
         "flex items-center gap-6 px-4 py-3",
       )}
     >
       <div
         className={cn(
           "font-display text-sm font-bold tracking-[1.4px]",
-          dark ? "text-white" : "text-[#0f172a]",
+          dark ? "text-white" : "text-[#243028]",
         )}
       >
         Binary_Search_Logic.md
@@ -1179,7 +1181,7 @@ function EditorTabs({ theme }: { theme: CyberTheme }) {
       <div
         className={cn(
           "font-display text-xs font-bold uppercase",
-          dark ? "text-[#69daff]" : "text-[#0891b2]",
+          dark ? "text-[#69daff]" : "text-[#6f95a5]",
         )}
       >
         SAVED
@@ -1192,10 +1194,10 @@ function EditorTabs({ theme }: { theme: CyberTheme }) {
               index === 0
                 ? dark
                   ? "border-b-2 border-[#9cff93] pb-2 text-[#9cff93]"
-                  : "border-b-2 border-[#16a34a] pb-2 text-[#16a34a]"
+                  : "border-b-2 border-[#769a7a] pb-2 text-[#769a7a]"
                 : dark
                   ? "text-[#6b7280]"
-                  : "text-[#6c7988]",
+                  : "text-[#6f7e76]",
             )}
             key={tab}
           >
@@ -1230,7 +1232,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
       main={
         <main
           className={cn(
-            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            dark ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
             "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
           )}
         >
@@ -1240,7 +1242,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                 className={cn(
                   dark
                     ? "bg-[#131313] border-l-4 border-[#9cff93]"
-                    : "bg-[#d9e0e6] border-l-4 border-[#16a34a]",
+                    : "bg-[#d8e2d8] border-l-4 border-[#769a7a]",
                   "overflow-hidden p-8",
                 )}
               >
@@ -1250,7 +1252,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                       className={cn(
                         dark
                           ? "bg-[#00fc40] text-[#005a10]"
-                          : "bg-[#dcfce7] text-[#166534]",
+                          : "bg-[#e8f3e7] text-[#5f8166]",
                         "mb-4 inline-flex px-3 py-1 font-sans text-[10px] font-semibold uppercase tracking-[1px]",
                       )}
                     >
@@ -1259,7 +1261,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                     <h1
                       className={cn(
                         "font-display text-5xl font-bold uppercase leading-[1] tracking-[-1.8px]",
-                        dark ? "text-white" : "text-[#0f172a]",
+                        dark ? "text-white" : "text-[#243028]",
                       )}
                     >
                       INTRODUCTION TO ALGORITHMS
@@ -1267,7 +1269,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                     <p
                       className={cn(
                         "mt-5 max-w-[28rem] font-sans text-sm leading-[22px]",
-                        dark ? "text-[#adaaaa]" : "text-[#475569]",
+                        dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                       )}
                     >
                       Master the foundational logic of computational complexity
@@ -1277,14 +1279,14 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                   </div>
                   <div
                     className={cn(
-                      dark ? "bg-[#1a1a1a]" : "bg-[#cfd7de]",
+                      dark ? "bg-[#1a1a1a]" : "bg-[#c8d4c9]",
                       "hidden h-28 w-32 items-center justify-center xl:flex",
                     )}
                   >
                     <span
                       className={cn(
                         "size-12",
-                        dark ? "text-[#6b7280]" : "text-[#9aa8b6]",
+                        dark ? "text-[#6b7280]" : "text-[#8da096]",
                       )}
                     >
                       <TerminalFrameIcon />
@@ -1296,7 +1298,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                     <div
                       className={cn(
                         "font-display text-xs font-bold uppercase",
-                        dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                        dark ? "text-[#9cff93]" : "text-[#769a7a]",
                       )}
                     >
                       PROGRESS_LOAD: 64%
@@ -1304,7 +1306,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                     <div
                       className={cn(
                         "font-display text-xs uppercase",
-                        dark ? "text-[#6b7280]" : "text-[#6c7988]",
+                        dark ? "text-[#6b7280]" : "text-[#6f7e76]",
                       )}
                     >
                       SEGMENT_04/07
@@ -1329,19 +1331,19 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                   className={cn(
                     dark
                       ? "bg-[#262626] border-b-4 border-[#ff7351]"
-                      : "bg-[#d9e0e6] border-b-4 border-[#dc2626]",
+                      : "bg-[#d8e2d8] border-b-4 border-[#c97a86]",
                     "p-6",
                   )}
                 >
                   <div className="mb-4 flex items-center gap-4">
                     <div
                       className={cn(
-                        dark ? "bg-[#b92902]" : "bg-[#fee2e2]",
+                        dark ? "bg-[#b92902]" : "bg-[#f8e8ea]",
                         "flex size-12 items-center justify-center",
                       )}
                     >
                       <span
-                        className={dark ? "text-[#ff7351]" : "text-[#dc2626]"}
+                        className={dark ? "text-[#ff7351]" : "text-[#c97a86]"}
                       >
                         <FireIcon />
                       </span>
@@ -1350,7 +1352,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                       <div
                         className={cn(
                           "font-display text-[10px] font-bold uppercase",
-                          dark ? "text-[#ff7351]" : "text-[#dc2626]",
+                          dark ? "text-[#ff7351]" : "text-[#c97a86]",
                         )}
                       >
                         ACTIVE STREAK
@@ -1358,7 +1360,7 @@ export function DashboardScreen({ theme }: { theme: CyberTheme }) {
                       <div
                         className={cn(
                           "font-display text-4xl font-bold",
-                          dark ? "text-white" : "text-[#0f172a]",
+                          dark ? "text-white" : "text-[#243028]",
                         )}
                       >
                         07 DAYS
@@ -1550,7 +1552,7 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
       main={
         <main
           className={cn(
-            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            dark ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
             "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
           )}
         >
@@ -1559,11 +1561,11 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
               <h1
                 className={cn(
                   "font-display text-[60px] font-bold uppercase leading-[1] tracking-[-3px]",
-                  dark ? "text-white" : "text-[#0f172a]",
+                  dark ? "text-white" : "text-[#243028]",
                 )}
               >
                 SELECT{" "}
-                <span className={dark ? "text-[#9cff93]" : "text-[#16a34a]"}>
+                <span className={dark ? "text-[#9cff93]" : "text-[#769a7a]"}>
                   SUBJECT
                 </span>
                 _
@@ -1571,7 +1573,7 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
               <p
                 className={cn(
                   "mt-4 text-base leading-[26px]",
-                  dark ? "text-[#adaaaa]" : "text-[#475569]",
+                  dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                 )}
               >
                 Initialize your cognitive uplink. Choose a primary knowledge
@@ -1707,16 +1709,16 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
                 </div>
               </div>
             ) : (
-              <div className="border-t-4 border-[#b5c0ca] bg-[#e7edf1] p-6">
+              <div className="border-t-4 border-[#a3b1a4] bg-[#e8efe6] p-6">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center bg-[#cfd7de] text-[#9800d0]">
+                  <div className="flex size-10 items-center justify-center bg-[#c8d4c9] text-[#9a7ab6]">
                     <BotIcon />
                   </div>
                   <div>
-                    <div className="font-display text-xs font-bold uppercase text-[#9800d0]">
+                    <div className="font-display text-xs font-bold uppercase text-[#9a7ab6]">
                       AI_ASSISTANT
                     </div>
-                    <div className="font-sans text-[10px] text-[#52606f]">
+                    <div className="font-sans text-[10px] text-[#607068]">
                       Online / Processing
                     </div>
                   </div>
@@ -1729,7 +1731,7 @@ export function SubjectSelectScreen({ theme }: { theme: CyberTheme }) {
           subtitleClassName={
             dark
               ? "font-sans text-xs leading-4 text-[#adaaaa] tracking-[1.2px]"
-              : "font-sans text-xs leading-4 text-[#6c7988]"
+              : "font-sans text-xs leading-4 text-[#6f7e76]"
           }
           theme={theme}
         />
@@ -1770,7 +1772,7 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
       main={
         <main
           className={cn(
-            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            dark ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
             "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
           )}
         >
@@ -1779,7 +1781,7 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
               <h1
                 className={cn(
                   "font-display text-5xl font-bold uppercase",
-                  dark ? "text-white" : "text-[#0f172a]",
+                  dark ? "text-white" : "text-[#243028]",
                 )}
               >
                 COMPUTER SCIENCE PATH
@@ -1854,14 +1856,14 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                         item.active
                           ? dark
                             ? "border-[#9cff93] bg-[#9cff93] text-[#0e0e0e] shadow-[0px_0px_18px_rgba(156,255,147,0.55)]"
-                            : "border-[#16a34a] bg-[#00b61f] text-white shadow-[0px_0px_18px_rgba(22,163,74,0.25)]"
+                            : "border-[#769a7a] bg-[#00b61f] text-white shadow-[0px_0px_18px_rgba(22,163,74,0.25)]"
                           : item.done
                             ? dark
                               ? "border-[#262626] bg-[#131313] text-[#9cff93]"
-                              : "border-[#b5c0ca] bg-[#d9e0e6] text-[#16a34a]"
+                              : "border-[#a3b1a4] bg-[#d8e2d8] text-[#769a7a]"
                             : dark
                               ? "border-[#262626] bg-[#0e0e0e] text-[#6b7280]"
-                              : "border-[#b5c0ca] bg-[#e7edf1] text-[#6c7988]",
+                              : "border-[#a3b1a4] bg-[#e8efe6] text-[#6f7e76]",
                       )}
                     >
                       {item.locked ? (
@@ -1878,10 +1880,10 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                       item.locked
                         ? dark
                           ? "bg-[#0e0e0e] opacity-60"
-                          : "bg-[#e7edf1] opacity-70"
+                          : "bg-[#e8efe6] opacity-70"
                         : dark
                           ? "bg-[#131313]"
-                          : "bg-[#d9e0e6]",
+                          : "bg-[#d8e2d8]",
                       item.active &&
                         (dark
                           ? "border border-[#36553a] shadow-[inset_0_0_0_1px_rgba(156,255,147,0.18)]"
@@ -1889,8 +1891,8 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                       !item.active &&
                         !item.locked &&
                         !item.done &&
-                        (dark ? "bg-[#131313]" : "bg-[#d9e0e6]"),
-                      !dark && "shadow-[0px_0px_0px_2px_#b5c0ca]",
+                        (dark ? "bg-[#131313]" : "bg-[#d8e2d8]"),
+                      !dark && "shadow-[0px_0px_0px_2px_#a3b1a4]",
                       "p-6",
                     )}
                   >
@@ -1900,10 +1902,10 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                         item.active
                           ? dark
                             ? "text-[#9cff93]"
-                            : "text-[#16a34a]"
+                            : "text-[#769a7a]"
                           : dark
                             ? "text-[#6b7280]"
-                            : "text-[#6c7988]",
+                            : "text-[#6f7e76]",
                       )}
                     >
                       UNIT 0{index + 1}
@@ -1915,10 +1917,10 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                         item.locked
                           ? dark
                             ? "text-[#575757]"
-                            : "text-[#6c7988]"
+                            : "text-[#6f7e76]"
                           : dark
                             ? "text-white"
-                            : "text-[#0f172a]",
+                            : "text-[#243028]",
                       )}
                     >
                       {item.title}
@@ -1929,10 +1931,10 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                         item.locked
                           ? dark
                             ? "text-[#575757]"
-                            : "text-[#6c7988]"
+                            : "text-[#6f7e76]"
                           : dark
                             ? "text-[#adaaaa]"
-                            : "text-[#475569]",
+                            : "text-[#5b6b62]",
                       )}
                     >
                       {item.description}
@@ -1943,10 +1945,10 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                         item.locked
                           ? dark
                             ? "text-[#575757]"
-                            : "text-[#6c7988]"
+                            : "text-[#6f7e76]"
                           : dark
                             ? "text-[#69daff]"
-                            : "text-[#0891b2]",
+                            : "text-[#6f95a5]",
                       )}
                     >
                       <span className="flex items-center gap-2">
@@ -1959,7 +1961,7 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
                             ? ""
                             : dark
                               ? "text-[#9cff93]"
-                              : "text-[#16a34a]"
+                              : "text-[#769a7a]"
                         }
                       >
                         <span className="inline-flex items-center gap-2">
@@ -1980,14 +1982,14 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
           footer={
             <div
               className={cn(
-                dark ? "bg-[#1a1a1a]" : "bg-[#d9e0e6] border border-[#b5c0ca]",
+                dark ? "bg-[#1a1a1a]" : "bg-[#d8e2d8] border border-[#a3b1a4]",
                 "p-4",
               )}
             >
               <div
                 className={cn(
                   "font-sans text-xs",
-                  dark ? "text-[#6b7280]" : "text-[#6c7988]",
+                  dark ? "text-[#6b7280]" : "text-[#6f7e76]",
                 )}
               >
                 TYPE_MESSAGE...
@@ -2054,7 +2056,7 @@ export function PathScreen({ theme }: { theme: CyberTheme }) {
           subtitleClassName={
             dark
               ? "font-pixel text-[10px] leading-[15px] text-[#9cff93]"
-              : "font-pixel text-[10px] leading-[15px] text-[#9800d0]"
+              : "font-pixel text-[10px] leading-[15px] text-[#9a7ab6]"
           }
           subtitleFont="pixel"
           theme={theme}
@@ -2083,7 +2085,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-5 text-[#6c7988]">
+            <div className="flex items-center gap-5 text-[#6f7e76]">
               <FolderIcon />
               <ShareIcon />
               <EyeIcon />
@@ -2094,7 +2096,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
       main={
         <main
           className={cn(
-            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            dark ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
             "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
           )}
         >
@@ -2104,7 +2106,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
               className={cn(
                 dark
                   ? "border-r border-[#262626] bg-[#131313]"
-                  : "border-r border-[#b5c0ca] bg-[#d9e0e6]",
+                  : "border-r border-[#a3b1a4] bg-[#d8e2d8]",
                 "p-4",
               )}
             >
@@ -2112,7 +2114,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 className={cn(
                   dark
                     ? "bg-[#262626] text-[#6b7280]"
-                    : "bg-[#e7edf1] text-[#6c7988]",
+                    : "bg-[#e8efe6] text-[#6f7e76]",
                   "mb-4 flex items-center justify-between px-4 py-3 text-xs",
                 )}
               >
@@ -2122,7 +2124,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
               <div
                 className={cn(
                   "space-y-3 font-display text-sm",
-                  dark ? "text-[#adaaaa]" : "text-[#475569]",
+                  dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                 )}
               >
                 <div className="space-y-2">
@@ -2139,7 +2141,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                       className={cn(
                         dark
                           ? "bg-[#262626] text-[#9cff93]"
-                          : "bg-[#e7edf1] text-[#16a34a]",
+                          : "bg-[#e8efe6] text-[#769a7a]",
                         "flex items-center gap-2 px-3 py-2",
                       )}
                     >
@@ -2164,7 +2166,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
             </aside>
             <section
               className={cn(
-                dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+                dark ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
                 "overflow-auto p-4 cyber-scrollbar",
               )}
             >
@@ -2172,14 +2174,14 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 className={cn(
                   dark
                     ? "border border-[#262626] bg-[#131313]"
-                    : "border border-[#b5c0ca] bg-[#d9e0e6]",
+                    : "border border-[#a3b1a4] bg-[#d8e2d8]",
                   "mx-auto max-w-[520px] p-6",
                 )}
               >
                 <div
                   className={cn(
                     "mb-4 font-display text-sm uppercase",
-                    dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                    dark ? "text-[#9cff93]" : "text-[#769a7a]",
                   )}
                 >
                   # Binary Search Algorithm
@@ -2187,7 +2189,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 <h1
                   className={cn(
                     "mb-6 font-display text-5xl font-bold leading-tight",
-                    dark ? "text-white" : "text-[#0f172a]",
+                    dark ? "text-white" : "text-[#243028]",
                   )}
                 >
                   Binary Search
@@ -2197,7 +2199,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 <div
                   className={cn(
                     "space-y-3 text-base leading-9",
-                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                    dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                   )}
                 >
                   <p>
@@ -2216,7 +2218,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 <h2
                   className={cn(
                     "mt-8 font-display text-xl font-bold",
-                    dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                    dark ? "text-[#9cff93]" : "text-[#769a7a]",
                   )}
                 >
                   ## Logic Principles
@@ -2224,7 +2226,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 <ul
                   className={cn(
                     "mt-4 space-y-3 text-lg leading-9",
-                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                    dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                   )}
                 >
                   <li>
@@ -2241,14 +2243,14 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 </ul>
                 <div
                   className={cn(
-                    dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                    dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
                     "mt-8 p-6",
                   )}
                 >
                   <div
                     className={cn(
                       "mb-3 font-display text-base",
-                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                      dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                     )}
                   >
                     {"// Code snippet logic"}
@@ -2256,7 +2258,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                   <pre
                     className={cn(
                       "overflow-auto font-mono text-sm leading-7",
-                      dark ? "text-white" : "text-[#0f172a]",
+                      dark ? "text-white" : "text-[#243028]",
                     )}
                   >
                     {`function binarySearch(arr, target) {
@@ -2272,12 +2274,12 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
               className={cn(
                 dark
                   ? "border-l border-[#262626] bg-[#0e0e0e]"
-                  : "border-l border-[#b5c0ca] bg-[#d9e0e6]",
+                  : "border-l border-[#a3b1a4] bg-[#d8e2d8]",
                 "flex flex-col",
               )}
             >
               <div
-                className={cn("flex-1 p-4", dark ? "bg-black" : "bg-[#e7edf1]")}
+                className={cn("flex-1 p-4", dark ? "bg-black" : "bg-[#e8efe6]")}
               >
                 <div className="relative h-full border">
                   <div
@@ -2285,7 +2287,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                       "absolute left-1/2 top-24 h-8 w-16 -translate-x-1/2 border text-center text-[8px]",
                       dark
                         ? "border-[#9cff93] text-[#9cff93]"
-                        : "border-[#0f172a] text-[#0f172a]",
+                        : "border-[#243028] text-[#243028]",
                     )}
                   >
                     SORTED
@@ -2295,7 +2297,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                       "absolute right-6 top-24 h-8 w-16 border text-center text-[8px]",
                       dark
                         ? "border-[#9cff93] text-[#9cff93]"
-                        : "border-[#0f172a] text-[#0f172a]",
+                        : "border-[#243028] text-[#243028]",
                     )}
                   >
                     ARRAY
@@ -2305,7 +2307,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                       "absolute left-10 top-24 h-8 w-16 border text-center text-[8px]",
                       dark
                         ? "border-[#9cff93] text-[#9cff93]"
-                        : "border-[#0f172a] text-[#0f172a]",
+                        : "border-[#243028] text-[#243028]",
                     )}
                   >
                     SEARCH
@@ -2315,7 +2317,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                       "absolute left-1/2 top-44 h-8 w-24 -translate-x-1/2 border text-center text-[8px]",
                       dark
                         ? "border-[#9cff93] text-[#9cff93]"
-                        : "border-[#0f172a] text-[#0f172a]",
+                        : "border-[#243028] text-[#243028]",
                     )}
                   >
                     BINARY SEARCH
@@ -2325,7 +2327,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                       "absolute left-1/2 top-64 h-8 w-20 -translate-x-1/2 border text-center text-[8px]",
                       dark
                         ? "border-[#d575ff] text-[#d575ff]"
-                        : "border-[#9800d0] text-[#9800d0]",
+                        : "border-[#9a7ab6] text-[#9a7ab6]",
                     )}
                   >
                     RECURSION
@@ -2333,19 +2335,19 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                   <div
                     className={cn(
                       "absolute left-1/2 top-32 h-16 w-px -translate-x-1/2",
-                      dark ? "bg-[#9cff93]" : "bg-[#0f172a]",
+                      dark ? "bg-[#9cff93]" : "bg-[#243028]",
                     )}
                   />
                   <div
                     className={cn(
                       "absolute left-24 top-32 h-20 w-px rotate-45 origin-top",
-                      dark ? "bg-[#9cff93]" : "bg-[#0f172a]",
+                      dark ? "bg-[#9cff93]" : "bg-[#243028]",
                     )}
                   />
                   <div
                     className={cn(
                       "absolute right-24 top-32 h-20 w-px -rotate-45 origin-top",
-                      dark ? "bg-[#9cff93]" : "bg-[#0f172a]",
+                      dark ? "bg-[#9cff93]" : "bg-[#243028]",
                     )}
                   />
                 </div>
@@ -2354,14 +2356,14 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 className={cn(
                   dark
                     ? "border-t border-[#262626] bg-[#131313]"
-                    : "border-t-2 border-[#b5c0ca] bg-[#d9e0e6]",
+                    : "border-t-2 border-[#a3b1a4] bg-[#d8e2d8]",
                   "space-y-4 p-4",
                 )}
               >
                 <div
                   className={cn(
                     "font-display text-sm font-bold uppercase",
-                    dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                    dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                   )}
                 >
                   SUGGESTED_ACTIONS
@@ -2373,18 +2375,18 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
                 ].map((action, index) => (
                   <div
                     className={cn(
-                      dark ? "bg-[#1a1a1a]" : "bg-[#e7edf1]",
+                      dark ? "bg-[#1a1a1a]" : "bg-[#e8efe6]",
                       index === 0
                         ? dark
                           ? "border-l-4 border-[#9cff93]"
-                          : "border-l-4 border-[#16a34a]"
+                          : "border-l-4 border-[#769a7a]"
                         : index === 1
                           ? dark
                             ? "border-l-4 border-[#69daff]"
-                            : "border-l-4 border-[#0891b2]"
+                            : "border-l-4 border-[#6f95a5]"
                           : dark
                             ? "border-l-4 border-[#d575ff]"
-                            : "border-l-4 border-[#9800d0]",
+                            : "border-l-4 border-[#9a7ab6]",
                       "px-4 py-3 font-display text-sm font-bold",
                     )}
                     key={action}
@@ -2418,7 +2420,7 @@ export function DocsExplorerScreen({ theme }: { theme: CyberTheme }) {
           subtitleClassName={
             dark
               ? "font-sans text-xs leading-4 text-[#adaaaa] tracking-[1.2px]"
-              : "font-pixel text-[10px] leading-[15px] text-[#16a34a]"
+              : "font-pixel text-[10px] leading-[15px] text-[#769a7a]"
           }
           subtitleFont={dark ? "body" : "pixel"}
           theme={theme}
@@ -2449,10 +2451,10 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   index === 1
                     ? dark
                       ? "text-[#69daff]"
-                      : "text-[#0f172a]"
+                      : "text-[#243028]"
                     : dark
                       ? "text-[#9cff93]"
-                      : "text-[#16a34a]",
+                      : "text-[#769a7a]",
                 )}
                 key={item}
               >
@@ -2465,21 +2467,21 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
       main={
         <main
           className={cn(
-            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            dark ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
             "flex-1 overflow-hidden",
           )}
         >
           <div className="grid h-[calc(100vh-64px)] grid-cols-[420px_minmax(0,1fr)] overflow-hidden">
             <section
               className={cn(
-                dark ? "bg-[#131313]" : "bg-[#d9e0e6]",
-                dark ? "border-[#262626]" : "border-[#b5c0ca]",
+                dark ? "bg-[#131313]" : "bg-[#d8e2d8]",
+                dark ? "border-[#262626]" : "border-[#a3b1a4]",
                 "cyber-scrollbar overflow-y-auto border-r p-8",
               )}
             >
               <div
                 className={cn(
-                  dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                  dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
                   "mb-6 flex items-start justify-between p-4",
                 )}
               >
@@ -2487,7 +2489,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   <div
                     className={cn(
                       "font-display text-xl font-bold uppercase",
-                      dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                      dark ? "text-[#9cff93]" : "text-[#769a7a]",
                     )}
                   >
                     PROBLEM_042:
@@ -2499,7 +2501,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   className={cn(
                     dark
                       ? "bg-[#9cff93] text-[#0e0e0e]"
-                      : "bg-[#16a34a] text-white",
+                      : "bg-[#769a7a] text-white",
                     "px-4 py-1 font-display text-sm font-bold uppercase",
                   )}
                 >
@@ -2509,7 +2511,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
               <div
                 className={cn(
                   "space-y-6 text-2xl leading-[1.45]",
-                  dark ? "text-white" : "text-[#0f172a]",
+                  dark ? "text-white" : "text-[#243028]",
                 )}
               >
                 <p>
@@ -2519,7 +2521,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                       "mx-2 px-2 py-1 text-xl",
                       dark
                         ? "bg-[#262626] text-[#d575ff]"
-                        : "bg-[#cfd7de] text-[#9800d0]",
+                        : "bg-[#c8d4c9] text-[#9a7ab6]",
                     )}
                   >
                     binary_search(arr, target)
@@ -2529,7 +2531,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   <span
                     className={cn(
                       "ml-2",
-                      dark ? "text-[#69daff]" : "text-[#0891b2]",
+                      dark ? "text-[#69daff]" : "text-[#6f95a5]",
                     )}
                   >
                     Divide and Conquer
@@ -2541,7 +2543,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                 <div
                   className={cn(
                     "mb-4 font-display text-3xl font-bold uppercase",
-                    dark ? "text-white" : "text-[#0f172a]",
+                    dark ? "text-white" : "text-[#243028]",
                   )}
                 >
                   LOGIC_REQUIREMENTS:
@@ -2556,13 +2558,13 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                       <span
                         className={cn(
                           "mt-1 size-3 border",
-                          dark ? "border-[#9cff93]" : "border-[#16a34a]",
+                          dark ? "border-[#9cff93]" : "border-[#769a7a]",
                         )}
                       />
                       <span
                         className={cn(
                           "text-xl",
-                          dark ? "text-white" : "text-[#0f172a]",
+                          dark ? "text-white" : "text-[#243028]",
                         )}
                       >
                         {item}
@@ -2573,14 +2575,14 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
               </div>
               <div
                 className={cn(
-                  dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                  dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
                   "mt-8 p-6",
                 )}
               >
                 <div
                   className={cn(
                     "mb-3 font-display text-2xl font-bold uppercase",
-                    dark ? "text-[#69daff]" : "text-[#0891b2]",
+                    dark ? "text-[#69daff]" : "text-[#6f95a5]",
                   )}
                 >
                   EXAMPLE_INPUT:
@@ -2588,7 +2590,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                 <div
                   className={cn(
                     "font-mono text-sm leading-7",
-                    dark ? "text-white" : "text-[#0f172a]",
+                    dark ? "text-white" : "text-[#243028]",
                   )}
                 >
                   arr = [1, 3, 5, 7, 9, 11]
@@ -2600,14 +2602,14 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
               </div>
               <div
                 className={cn(
-                  dark ? "bg-[#262626]" : "bg-[#cfd7de]",
+                  dark ? "bg-[#262626]" : "bg-[#c8d4c9]",
                   "mt-4 p-6",
                 )}
               >
                 <div
                   className={cn(
                     "mb-3 font-display text-2xl font-bold uppercase",
-                    dark ? "text-[#767575]" : "text-[#64748b]",
+                    dark ? "text-[#767575]" : "text-[#6a7a72]",
                   )}
                 >
                   SYSTEM_HINT:
@@ -2615,7 +2617,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                 <p
                   className={cn(
                     "text-lg italic leading-8",
-                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                    dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                   )}
                 >
                   Remember to update the &apos;low&apos; and &apos;high&apos;
@@ -2631,7 +2633,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                     className={cn(
                       dark
                         ? "border border-[#262626] bg-[#0e0e0e]"
-                        : "border border-[#b5c0ca] bg-[#e7edf1]",
+                        : "border border-[#a3b1a4] bg-[#e8efe6]",
                       "flex h-full min-h-0 flex-col p-6",
                     )}
                   >
@@ -2642,7 +2644,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                       <div
                         className={cn(
                           "ml-4 font-display text-base font-bold",
-                          dark ? "text-[#adaaaa]" : "text-[#475569]",
+                          dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                         )}
                       >
                         solution.py
@@ -2651,7 +2653,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                     <pre
                       className={cn(
                         "cyber-scrollbar min-h-0 flex-1 overflow-auto font-mono text-2xl leading-[2.1]",
-                        dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                        dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                       )}
                     >
                       {`def binary_search(arr, target):
@@ -2679,8 +2681,8 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                 </div>
                 <aside
                   className={cn(
-                    dark ? "bg-[#131313]" : "bg-[#d9e0e6]",
-                    dark ? "border-[#262626]" : "border-[#b5c0ca]",
+                    dark ? "bg-[#131313]" : "bg-[#d8e2d8]",
+                    dark ? "border-[#262626]" : "border-[#a3b1a4]",
                     "cyber-scrollbar overflow-y-auto border-l p-6",
                   )}
                 >
@@ -2689,19 +2691,19 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                       className={cn(
                         dark
                           ? "border-4 border-[#d575ff]"
-                          : "border-4 border-[#9800d0]",
+                          : "border-4 border-[#9a7ab6]",
                         "flex size-12 items-center justify-center",
                       )}
                     >
                       <BotIcon
-                        className={dark ? "text-white" : "text-[#0f172a]"}
+                        className={dark ? "text-white" : "text-[#243028]"}
                       />
                     </div>
                     <div>
                       <div
                         className={cn(
                           "font-display text-sm font-bold uppercase",
-                          dark ? "text-white" : "text-[#0f172a]",
+                          dark ? "text-white" : "text-[#243028]",
                         )}
                       >
                         ONLINE / PROCESSING
@@ -2726,7 +2728,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   <div
                     className={cn(
                       "mt-5 font-display text-lg font-bold uppercase",
-                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                      dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                     )}
                   >
                     SUGGESTED_QUERY:
@@ -2734,7 +2736,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   <div
                     className={cn(
                       "mt-2 text-base italic leading-7",
-                      dark ? "text-[#adaaaa]" : "text-[#475569]",
+                      dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                     )}
                   >
                     &quot;Explain space complexity in recursive
@@ -2743,7 +2745,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                   <div
                     className={cn(
                       "mt-10 flex items-center justify-between font-display text-xl font-bold uppercase",
-                      dark ? "text-white" : "text-[#475569]",
+                      dark ? "text-white" : "text-[#5b6b62]",
                     )}
                   >
                     <span>SYSTEM_LOAD</span>
@@ -2764,7 +2766,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                 className={cn(
                   dark
                     ? "border-t border-[#262626]"
-                    : "border-t-2 border-[#b5c0ca]",
+                    : "border-t-2 border-[#a3b1a4]",
                   "grid grid-cols-[minmax(0,1fr)_320px]",
                 )}
               >
@@ -2797,14 +2799,14 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
                     className={cn(
                       dark
                         ? "bg-[#1a1a1a]"
-                        : "bg-[#cfd7de] border border-[#b5c0ca]",
+                        : "bg-[#c8d4c9] border border-[#a3b1a4]",
                       "p-4",
                     )}
                   >
                     <div
                       className={cn(
                         "font-sans text-sm",
-                        dark ? "text-[#575757]" : "text-[#6c7988]",
+                        dark ? "text-[#575757]" : "text-[#6f7e76]",
                       )}
                     >
                       TYPE_QUERY_HERE...
@@ -2841,7 +2843,7 @@ export function PracticeChallengeScreen({ theme }: { theme: CyberTheme }) {
           subtitleClassName={
             dark
               ? "font-display text-[12px] tracking-[1.2px] text-[#6b7280]"
-              : "font-display text-[12px] tracking-[1.2px] text-[#6c7988]"
+              : "font-display text-[12px] tracking-[1.2px] text-[#6f7e76]"
           }
           theme={theme}
         />
@@ -3237,17 +3239,17 @@ export function ProfileScreen({
         <HeaderBar theme={theme}>
           <HeaderTitle theme={theme} title="LEARNING_TERMINAL" />
           <div className="flex items-center gap-4">
-            <span className={dark ? "text-[#9cff93]" : "text-[#16a34a]"}>
+            <span className={dark ? "text-[#9cff93]" : "text-[#769a7a]"}>
               <SparkIcon />
             </span>
-            <span className={dark ? "text-[#69daff]" : "text-[#0891b2]"}>
+            <span className={dark ? "text-[#69daff]" : "text-[#6f95a5]"}>
               <TrophyIcon />
             </span>
             <div
               className={cn(
                 dark
                   ? "bg-[#00fc40] text-[#005a10]"
-                  : "bg-[#006e17] text-white",
+                  : "bg-[#5f8166] text-white",
                 "px-3 py-1 font-pixel text-[10px]",
               )}
             >
@@ -3259,7 +3261,7 @@ export function ProfileScreen({
       main={
         <main
           className={cn(
-            dark ? "bg-[#0e0e0e]" : "bg-[#e7edf1]",
+            dark ? "bg-[#0e0e0e]" : "bg-[#e8efe6]",
             "cyber-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain",
           )}
         >
@@ -3268,7 +3270,7 @@ export function ProfileScreen({
               <div className="relative">
                 <div
                   className={cn(
-                    dark ? "bg-[#9cff93]/20" : "bg-[#006e17]/10",
+                    dark ? "bg-[#9cff93]/20" : "bg-[#5f8166]/10",
                     "absolute inset-0 blur-xl",
                   )}
                 />
@@ -3277,7 +3279,7 @@ export function ProfileScreen({
                   className={cn(
                     dark
                       ? "border-4 border-[#262626] saturate-0"
-                      : "border-4 border-[#b5c0ca] saturate-0",
+                      : "border-4 border-[#a3b1a4] saturate-0",
                     "relative h-48 w-48 object-cover",
                   )}
                   height={192}
@@ -3289,7 +3291,7 @@ export function ProfileScreen({
                   className={cn(
                     dark
                       ? "bg-[#9cff93] text-[#006413]"
-                      : "bg-[#006e17] text-white",
+                      : "bg-[#5f8166] text-white",
                     "absolute bottom-0 right-0 px-2 py-1 font-pixel text-[10px]",
                   )}
                 >
@@ -3300,7 +3302,7 @@ export function ProfileScreen({
                 <h1
                   className={cn(
                     "font-display text-[48px] font-bold uppercase tracking-[-2.4px]",
-                    dark ? "text-white" : "text-[#0f172a]",
+                    dark ? "text-white" : "text-[#243028]",
                   )}
                 >
                   {profileName}
@@ -3351,14 +3353,14 @@ export function ProfileScreen({
                 className={cn(
                   dark
                     ? "border-b-2 border-[#262626]"
-                    : "border-b-2 border-[#b5c0ca]",
+                    : "border-b-2 border-[#a3b1a4]",
                   "flex items-end justify-between pb-5",
                 )}
               >
                 <h2
                   className={cn(
                     "font-display text-[24px] font-bold uppercase",
-                    dark ? "text-white" : "text-[#0f172a]",
+                    dark ? "text-white" : "text-[#243028]",
                   )}
                 >
                   EARNED_ACHIEVEMENTS
@@ -3366,7 +3368,7 @@ export function ProfileScreen({
                 <div
                   className={cn(
                     "font-display text-sm uppercase",
-                    dark ? "text-[#767575]" : "text-[#64748b]",
+                    dark ? "text-[#767575]" : "text-[#6a7a72]",
                   )}
                 >
                   14 / 48 UNLOCKED
@@ -3424,7 +3426,7 @@ export function ProfileScreen({
                 className={cn(
                   dark
                     ? "bg-[#1a1a1a] border-l-4 border-[#9cff93]"
-                    : "bg-[#e2e8f0] border-l-4 border-[#006e17]",
+                    : "bg-[#dde7dd] border-l-4 border-[#5f8166]",
                   "min-w-0 p-6",
                 )}
               >
@@ -3433,7 +3435,7 @@ export function ProfileScreen({
                     <div
                       className={cn(
                         "font-display text-4xl font-bold uppercase",
-                        dark ? "text-white" : "text-[#0f172a]",
+                        dark ? "text-white" : "text-[#243028]",
                       )}
                     >
                       PROFILE
@@ -3441,7 +3443,7 @@ export function ProfileScreen({
                     <div
                       className={cn(
                         "font-display text-4xl font-bold uppercase",
-                        dark ? "text-white" : "text-[#0f172a]",
+                        dark ? "text-white" : "text-[#243028]",
                       )}
                     >
                       OVERVIEW
@@ -3450,7 +3452,7 @@ export function ProfileScreen({
                   <div
                     className={cn(
                       "min-w-0 break-words text-right font-display text-[18px] font-bold uppercase",
-                      dark ? "text-[#9cff93]" : "text-[#16a34a]",
+                      dark ? "text-[#9cff93]" : "text-[#769a7a]",
                     )}
                   >
                     TIER:
@@ -3461,7 +3463,7 @@ export function ProfileScreen({
                 <div
                   className={cn(
                     "mt-4 text-sm",
-                    dark ? "text-[#adaaaa]" : "text-[#475569]",
+                    dark ? "text-[#adaaaa]" : "text-[#5b6b62]",
                   )}
                 >
                   {isLoading
@@ -3480,14 +3482,14 @@ export function ProfileScreen({
               <div className="grid min-w-0 gap-6">
                 <div
                   className={cn(
-                    dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]",
+                    dark ? "bg-[#1a1a1a]" : "bg-[#dde7dd]",
                     "min-w-0 p-6",
                   )}
                 >
                   <div
                     className={cn(
                       "mb-4 flex items-center gap-2 font-pixel text-[10px] uppercase",
-                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                      dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                     )}
                   >
                     ACCOUNT_MATRIX <EyeIcon />
@@ -3497,22 +3499,22 @@ export function ProfileScreen({
                       [
                         "EMAIL",
                         emailAddress,
-                        dark ? "text-[#9cff93]" : "text-[#006e17]",
+                        dark ? "text-[#9cff93]" : "text-[#5f8166]",
                       ],
                       [
                         "STATUS",
                         statusLabel,
-                        dark ? "text-[#9cff93]" : "text-[#006e17]",
+                        dark ? "text-[#9cff93]" : "text-[#5f8166]",
                       ],
                       [
                         "PLAN",
                         subscriptionTier,
-                        dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                        dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                       ],
                     ].map(([label, value, color]) => (
                       <div className="flex justify-between text-sm" key={label}>
                         <span
-                          className={dark ? "text-white" : "text-[#0f172a]"}
+                          className={dark ? "text-white" : "text-[#243028]"}
                         >
                           {label}
                         </span>
@@ -3525,14 +3527,14 @@ export function ProfileScreen({
                 </div>
                 <div
                   className={cn(
-                    dark ? "bg-[#1a1a1a]" : "bg-[#e2e8f0]",
+                    dark ? "bg-[#1a1a1a]" : "bg-[#dde7dd]",
                     "min-w-0 p-6",
                   )}
                 >
                   <div
                     className={cn(
                       "mb-4 flex items-center gap-2 font-pixel text-[10px] uppercase",
-                      dark ? "text-[#69daff]" : "text-[#00677d]",
+                      dark ? "text-[#69daff]" : "text-[#668895]",
                     )}
                   >
                     SOCIAL_MATRIX <ShareIcon />
@@ -3549,7 +3551,7 @@ export function ProfileScreen({
                       <span
                         className={cn(
                           "font-pixel text-[10px]",
-                          dark ? "text-white" : "text-[#0f172a]",
+                          dark ? "text-white" : "text-[#243028]",
                         )}
                       >
                         SYS_ADMIN
@@ -3566,7 +3568,7 @@ export function ProfileScreen({
                       <span
                         className={cn(
                           "font-pixel text-[10px]",
-                          dark ? "text-white" : "text-[#0f172a]",
+                          dark ? "text-white" : "text-[#243028]",
                         )}
                       >
                         NULL_POINTER
@@ -3579,28 +3581,28 @@ export function ProfileScreen({
                 className={cn(
                   dark
                     ? "bg-[#1a1a1a] border-b-8 border-[#d575ff]"
-                    : "bg-[#e2e8f0] border-b-8 border-[#9800d0]",
+                    : "bg-[#dde7dd] border-b-8 border-[#9a7ab6]",
                   "min-w-0 p-6",
                 )}
               >
                 <div className="mb-6 flex items-center gap-3">
                   <div
                     className={cn(
-                      dark ? "bg-[#d575ff]" : "bg-[#9800d0]",
+                      dark ? "bg-[#d575ff]" : "bg-[#9a7ab6]",
                       "flex h-4 w-[10px] items-center justify-center",
                     )}
                   >
                     <span
                       className={cn(
                         "size-2",
-                        dark ? "bg-black" : "bg-[#e7edf1]",
+                        dark ? "bg-black" : "bg-[#e8efe6]",
                       )}
                     />
                   </div>
                   <div
                     className={cn(
                       "font-pixel text-xs uppercase leading-4",
-                      dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                      dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                     )}
                   >
                     AI_PULSE:
@@ -3667,7 +3669,7 @@ export function ProfileScreen({
                   <div
                     className={cn(
                       "font-pixel text-[10px] uppercase tracking-[1.2px]",
-                      dark ? "text-[#69daff]" : "text-[#00677d]",
+                      dark ? "text-[#69daff]" : "text-[#668895]",
                     )}
                   >
                     UPDATE_SUBSCRIPTION
@@ -3704,10 +3706,10 @@ export function ProfileScreen({
                       updateSubscriptionMutation.isError
                         ? dark
                           ? "text-[#d575ff]"
-                          : "text-[#9800d0]"
+                          : "text-[#9a7ab6]"
                         : dark
                           ? "text-[#767575]"
-                          : "text-[#475569]",
+                          : "text-[#5b6b62]",
                     )}
                   >
                     {updateSubscriptionMutation.isError
@@ -3718,7 +3720,7 @@ export function ProfileScreen({
                     <div
                       className={cn(
                         "text-xs",
-                        dark ? "text-[#d575ff]" : "text-[#9800d0]",
+                        dark ? "text-[#d575ff]" : "text-[#9a7ab6]",
                       )}
                     >
                       {logoutMutation.error.message}
@@ -3748,7 +3750,7 @@ export function ProfileScreen({
           subtitleClassName={
             dark
               ? "font-pixel text-[10px] leading-[15px] text-[#d575ff]"
-              : "font-pixel text-[10px] leading-[15px] text-[#9800d0]"
+              : "font-pixel text-[10px] leading-[15px] text-[#9a7ab6]"
           }
           subtitleFont="pixel"
           theme={theme}
@@ -4328,3 +4330,4 @@ function BotStatusIcon() {
     </svg>
   );
 }
+

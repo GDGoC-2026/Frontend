@@ -7,13 +7,13 @@ export function ResponsiveLayoutWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const { open, width } = useChatDrawerState();
+  const { reserveSpace, width } = useChatDrawerState();
 
   return (
     <main
-      className="h-full overflow-auto transition-all duration-200"
+      className="h-[100dvh] min-w-0 max-w-full overflow-x-hidden overflow-y-auto transition-[width] duration-200"
       style={{
-        width: open ? `calc(100% - ${width}px)` : "100%",
+        width: reserveSpace ? `max(0px, calc(100% - ${width}px))` : "100%",
       }}
     >
       {children}
