@@ -27,21 +27,21 @@ export function PixelButton({
       ? hollow
         ? theme === "dark"
           ? "border-2 border-[#d575ff] bg-transparent text-[#d575ff]"
-          : "border-2 border-[#9800d0] bg-transparent text-[#9800d0]"
+          : "border-2 border-[#9a7ab6] bg-transparent text-[#9a7ab6]"
         : theme === "dark"
           ? "bg-[#d575ff] text-[#390050] shadow-[4px_4px_0px_0px_black]"
-          : "bg-[#9800d0] text-white shadow-[4px_4px_0px_0px_#0f172a]"
+          : "bg-[#9a7ab6] text-white shadow-[4px_4px_0px_0px_#7d678f]"
       : tone === "cyan"
         ? theme === "dark"
           ? "bg-[#69daff] text-[#002935]"
-          : "bg-[#0891b2] text-white"
+          : "bg-[#6f95a5] text-white shadow-[4px_4px_0px_0px_#5d7d88]"
         : hollow
           ? theme === "dark"
             ? "border-2 border-[#9cff93] bg-transparent text-[#9cff93]"
-            : "border-2 border-[#16a34a] bg-transparent text-[#16a34a]"
+            : "border-2 border-[#5f8166] bg-transparent text-[#5f8166]"
           : theme === "dark"
             ? "bg-[#9cff93] text-[#006413] shadow-[4px_4px_0px_0px_#00440a]"
-            : "bg-[#16a34a] text-white shadow-[4px_4px_0px_0px_#00440a]";
+            : "bg-[#769a7a] text-white shadow-[4px_4px_0px_0px_#58745e]";
 
   return (
     <button

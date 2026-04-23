@@ -13,6 +13,7 @@ import {
   ReviewLearningWorkspace,
 } from "@/app/_components/learning-workspace";
 import { useTheme } from "@/app/_components/theme-provider";
+import { NotesWorkspacePage } from "@/app/_components/notes-workspace";
 
 export function HomeRoutePage() {
   const { theme } = useTheme();
@@ -46,6 +47,12 @@ export function PracticeChallengeRoutePage() {
 
 export function PracticeFlashcardsRoutePage() {
   return <FlashcardScreen />;
+}
+
+export function NotesRoutePage() {
+  const { theme } = useTheme();
+
+  return <NotesWorkspacePage theme={theme} />;
 }
 
 export function ProfileRoutePage() {

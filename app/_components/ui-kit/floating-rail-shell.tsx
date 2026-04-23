@@ -25,7 +25,7 @@ export function FloatingRailShell({
         className={cn(
           isDark
             ? "border-l-4 border-[#262626] bg-[#131313]"
-            : "border-l-4 border-[#b5c0ca] bg-[#d9e0e6]",
+            : "border-l-4 border-[#a3b1a4] bg-[#d8e2d8]",
           "cyber-scrollbar fixed right-0 top-0 z-40 flex h-screen max-h-screen overflow-y-auto overscroll-contain flex-col",
           widthClassName,
           className,

@@ -144,7 +144,7 @@ export function GlobalChatDrawer() {
             "fixed right-0 top-0 z-[55] flex h-screen flex-col border-l shadow-2xl transition-all",
             dark
               ? "border-[#262626] bg-[#0e0e0e]"
-              : "border-[#b5c0ca] bg-[#f3f7fb]",
+              : "border-[#c6d2c4] bg-[#eef4ec]",
           )}
           style={{ width: `${width}px` }}
         >
@@ -155,8 +155,8 @@ export function GlobalChatDrawer() {
               "absolute left-0 top-0 w-1 h-full cursor-col-resize transition-colors",
               dark
                 ? "bg-[#262626] hover:bg-[#69daff]"
-                : "bg-[#b5c0ca] hover:bg-[#00677d]",
-              isResizing && (dark ? "bg-[#69daff]" : "bg-[#00677d]"),
+                : "bg-[#c6d2c4] hover:bg-[#8cb6c6]",
+              isResizing && (dark ? "bg-[#69daff]" : "bg-[#8cb6c6]"),
             )}
             onMouseDown={() => setIsResizing(true)}
           />
@@ -164,14 +164,14 @@ export function GlobalChatDrawer() {
           <header
             className={cn(
               "flex items-center justify-between border-b px-4 py-3",
-              dark ? "border-[#262626]" : "border-[#b5c0ca]",
+              dark ? "border-[#262626]" : "border-[#c6d2c4]",
             )}
           >
             <div>
               <div
                 className={cn(
                   "font-display text-sm font-bold uppercase tracking-[0.12em]",
-                  dark ? "text-[#69daff]" : "text-[#00677d]",
+                  dark ? "text-[#69daff]" : "text-[#4f8798]",
                 )}
               >
                 Mixi Bot
@@ -179,7 +179,7 @@ export function GlobalChatDrawer() {
               <div
                 className={cn(
                   "font-pixel text-[9px] uppercase",
-                  dark ? "text-[#767575]" : "text-[#64748b]",
+                  dark ? "text-[#767575]" : "text-[#6f7c74]",
                 )}
               >
                 Ctrl/Cmd + Shift + K
@@ -191,7 +191,7 @@ export function GlobalChatDrawer() {
                   "border px-2 py-1 font-pixel text-[9px] uppercase",
                   dark
                     ? "border-[#262626] text-[#9cff93] hover:bg-[#1f1f1f]"
-                    : "border-[#9aa7b3] text-[#006e17] hover:bg-[#d9e0e6]",
+                    : "border-[#c6d2c4] text-[#5f8c61] hover:bg-[#e4efe1]",
                 )}
                 onClick={handleResetConversation}
                 type="button"
@@ -204,7 +204,7 @@ export function GlobalChatDrawer() {
                   "border px-2 py-1 font-pixel text-[10px] uppercase",
                   dark
                     ? "border-[#262626] text-[#adaaaa] hover:bg-[#1f1f1f]"
-                    : "border-[#9aa7b3] text-[#475569] hover:bg-[#d9e0e6]",
+                    : "border-[#c6d2c4] text-[#5f7066] hover:bg-[#e8eeea]",
                 )}
                 onClick={() => setOpen(false)}
                 type="button"
@@ -228,10 +228,10 @@ export function GlobalChatDrawer() {
                     userMessage
                       ? dark
                         ? "border-[#1e3a2a] bg-[#132217]"
-                        : "border-[#86efac] bg-[#f0fff4]"
+                        : "border-[#b6d0b9] bg-[#edf5eb]"
                       : dark
                         ? "border-[#262626] bg-[#131313]"
-                        : "border-[#b5c0ca] bg-white",
+                        : "border-[#d1dbcf] bg-[#f8fbf5]",
                   )}
                   key={message.id}
                 >
@@ -241,10 +241,10 @@ export function GlobalChatDrawer() {
                       userMessage
                         ? dark
                           ? "text-[#9cff93]"
-                          : "text-[#006e17]"
+                          : "text-[#5f8c61]"
                         : dark
                           ? "text-[#69daff]"
-                          : "text-[#00677d]",
+                          : "text-[#4f8798]",
                     )}
                   >
                     <span>{userMessage ? "You" : "Mixi Bot"}</span>
@@ -253,7 +253,7 @@ export function GlobalChatDrawer() {
                   <div
                     className={cn(
                       "whitespace-pre-wrap break-words",
-                      dark ? "text-[#d4d4d4]" : "text-[#1f2937]",
+                      dark ? "text-[#d4d4d4]" : "text-[#243127]",
                     )}
                   >
                     {message.text}
@@ -268,13 +268,13 @@ export function GlobalChatDrawer() {
                   "mr-auto max-w-[85%] border px-3 py-2 text-sm",
                   dark
                     ? "border-[#262626] bg-[#131313]"
-                    : "border-[#b5c0ca] bg-white",
+                    : "border-[#d1dbcf] bg-[#f8fbf5]",
                 )}
               >
                 <div
                   className={cn(
                     "font-pixel text-[9px] uppercase",
-                    dark ? "text-[#69daff]" : "text-[#00677d]",
+                    dark ? "text-[#69daff]" : "text-[#4f8798]",
                   )}
                 >
                   Mixi Bot is thinking...
@@ -288,7 +288,7 @@ export function GlobalChatDrawer() {
               "border-t p-3",
               dark
                 ? "border-[#262626] bg-[#101010]"
-                : "border-[#b5c0ca] bg-white",
+                : "border-[#c6d2c4] bg-[#f6faf3]",
             )}
           >
             <div className="flex gap-2">
@@ -297,7 +297,7 @@ export function GlobalChatDrawer() {
                   "min-h-[52px] flex-1 resize-none border px-3 py-2 text-sm outline-none",
                   dark
                     ? "border-[#262626] bg-[#131313] text-white placeholder:text-[#767575]"
-                    : "border-[#9aa7b3] bg-white text-[#0f172a] placeholder:text-[#64748b]",
+                    : "border-[#c6d2c4] bg-[#fbfdf8] text-[#243127] placeholder:text-[#7a887f]",
                 )}
                 onChange={(event) => setDraft(event.target.value)}
                 onKeyDown={(event) => {
@@ -315,7 +315,7 @@ export function GlobalChatDrawer() {
                   "border px-3 py-2 font-pixel text-[10px] uppercase",
                   dark
                     ? "border-[#262626] text-[#69daff] hover:bg-[#11232b]"
-                    : "border-[#9aa7b3] text-[#00677d] hover:bg-[#dff4fa]",
+                    : "border-[#c6d2c4] text-[#4f8798] hover:bg-[#edf5f7]",
                 )}
                 disabled={askMutation.isPending || !draft.trim()}
                 onClick={() => void handleSendMessage()}
@@ -336,7 +336,7 @@ export function GlobalChatDrawer() {
             "fixed top-6 right-6 z-50 rounded-none border px-3 py-2 font-pixel text-[10px] uppercase tracking-[0.12em] transition-colors",
             dark
               ? "border-[#262626] bg-[#131313] text-[#69daff] hover:bg-[#1f1f1f]"
-              : "border-[#9aa7b3] bg-[#e7edf1] text-[#00677d] hover:bg-[#d9e0e6]",
+              : "border-[#c6d2c4] bg-[#edf4ec] text-[#4f8798] hover:bg-[#e2ece6]",
           )}
           onClick={() => setOpen(true)}
           type="button"
